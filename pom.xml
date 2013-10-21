@@ -41,8 +41,12 @@
             <Bundle-Activator>us.m410.osgi.Activator</Bundle-Activator>
             <Import-Package>
               org.osgi.framework,
+              us.m410.osgi.service,
               *;resolution:=optional
             </Import-Package>
+            <Export-Package>
+               us.m410.osgi.service
+            </Export-Package>
           </instructions>
         </configuration>
       </plugin>
