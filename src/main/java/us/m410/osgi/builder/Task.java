@@ -11,6 +11,6 @@ public interface Task {
     String getName(); // must be unique
     String getDescription();
     String getHelp();
-    Task[] getPrerequisites();
+    String[] getPrerequisites();
     void execute(BuildContext context);
 }
