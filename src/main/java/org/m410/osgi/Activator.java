@@ -1,7 +1,7 @@
-package us.m410.osgi;
+package org.m410.osgi;
 
 import org.osgi.framework.*;
-import us.m410.osgi.service.HelloService;
+import org.m410.osgi.service.HelloService;
 
 /**
  * And to read this serice:

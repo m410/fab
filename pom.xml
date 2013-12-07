@@ -1,56 +1,67 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>fab-java-compiler-bundle</groupId>
-  <artifactId>fab-java-compiler-bundle</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  <packaging>bundle</packaging>
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>fab-java-compiler-bundle</groupId>
+    <artifactId>fab-java-compiler-bundle</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>bundle</packaging>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
 
-  <dependencies>
-    <dependency>
-      <groupId>org.eclipse.equinox</groupId>
-      <artifactId>osgi</artifactId>
-      <version>3.1.1</version>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+    <distributionManagement>
+        <repository>
+            <id>repo.m410.org</id>
+            <url>http://repo.m410.org/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>repo.m410.org</id>
+            <url>http://repo.m410.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <version>1.4.0</version>
-        <extensions>true</extensions>
-        <configuration>
-          <instructions>
-            <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
-            <Bundle-Name>${project.artifactId}</Bundle-Name>
-            <Bundle-Version>1.0.0</Bundle-Version>
-            <Private-Package>us.m410.osgi</Private-Package>
-            <Bundle-Activator>us.m410.osgi.Activator</Bundle-Activator>
-            <Import-Package>
-              org.osgi.framework,
-              us.m410.osgi.service,
-              *;resolution:=optional
-            </Import-Package>
-            <Export-Package>
-              us.m410.osgi.service
-            </Export-Package>
-          </instructions>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+    <dependencies>
+        <dependency>
+            <groupId>org.eclipse.equinox</groupId>
+            <artifactId>osgi</artifactId>
+            <version>3.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>1.4.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+                        <Bundle-Name>${project.artifactId}</Bundle-Name>
+                        <Bundle-Version>1.0.0</Bundle-Version>
+                        <Private-Package>org.m410.osgi</Private-Package>
+                        <Bundle-Activator>org.m410.osgi.Activator</Bundle-Activator>
+                        <Import-Package>
+                            org.osgi.framework,
+                            org.m410.osgi.service,
+                            *;resolution:=optional
+                        </Import-Package>
+                        <Export-Package>
+                            org.m410.osgi.service
+                        </Export-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 
 </project>
