@@ -8,7 +8,9 @@ import org.m410.osgi.service.HelloService;
 import org.m410.osgi.service.HelloServiceImpl;
 
 /**
- * And to read this serice:
+ * And to read this service:
+ *
+ * <pre>
  * public class Activator implements BundleActivator {
  * ServiceReference helloServiceReference;
  * public void start(BundleContext context) throws Exception {
@@ -16,13 +18,14 @@ import org.m410.osgi.service.HelloServiceImpl;
  * helloServiceReference= context.getServiceReference(HelloService.class.getName());
  * HelloService helloService =(HelloService)context.getService(helloServiceReference);
  * System.out.println(helloService.sayHello());
- * <p/>
  * }
  * public void stop(BundleContext context) throws Exception {
  * System.out.println("Goodbye World!!");
  * context.ungetService(helloServiceReference);
  * }
  * }
+ * </pre>
+ *
  */
 public class Activator implements BundleActivator {
     ServiceRegistration helloServiceRegistration;
