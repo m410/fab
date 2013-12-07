@@ -1,4 +1,4 @@
-package us.m410.osgi.builder;
+package org.m410.osgi.builder;
 
 import java.util.Set;
 
