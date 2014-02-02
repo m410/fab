@@ -47,15 +47,15 @@
                         <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Bundle-Version>1.0.0</Bundle-Version>
-                        <Private-Package>org.m410.osgi</Private-Package>
-                        <Bundle-Activator>org.m410.osgi.Activator</Bundle-Activator>
+                        <Private-Package>org.m410.fab</Private-Package>
+                        <Bundle-Activator>org.m410.fab.Activator</Bundle-Activator>
                         <Import-Package>
                             org.osgi.framework,
-                            org.m410.osgi.service,
+                            org.m410.fab.service,
                             *;resolution:=optional
                         </Import-Package>
                         <Export-Package>
-                            org.m410.osgi.service
+                            org.m410.fab.service
                         </Export-Package>
                     </instructions>
                 </configuration>

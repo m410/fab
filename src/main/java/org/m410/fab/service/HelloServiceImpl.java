@@ -1,4 +1,4 @@
-package org.m410.osgi.service;
+package org.m410.fab.service;
 
 /**
  * Document Me..

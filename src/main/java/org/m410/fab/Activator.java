@@ -1,7 +1,7 @@
-package org.m410.osgi;
+package org.m410.fab;
 
 import org.osgi.framework.*;
-import org.m410.osgi.service.HelloService;
+import org.m410.fab.service.HelloService;
 
 /**
  * And to read this service:
