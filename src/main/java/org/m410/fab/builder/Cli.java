@@ -1,4 +1,4 @@
-package org.m410.osgi.builder;
+package org.m410.fab.builder;
 
 /**
  * Document Me..

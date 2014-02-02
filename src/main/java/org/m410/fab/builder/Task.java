@@ -1,16 +1,14 @@
-package org.m410.osgi.builder;
+package org.m410.fab.builder;
 
-import java.util.Set;
+import java.io.Serializable;
 
 /**
  * Should be immutable
  *
  * @author Michael Fortin
  */
-public interface Task {
+public interface Task extends Serializable {
     String getName(); // must be unique
     String getDescription();
-    String getHelp();
-    String[] getPrerequisites();
     void execute(BuildContext context);
 }

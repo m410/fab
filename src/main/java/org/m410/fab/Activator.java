@@ -1,11 +1,10 @@
-package org.m410.osgi;
+package org.m410.fab;
 
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
-import org.m410.osgi.service.HelloService;
-import org.m410.osgi.service.HelloServiceImpl;
+import org.m410.fab.service.HelloService;
+import org.m410.fab.service.HelloServiceImpl;
 
 /**
  * And to read this service:

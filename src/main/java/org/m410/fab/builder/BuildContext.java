@@ -1,4 +1,4 @@
-package org.m410.osgi.builder;
+package org.m410.fab.builder;
 
 /**
  * Document Me..
@@ -8,6 +8,10 @@ package org.m410.osgi.builder;
 public interface BuildContext {
     Application getApplication();
     Build getBuild();
+
+    // environment
+    // dependencies
+    // paths
 
     Cli cli();
 }
