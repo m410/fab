@@ -1,4 +1,4 @@
-package org.m410.fab;
+package org.m410.fab.loader;
 
 import org.m410.fab.service.FabricateService;
 import org.m410.fab.service.FabricateServiceImpl;
@@ -37,7 +37,7 @@ public class Activator implements BundleActivator {
         final String s = "file://Users/m410/Projects/fab(ricate)/fab-java-task-bundle" +
                 "/target/fab-java-task-bundle-0.1-SNAPSHOT.jar";
         context.installBundle(s);
-
+        System.out.println("installed task module");
         // load modules by url
 
         fabricateService.addConfiguration("Some Config");
