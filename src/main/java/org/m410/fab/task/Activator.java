@@ -1,7 +1,7 @@
-package org.m410.fab;
+package org.m410.fab.task;
 
+import org.m410.fab.service.FabricateService;
 import org.osgi.framework.*;
-import org.m410.fab.service.HelloService;
 
 /**
  * And to read this service:
@@ -24,18 +24,20 @@ import org.m410.fab.service.HelloService;
  */
 public class Activator implements BundleActivator {
 
-    ServiceReference helloServiceReference;
+    ServiceReference fabricateServiceReference;
 
     public void start(BundleContext context) throws Exception {
         System.out.println("Hello World!!");
-        helloServiceReference= context.getServiceReference(HelloService.class.getName());
+        fabricateServiceReference = context.getServiceReference(FabricateService.class.getName());
         System.out.println("made service");
-        HelloService helloService =(HelloService)context.getService(helloServiceReference);
-        System.out.println("call service:" + helloService.sayHello());
+        FabricateService helloService =(FabricateService)context.getService(fabricateServiceReference);
+        helloService.addConfiguration("task bundle configuration");
+        helloService.addCommand("task command 1");
+        helloService.addTask("task 1");
     }
 
     public void stop(BundleContext context) throws Exception {
-        System.out.println("Goodbye World!!");
-        context.ungetService(helloServiceReference);
+        System.out.println("Goodbye task bundle!!");
+        context.ungetService(fabricateServiceReference);
     }
 }

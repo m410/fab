@@ -2,12 +2,12 @@
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="Osmorc" name="OSGi">
-      <configuration manifestGenerationMode="OsmorcControlled" manifestLocation="" jarfileLocation="fab-java-task-bundle-0.1-SNAPSHOT.jar" outputPathType="CompilerOutputPath" bndFileLocation="" bundlorFileLocation="" bundleActivator="org.m410.fab.Activator" bundleSymbolicName="org.m410.fab-java-task-bundle" bundleVersion="1.0.0" ignoreFilePattern="" useProjectDefaultManifestFileLocation="true" alwaysRebuildBundleJAR="false" doNotSynchronizeWithMaven="false">
+      <configuration manifestGenerationMode="OsmorcControlled" manifestLocation="" jarfileLocation="fab-java-task-0.1-SNAPSHOT.jar" outputPathType="CompilerOutputPath" bndFileLocation="" bundlorFileLocation="" bundleActivator="org.m410.fab.task.Activator" bundleSymbolicName="org.m410.fab-java-task" bundleVersion="1.0.0" ignoreFilePattern="" useProjectDefaultManifestFileLocation="true" alwaysRebuildBundleJAR="false" doNotSynchronizeWithMaven="false">
         <additionalProperties>
-          <property key="Bundle-Name" value="fab-java-task-bundle" />
+          <property key="Bundle-Name" value="fab-java-task" />
           <property key="Private-Package" value="org.m410.fab" />
-          <property key="Import-Package" value="org.osgi.framework,org.m410.fab.service,*;resolution:=optional" />
-          <property key="Export-Package" value="org.m410.fab.service" />
+          <property key="Import-Package" value="org.osgi.framework,org.m410.fab.service,org.m410.fab.builder,*;resolution:=optional" />
+          <property key="Export-Package" value="org.m410.fab.task" />
         </additionalProperties>
         <additionalJARContents />
       </configuration>
