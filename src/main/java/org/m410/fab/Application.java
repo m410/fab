@@ -1,7 +1,6 @@
 package org.m410.fab;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
@@ -38,61 +37,46 @@ public class Application {
 
         // (4) Copy framework properties from the system properties.
         Main.copySystemProperties(configProps);
-        System.out.println("4");
         // (5) Use the specified auto-deploy directory over default.
         configProps.put(AutoProcessor.AUTO_DEPLOY_DIR_PROPERY, bundleDir);
-        System.out.println("5");
 
         // (6) Use the specified bundle cache directory over default.
         configProps.put(Constants.FRAMEWORK_STORAGE, cacheDir);
-        System.out.println("6");
 
         // (7) Add a shutdown hook to clean stop the framework.
-        String enableHook = configProps.get(Main.SHUTDOWN_HOOK_PROP);
-        System.out.println("7");
+//        String enableHook = configProps.get(Main.SHUTDOWN_HOOK_PROP);
 
-        if ((enableHook == null) || !enableHook.equalsIgnoreCase("false"))
-            Runtime.getRuntime().addShutdownHook(new Thread("Felix Shutdown Hook") {
-                public void run() {
-                    try {
-                        System.out.println("exit");
-                        if (framework != null) {
-                            framework.stop();
-                            framework.waitForStop(0);
-                        }
-                    }
-                    catch (Exception ex) {
-                        System.err.println("Error stopping framework: " + ex);
-                    }
-                }
-            });
+//        if ((enableHook == null) || !enableHook.equalsIgnoreCase("false"))
+//            Runtime.getRuntime().addShutdownHook(new Thread("Felix Shutdown Hook") {
+//                public void run() {
+//                    try {
+//                        System.out.println("exit");
+//                        if (framework != null) {
+//                            framework.stop();
+//                            framework.waitForStop(0);
+//                        }
+//                    }
+//                    catch (Exception ex) {
+//                        System.err.println("Error stopping framework: " + ex);
+//                    }
+//                }
+//            });
 
-        try {
-            // (8) Create an instance and initialize the framework.
-            FrameworkFactory factory = getFrameworkFactory();
-            framework = factory.newFramework(configProps);
-            framework.init();
-            System.out.println("8");
-            // (9) Use the system bundle context to process the auto-deploy
-            // and auto-install/auto-start properties.
-            AutoProcessor.process(configProps, framework.getBundleContext());
-            System.out.println("9");
-            // (10) Start the framework.
+        // (8) Create an instance and initialize the framework.
+        FrameworkFactory factory = getFrameworkFactory();
+        framework = factory.newFramework(configProps);
+        framework.init();
+        // (9) Use the system bundle context to process the auto-deploy
+        // and auto-install/auto-start properties.
+        AutoProcessor.process(configProps, framework.getBundleContext());
+        // (10) Start the framework.
 //            final String s = new File("/Users/m410/Projects/fab(ricate)/fab-loader-bundle" +
 //                    "/target/fab-loader-bundle-0.1-SNAPSHOT.jar").toURI().toURL().toString();
-            framework.start();
+        framework.start();
 //            framework.getBundleContext().installBundle(s);
-            System.out.println("10");
-            // (11) Wait for framework to stop to exit the VM.
-            framework.waitForStop(0);
-            System.out.println("11");
-            System.exit(0);
-        }
-        catch (Exception ex) {
-            System.err.println("Could not create framework: " + ex);
-            ex.printStackTrace();
-            System.exit(1);
-        }
+        // (11) Wait for framework to stop to exit the VM.
+//        framework.waitForStop(0);
+        framework.stop();
     }
 
     private static FrameworkFactory getFrameworkFactory() throws Exception {
