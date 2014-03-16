@@ -4,7 +4,7 @@
     <groupId>org.m410.fab</groupId>
     <artifactId>fab-lib</artifactId>
     <version>0.1-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -43,6 +43,28 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>1.4.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+                        <Bundle-Name>${project.artifactId}</Bundle-Name>
+                        <Bundle-Version>${project.version}</Bundle-Version>
+                        <Private-Package>org.m410.fab.service.internal</Private-Package>
+                        <Import-Package>
+                            org.osgi.framework,
+                            *;resolution:=optional
+                        </Import-Package>
+                        <Export-Package>
+                            org.m410.fab.service,
+                            org.m410.fab.builder,
+                        </Export-Package>
+                    </instructions>
                 </configuration>
             </plugin>
             <!--<plugin>-->
