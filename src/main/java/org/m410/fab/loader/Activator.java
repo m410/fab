@@ -4,6 +4,8 @@ import org.m410.fab.service.FabricateService;
 import org.m410.fab.service.FabricateServiceImpl;
 import org.osgi.framework.*;
 
+import java.io.File;
+
 /**
  * And to read this service:
  *
@@ -28,25 +30,24 @@ public class Activator implements BundleActivator {
     ServiceRegistration fabricateServiceRegistration;
 
     public void start(BundleContext context) throws Exception {
-        System.out.println("start with context:" + context);
         FabricateService fabricateService = new FabricateServiceImpl();
         final String name = FabricateService.class.getName();
         fabricateServiceRegistration = context.registerService(name, fabricateService, null);
 
         // open file, read modules
-        final String s = "file://Users/m410/Projects/fab(ricate)/fab-java-task-bundle" +
-                "/target/fab-java-task-bundle-0.1-SNAPSHOT.jar";
-        context.installBundle(s);
-        System.out.println("installed task module");
+        final String s = new File("/Users/m410/Projects/" +
+                "fab(ricate)/fab-java-task-bundle/target/fab-java-task-0.1-SNAPSHOT.jar")
+                .toURI().toURL().toString();
+        context.installBundle(s).start();
         // load modules by url
 
-        fabricateService.addConfiguration("Some Config");
-        // need to know what command to run
-        fabricateService.execute(new String[]{});
+        FabricateService service = (FabricateService)context.getService(fabricateServiceRegistration.getReference());
+        service.addConfiguration("some config");
+
+        service.execute(new String[]{});
     }
 
     public void stop(BundleContext context) throws Exception {
-        System.out.println("stop with context:" + context);
         fabricateServiceRegistration.unregister();
     }
 
