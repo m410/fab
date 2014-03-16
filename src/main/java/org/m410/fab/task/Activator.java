@@ -24,20 +24,16 @@ import org.osgi.framework.*;
  */
 public class Activator implements BundleActivator {
 
-    ServiceReference fabricateServiceReference;
-
+    
     public void start(BundleContext context) throws Exception {
-        System.out.println("Hello World!!");
-        fabricateServiceReference = context.getServiceReference(FabricateService.class.getName());
-        System.out.println("made service");
-        FabricateService helloService =(FabricateService)context.getService(fabricateServiceReference);
-        helloService.addConfiguration("task bundle configuration");
-        helloService.addCommand("task command 1");
-        helloService.addTask("task 1");
+        ServiceReference fabricateServiceReference = context.getServiceReference(FabricateService.class.getName());
+
+        FabricateService fabricateService =(FabricateService)context.getService(fabricateServiceReference);
+        fabricateService.addConfiguration("task configuration 1");
+        fabricateService.addCommand("task command 1");
+        fabricateService.addTask("task 1");
     }
 
     public void stop(BundleContext context) throws Exception {
-        System.out.println("Goodbye task bundle!!");
-        context.ungetService(fabricateServiceReference);
     }
 }
