@@ -23,15 +23,17 @@ public class FabricateServiceImpl implements FabricateService {
 
     @Override
     public void addConfiguration(String config) {
-
     }
 
     @Override
     public void execute(String[] taskList) {
-        for (String s : taskList) {
+        for (String s : tasks)
             System.out.println("TASK:"+s);
-        }
+
     }
 
-
+    @Override
+    public String toString() {
+        return "FabricateServiceImp["+tasks+"]";
+    }
 }
