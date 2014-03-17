@@ -5,6 +5,7 @@ import org.m410.fab.service.FabricateServiceImpl;
 import org.osgi.framework.*;
 
 import java.io.File;
+import java.util.Arrays;
 
 /**
  * And to read this service:
@@ -34,17 +35,23 @@ public class Activator implements BundleActivator {
         final String name = FabricateService.class.getName();
         fabricateServiceRegistration = context.registerService(name, fabricateService, null);
 
-        // open file, read modules
-        final String s = new File("/Users/m410/Projects/" +
-                "fab(ricate)/fab-java-task-bundle/target/fab-java-task-0.1-SNAPSHOT.jar")
-                .toURI().toURL().toString();
-        context.installBundle(s).start();
-        // load modules by url
+        String argsStr = System.getProperty("m410.cli.arguments");
+        String[] args = argsStr.substring(1,argsStr.length() -1).split("\\s*,\\s*");
 
         FabricateService service = (FabricateService)context.getService(fabricateServiceRegistration.getReference());
         service.addConfiguration("some config");
 
-        service.execute(new String[]{});
+        // open file, read modules
+        final String s = new File("/Users/m410/Projects/fab(ricate)/fab-java-task-bundle" +
+                "/target/fab-java-task-0.1-SNAPSHOT.jar").toURI().toURL().toString();
+        context.installBundle(s).start();
+
+        final String s2 = new File("/Users/m410/Projects/fab(ricate)/fab-java-compiler-bundle" +
+                "/target/fab-java-compiler-0.1-SNAPSHOT.jar").toURI().toURL().toString();
+        context.installBundle(s2).start();
+
+        service.modifyCommands();
+        service.execute(args);
     }
 
     public void stop(BundleContext context) throws Exception {
