@@ -1,7 +1,13 @@
 package org.m410.fab.task;
 
+import org.m410.fab.builder.BuildContext;
+import org.m410.fab.builder.Command;
+import org.m410.fab.builder.Step;
+import org.m410.fab.builder.Task;
 import org.m410.fab.service.FabricateService;
 import org.osgi.framework.*;
+
+import java.util.Arrays;
 
 /**
  * And to read this service:
@@ -29,11 +35,16 @@ public class Activator implements BundleActivator {
         ServiceReference fabricateServiceReference = context.getServiceReference(FabricateService.class.getName());
 
         FabricateService fabricateService =(FabricateService)context.getService(fabricateServiceReference);
-        fabricateService.addConfiguration("task configuration 1");
-        fabricateService.addCommand("task command 1");
-        fabricateService.addTask("task 1");
+        fabricateService.addConfiguration("configuration1");
+        fabricateService.addCommand(
+                new Command("build","Build project",false)
+                .withStep(new Step("default")
+                        .withTask(new BuildTask())
+                )
+        );
     }
 
     public void stop(BundleContext context) throws Exception {
     }
+
 }
