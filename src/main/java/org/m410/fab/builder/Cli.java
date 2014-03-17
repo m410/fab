@@ -10,5 +10,6 @@ public interface Cli {
     void warn(String in);
     void info(String in);
     void debug(String in);
+    void error(String in);
 
 }

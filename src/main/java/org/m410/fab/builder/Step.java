@@ -29,4 +29,8 @@ public final class Step  implements Serializable {
     public String getName() {
         return name;
     }
+
+    public List<Task> getTasks() {
+        return tasks;
+    }
 }

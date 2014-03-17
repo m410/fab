@@ -1,5 +1,7 @@
 package org.m410.fab.service;
 
+import org.m410.fab.builder.*;
+
 /**
  * Document Me..
  *
@@ -7,11 +9,19 @@ package org.m410.fab.service;
  */
 public interface FabricateService {
 
-    void addCommand(String c);
+    void addCommand(Command c);
 
-    void addTask(String c);
+    void addCommandModifier(CommandModifier c);
 
     void execute(String[] taskList);
 
     void addConfiguration(String config);
+
+    void addCommandListener(CommandListener c);
+
+    void addTaskListener(TaskListener t);
+
+    void addConfigListener(ConfigListener c);
+
+    void modifyCommands();
 }

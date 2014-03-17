@@ -54,6 +54,14 @@ public final class Command implements Serializable{
         return name;
     }
 
+    public void execute(BuildContext buildContext) {
+        for (Step step : steps) {
+            for (Task task : step.getTasks()) {
+                task.execute(buildContext);
+            }
+        }
+    }
+
     public String getDescription() {
         return description;
     }
