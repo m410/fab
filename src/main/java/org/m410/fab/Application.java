@@ -16,66 +16,29 @@ import org.apache.felix.main.AutoProcessor;
  * @author m410
  */
 public class Application {
-    private static Framework framework = null;
 
     public static void main(String[] args) throws Exception {
 
-        // (1) Check for command line arguments and verify usage.
         String bundleDir = ".fab/bundles";
         String cacheDir = ".fab/cache";
 
-        // (2) Load system properties.
+        System.setProperty("m410.cli.arguments",Arrays.toString(args));
         Main.loadSystemProperties();
-
-        // (3) Read configuration properties.
         Map<String,String> configProps = loadConfigProperties();
 
-        if (configProps == null) {
-            System.err.println("No " + Main.CONFIG_PROPERTIES_FILE_VALUE + " found.");
-            configProps = new HashMap<>();
-        }
-
-        // (4) Copy framework properties from the system properties.
         Main.copySystemProperties(configProps);
-        // (5) Use the specified auto-deploy directory over default.
         configProps.put(AutoProcessor.AUTO_DEPLOY_DIR_PROPERY, bundleDir);
-
-        // (6) Use the specified bundle cache directory over default.
         configProps.put(Constants.FRAMEWORK_STORAGE, cacheDir);
-
-        // (7) Add a shutdown hook to clean stop the framework.
-//        String enableHook = configProps.get(Main.SHUTDOWN_HOOK_PROP);
-
-//        if ((enableHook == null) || !enableHook.equalsIgnoreCase("false"))
-//            Runtime.getRuntime().addShutdownHook(new Thread("Felix Shutdown Hook") {
-//                public void run() {
-//                    try {
-//                        System.out.println("exit");
-//                        if (framework != null) {
-//                            framework.stop();
-//                            framework.waitForStop(0);
-//                        }
-//                    }
-//                    catch (Exception ex) {
-//                        System.err.println("Error stopping framework: " + ex);
-//                    }
-//                }
-//            });
-
-        // (8) Create an instance and initialize the framework.
         FrameworkFactory factory = getFrameworkFactory();
-        framework = factory.newFramework(configProps);
+        Framework framework = factory.newFramework(configProps);
         framework.init();
-        // (9) Use the system bundle context to process the auto-deploy
-        // and auto-install/auto-start properties.
         AutoProcessor.process(configProps, framework.getBundleContext());
-        // (10) Start the framework.
+
+        // load the one main bundle
 //            final String s = new File("/Users/m410/Projects/fab(ricate)/fab-loader-bundle" +
 //                    "/target/fab-loader-bundle-0.1-SNAPSHOT.jar").toURI().toURL().toString();
+
         framework.start();
-//            framework.getBundleContext().installBundle(s);
-        // (11) Wait for framework to stop to exit the VM.
-//        framework.waitForStop(0);
         framework.stop();
     }
 
