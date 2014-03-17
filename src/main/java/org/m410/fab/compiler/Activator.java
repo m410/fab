@@ -1,7 +1,8 @@
 package org.m410.fab.compiler;
 
+import org.m410.fab.builder.Command;
+import org.m410.fab.builder.Step;
 import org.m410.fab.service.FabricateService;
-import org.m410.fab.service.FabricateServiceImpl;
 import org.osgi.framework.*;
 
 
@@ -26,22 +27,20 @@ import org.osgi.framework.*;
  */
 public class Activator implements BundleActivator {
 
-    ServiceRegistration fabricateServiceRegistration;
-
     public void start(BundleContext context) throws Exception {
-        FabricateService fabricateService = new FabricateServiceImpl();
-        final String name = FabricateService.class.getName();
-        fabricateServiceRegistration = context.registerService(name, fabricateService, null);
+        ServiceReference fabricateServiceReference = context.getServiceReference(FabricateService.class.getName());
 
-        // load modules by url
-
-        fabricateService.addConfiguration("Some Config");
-        // need to know what command to run
-        fabricateService.execute(new String[]{});
+        FabricateService fabricateService =(FabricateService)context.getService(fabricateServiceReference);
+        fabricateService.addConfiguration("configuration2");
+        fabricateService.addCommand(
+                new Command("compile-src", "Compile project", false)
+                        .withStep(new Step("default")
+                                .withTask(new CompileTask())
+                        )
+        );
     }
 
     public void stop(BundleContext context) throws Exception {
-        fabricateServiceRegistration.unregister();
     }
 
 }
