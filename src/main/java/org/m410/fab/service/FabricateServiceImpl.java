@@ -1,6 +1,7 @@
 package org.m410.fab.service;
 
 import org.m410.fab.builder.*;
+import org.m410.fab.config.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,7 +23,7 @@ public class FabricateServiceImpl implements FabricateService {
     public void addCommand(Command c) {
 //        commandListeners.stream().forEach(it -> it.notify(new CommandEvent()));
         for (CommandListener commandListener : commandListeners) {
-            commandListener.notify(new CommandEvent());
+            commandListener.notify(new CommandEvent(c));
         }
         commands.add(c);
     }
@@ -61,7 +62,7 @@ public class FabricateServiceImpl implements FabricateService {
             for (Command command : commands) {
                 commandModifier.modify(command);
                 for (CommandListener commandListener : commandListeners) {
-                    commandListener.notify(new CommandEvent());
+                    commandListener.notify(new CommandEvent(command));
                 }
             }
         }
@@ -72,11 +73,15 @@ public class FabricateServiceImpl implements FabricateService {
 
     @Override
     public void execute(String[] args) {
+        BuildContext buildContext = configureInitialBuildContext();
 
         for (String arg : Arrays.asList(args)) {
             for (Command command : commands) {
                 if(command.getName().equals(arg)) {
-                    command.execute(new BuildContextImpl());
+                    for (CommandListener commandListener : commandListeners) {
+                        commandListener.notify(new CommandEvent(command));
+                    }
+                    command.execute(taskListeners, buildContext);
                 }
             }
         }
@@ -86,5 +91,20 @@ public class FabricateServiceImpl implements FabricateService {
 //                    .orElseThrow(UnknownCommandException::new)
 //                    .execute(new BuildContextImpl());
 //        });
+    }
+
+    BuildContext configureInitialBuildContext() {
+        // todo setup configuration
+        // pull config,
+        // apply modules,
+        // apply env overrides
+
+        Cli cli = new CliStdOutImpl();
+        Application application = new ApplicationImpl();
+        String environment = "development";
+        Build build = new BuildImpl();
+        List<Dependency> dependencies = new ArrayList<>();
+        List<Module> modules = new ArrayList<>();
+        return new BuildContextImpl(cli, application, build, environment, dependencies, modules);
     }
 }

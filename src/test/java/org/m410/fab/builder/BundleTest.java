@@ -15,7 +15,7 @@ public class BundleTest {
 
     @Test
     public void buildContext() {
-        BuildContext ctx = new BuildContextImpl();
+        BuildContext ctx = new BuildContextImpl(null,null,null,null,null,null);
         assertNotNull(ctx);
     }
 }

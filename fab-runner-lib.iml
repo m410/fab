@@ -7,7 +7,7 @@
           <property key="Bundle-Name" value="fab-lib" />
           <property key="Private-Package" value="org.m410.fab.service.internal" />
           <property key="Import-Package" value="org.osgi.framework,*;resolution:=optional" />
-          <property key="Export-Package" value="org.m410.fab.service,org.m410.fab.builder," />
+          <property key="Export-Package" value="org.m410.fab.service,org.m410.fab.builder,org.m410.fab.config" />
         </additionalProperties>
         <additionalJARContents />
       </configuration>

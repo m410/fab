@@ -1,4 +1,4 @@
-package org.m410.fab.builder;
+package org.m410.fab.config;
 
 import java.io.Serializable;
 
@@ -7,5 +7,5 @@ import java.io.Serializable;
  *
  * @author Michael Fortin
  */
-public interface Build extends Serializable {
+public interface Application extends Serializable {
 }

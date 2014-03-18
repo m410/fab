@@ -64,6 +64,7 @@
                         <Export-Package>
                             org.m410.fab.service,
                             org.m410.fab.builder,
+                            org.m410.fab.config
                         </Export-Package>
                     </instructions>
                 </configuration>
