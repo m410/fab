@@ -11,7 +11,7 @@ import java.util.Arrays;
 
 /**
  * And to read this service:
- *
+ * <p/>
  * <pre>
  * public class Activator implements BundleActivator {
  * ServiceReference helloServiceReference;
@@ -30,17 +30,26 @@ import java.util.Arrays;
  */
 public class Activator implements BundleActivator {
 
-    
+
     public void start(BundleContext context) throws Exception {
         ServiceReference fabricateServiceReference = context.getServiceReference(FabricateService.class.getName());
 
-        FabricateService fabricateService =(FabricateService)context.getService(fabricateServiceReference);
+        FabricateService fabricateService = (FabricateService) context.getService(fabricateServiceReference);
         fabricateService.addConfiguration("configuration1");
         fabricateService.addCommand(
-                new Command("build","Build project",false)
-                .withStep(new Step("default")
-                        .withTask(new BuildTask())
-                )
+                new Command("build", "Build project", false)
+                        .withStep(new Step("pre-compile"))
+                        .withStep(new Step("compile").withTask(new BuildTask()))
+                        .withStep(new Step("post-compile"))
+                        .withStep(new Step("pre-test-compile"))
+                        .withStep(new Step("test-compile"))
+                        .withStep(new Step("post-test-compile"))
+                        .withStep(new Step("pre-tet"))
+                        .withStep(new Step("test"))
+                        .withStep(new Step("post-test"))
+                        .withStep(new Step("pre-package"))
+                        .withStep(new Step("package"))
+                        .withStep(new Step("post-package"))
         );
     }
 
