@@ -39,16 +39,15 @@ public class Activator implements BundleActivator {
         String[] args = argsStr.substring(1,argsStr.length() -1).split("\\s*,\\s*");
 
         FabricateService service = (FabricateService)context.getService(fabricateServiceRegistration.getReference());
-        service.addConfiguration("some config");
 
         // open file, read modules
-        final String s = new File("/Users/m410/Projects/fab(ricate)/fab-java-task-bundle" +
-                "/target/fab-java-task-0.1-SNAPSHOT.jar").toURI().toURL().toString();
-        context.installBundle(s).start();
-
-        final String s2 = new File("/Users/m410/Projects/fab(ricate)/fab-java-compiler-bundle" +
-                "/target/fab-java-compiler-0.1-SNAPSHOT.jar").toURI().toURL().toString();
-        context.installBundle(s2).start();
+//        final String s = new File("/Users/m410/Projects/fab(ricate)/fab-java-task-bundle" +
+//                "/target/fab-java-task-0.1-SNAPSHOT.jar").toURI().toURL().toString();
+//        context.installBundle(s).start();
+//
+//        final String s2 = new File("/Users/m410/Projects/fab(ricate)/fab-java-compiler-bundle" +
+//                "/target/fab-java-compiler-0.1-SNAPSHOT.jar").toURI().toURL().toString();
+//        context.installBundle(s2).start();
 
         service.modifyCommands();
         service.execute(args);
