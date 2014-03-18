@@ -1,6 +1,7 @@
 package org.m410.fab;
 
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
@@ -9,6 +10,7 @@ import org.apache.felix.main.Main;
 import org.osgi.framework.Constants;
 import org.osgi.framework.launch.*;
 import org.apache.felix.main.AutoProcessor;
+import org.yaml.snakeyaml.Yaml;
 
 /**
  * http://felix.apache.org/site/apache-felix-framework-launching-and-embedding.html#ApacheFelixFrameworkLaunchingandEmbedding-customlauncher
@@ -29,17 +31,47 @@ public class Application {
         Main.copySystemProperties(configProps);
         configProps.put(AutoProcessor.AUTO_DEPLOY_DIR_PROPERY, bundleDir);
         configProps.put(Constants.FRAMEWORK_STORAGE, cacheDir);
+
         FrameworkFactory factory = getFrameworkFactory();
         Framework framework = factory.newFramework(configProps);
-        framework.init();
-        AutoProcessor.process(configProps, framework.getBundleContext());
 
-        // load the one main bundle
-//            final String s = new File("/Users/m410/Projects/fab(ricate)/fab-loader-bundle" +
-//                    "/target/fab-loader-bundle-0.1-SNAPSHOT.jar").toURI().toURL().toString();
+        try {
+            framework.init();
+            AutoProcessor.process(configProps, framework.getBundleContext());
 
-        framework.start();
-        framework.stop();
+            String fileName = "temp.m410.yml";
+            Map<String, Object> elems = (Map<String, Object>)new Yaml().load(
+                    new FileInputStream(new File("src/test/resources/configuration.m410.yml")));
+
+            framework.getBundleContext().installBundle(appBundlePath(fileName, elems));
+            List modules = (List)elems.get("modules");
+            final List persistence = (List) elems.get("persistence");
+
+            if(persistence != null)
+                modules.addAll(persistence);
+
+            final List view = (List) elems.get("view");
+
+            if(view != null)
+                modules.addAll(view);
+
+            for (Object module : modules)
+                framework.getBundleContext().installBundle(moduleBundlePath((Map<String,Object>)module));
+
+            framework.start();
+        } finally {
+            framework.stop();
+        }
+    }
+
+    static String appBundlePath(String fileName, Map<String,Object> yaml) throws MalformedURLException {
+        return  new File("/Users/m410/Projects/fab(ricate)/fab-loader-bundle/" +
+                "target/fab-loader-0.1-SNAPSHOT.jar").toURI().toURL().toString();
+    }
+
+    static String moduleBundlePath(Map<String,Object> yaml) throws MalformedURLException {
+        return  new File("/Users/m410/Projects/fab(ricate)/fab-java-task-bundle/" +
+                "target/fab-java-task-0.1-SNAPSHOT.jar").toURI().toURL().toString();
     }
 
     private static FrameworkFactory getFrameworkFactory() throws Exception {
