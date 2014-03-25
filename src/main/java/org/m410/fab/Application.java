@@ -3,10 +3,12 @@ package org.m410.fab;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.FileSystems;
 import java.util.*;
 
 import org.apache.felix.framework.util.Util;
 import org.apache.felix.main.Main;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 import org.osgi.framework.launch.*;
 import org.apache.felix.main.AutoProcessor;
@@ -25,6 +27,9 @@ public class Application {
         String cacheDir = ".fab/cache";
 
         System.setProperty("m410.cli.arguments",Arrays.toString(args));
+
+        checkAndSetupProjectDir();
+
         Main.loadSystemProperties();
         Map<String,String> configProps = loadConfigProperties();
 
@@ -38,12 +43,23 @@ public class Application {
         try {
             framework.init();
             AutoProcessor.process(configProps, framework.getBundleContext());
+            framework.start();
 
-            String fileName = "temp.m410.yml";
+            String fileName = "configuration.m410.yml";
             Map<String, Object> elems = (Map<String, Object>)new Yaml().load(
-                    new FileInputStream(new File("src/test/resources/configuration.m410.yml")));
+                    new FileInputStream(new File(fileName)));
 
-            framework.getBundleContext().installBundle(appBundlePath(fileName, elems));
+            // default lib
+            for (Bundle bundle : framework.getBundleContext().getBundles()) {
+                System.out.println(" - installed: " + bundle.getSymbolicName() +
+                        " : "+  bundle.getVersion());
+            }
+            framework.getBundleContext().installBundle(
+                    new File("/Users/m410/Projects/fab(ricate)/fab-runner-lib/" +
+                            "target/fab-lib-0.1-SNAPSHOT.jar").toURI().toURL().toString()
+            ).start();
+
+            framework.getBundleContext().installBundle(appBundlePath(fileName, elems)).start();
             List modules = (List)elems.get("modules");
             final List persistence = (List) elems.get("persistence");
 
@@ -56,25 +72,43 @@ public class Application {
                 modules.addAll(view);
 
             for (Object module : modules)
-                framework.getBundleContext().installBundle(moduleBundlePath((Map<String,Object>)module));
+                framework.getBundleContext().installBundle(moduleBundlePath((Map<String,Object>)module)).start();
 
-            framework.start();
         } finally {
             framework.stop();
         }
     }
 
+    private static void checkAndSetupProjectDir() throws IOException{
+        final File localCacheDir = FileSystems.getDefault().getPath(".fab").toFile();
+
+        if(!localCacheDir.exists()) {
+            localCacheDir.mkdir();
+            new File(localCacheDir,"bundles").mkdir();
+            new File(localCacheDir,"cache").mkdir();
+            File confFile = new File(localCacheDir,"config.properties");
+
+            try (FileWriter w = new FileWriter(confFile)) {
+                w.write("obr.repository.url=http://felix.apache.org/obr/releases.xml");
+            }
+        }
+    }
+
     static String appBundlePath(String fileName, Map<String,Object> yaml) throws MalformedURLException {
-        return  new File("/Users/m410/Projects/fab(ricate)/fab-loader-bundle/" +
+        final String s = new File("/Users/m410/Projects/fab(ricate)/fab-loader-bundle/" +
                 "target/fab-loader-0.1-SNAPSHOT.jar").toURI().toURL().toString();
+        System.out.println("-- add app: " + s);
+        return s;
     }
 
     static String moduleBundlePath(Map<String,Object> yaml) throws MalformedURLException {
-        return  new File("/Users/m410/Projects/fab(ricate)/fab-java-task-bundle/" +
+        final String s = new File("/Users/m410/Projects/fab(ricate)/fab-java-task-bundle/" +
                 "target/fab-java-task-0.1-SNAPSHOT.jar").toURI().toURL().toString();
+        System.out.println("-- add module: " + s);
+        return s;
     }
 
-    private static FrameworkFactory getFrameworkFactory() throws Exception {
+    static FrameworkFactory getFrameworkFactory() throws Exception {
         final String name = "META-INF/services/org.osgi.framework.launch.FrameworkFactory";
         java.net.URL url = Main.class.getClassLoader().getResource(name);
 
