@@ -32,10 +32,10 @@ public class Activator implements BundleActivator {
 
 
     public void start(BundleContext context) throws Exception {
+        System.out.println("fab-task-bundle");
         ServiceReference fabricateServiceReference = context.getServiceReference(FabricateService.class.getName());
 
         FabricateService fabricateService = (FabricateService) context.getService(fabricateServiceReference);
-        fabricateService.addConfiguration("configuration1");
         fabricateService.addCommand(
                 new Command("build", "Build project", false)
                         .withStep(new Step("pre-compile"))
