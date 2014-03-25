@@ -31,6 +31,7 @@ public class Activator implements BundleActivator {
     ServiceRegistration fabricateServiceRegistration;
 
     public void start(BundleContext context) throws Exception {
+        System.out.println("fab-loader-bundle");
         FabricateService fabricateService = new FabricateServiceImpl();
         final String name = FabricateService.class.getName();
         fabricateServiceRegistration = context.registerService(name, fabricateService, null);
@@ -40,14 +41,6 @@ public class Activator implements BundleActivator {
 
         FabricateService service = (FabricateService)context.getService(fabricateServiceRegistration.getReference());
 
-        // open file, read modules
-//        final String s = new File("/Users/m410/Projects/fab(ricate)/fab-java-task-bundle" +
-//                "/target/fab-java-task-0.1-SNAPSHOT.jar").toURI().toURL().toString();
-//        context.installBundle(s).start();
-//
-//        final String s2 = new File("/Users/m410/Projects/fab(ricate)/fab-java-compiler-bundle" +
-//                "/target/fab-java-compiler-0.1-SNAPSHOT.jar").toURI().toURL().toString();
-//        context.installBundle(s2).start();
 
         service.modifyCommands();
         service.execute(args);
