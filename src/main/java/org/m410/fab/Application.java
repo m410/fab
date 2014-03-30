@@ -1,14 +1,17 @@
 package org.m410.fab;
 
 import java.io.*;
-import java.net.MalformedURLException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.nio.file.FileSystems;
 import java.util.*;
+import java.util.stream.Collectors;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.felix.framework.util.Util;
 import org.apache.felix.main.Main;
-import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.launch.*;
 import org.apache.felix.main.AutoProcessor;
@@ -21,18 +24,18 @@ import org.yaml.snakeyaml.Yaml;
  */
 public class Application {
 
+    static final String bundleDir = ".fab/bundles";
+    static final String cacheDir = ".fab/cache";
+
     public static void main(String[] args) throws Exception {
 
-        String bundleDir = ".fab/bundles";
-        String cacheDir = ".fab/cache";
-
-        System.setProperty("m410.cli.arguments",Arrays.toString(args));
+        System.setProperty("m410.cli.arguments", Arrays.toString(args));
+        System.setProperty("m410.cli.environment", "dev");
 
         checkAndSetupProjectDir();
 
         Main.loadSystemProperties();
         Map<String,String> configProps = loadConfigProperties();
-
         Main.copySystemProperties(configProps);
         configProps.put(AutoProcessor.AUTO_DEPLOY_DIR_PROPERY, bundleDir);
         configProps.put(Constants.FRAMEWORK_STORAGE, cacheDir);
@@ -43,43 +46,69 @@ public class Application {
         try {
             framework.init();
             AutoProcessor.process(configProps, framework.getBundleContext());
+            BundleContext ctx = framework.getBundleContext();
+
+            final File configFile = new File("configuration.m410.yml");
+            BuildConfig localConfig = loadLocalConfig(configFile);
+            Set<String> violations = localConfig.verifyResources();
+
+            if(violations.size() > 0)
+                System.out.println("got config errors");
+            else
+                localConfig.resources().stream().forEach(s -> {
+                    try {
+                        ctx.installBundle(s.makeUrl().toString()).start();
+                    }
+                    catch (BundleException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
             framework.start();
-
-            String fileName = "configuration.m410.yml";
-            Map<String, Object> elems = (Map<String, Object>)new Yaml().load(
-                    new FileInputStream(new File(fileName)));
-
-            // default lib
-            for (Bundle bundle : framework.getBundleContext().getBundles()) {
-                System.out.println(" - installed: " + bundle.getSymbolicName() +
-                        " : "+  bundle.getVersion());
-            }
-            framework.getBundleContext().installBundle(
-                    new File("/Users/m410/Projects/fab(ricate)/fab-runner-lib/" +
-                            "target/fab-lib-0.1-SNAPSHOT.jar").toURI().toURL().toString()
-            ).start();
-
-            framework.getBundleContext().installBundle(appBundlePath(fileName, elems)).start();
-            List modules = (List)elems.get("modules");
-            final List persistence = (List) elems.get("persistence");
-
-            if(persistence != null)
-                modules.addAll(persistence);
-
-            final List view = (List) elems.get("view");
-
-            if(view != null)
-                modules.addAll(view);
-
-            for (Object module : modules)
-                framework.getBundleContext().installBundle(moduleBundlePath((Map<String,Object>)module)).start();
-
-        } finally {
+        }
+        finally {
             framework.stop();
         }
     }
 
-    private static void checkAndSetupProjectDir() throws IOException{
+    @SuppressWarnings("unchecked")
+    static BuildConfig loadLocalConfig(File configFile) throws Exception {
+        final Map<String, Object> load = (Map<String, Object>) new Yaml().load(new FileInputStream(configFile));
+        final BuildConfig bean = new BuildConfig();
+        BeanUtils.populate(bean, load);
+        bean.setBundles(collectBundles(load.get("bundles")));
+        bean.setPersistence(collectBundles(load.get("persistence")));
+        bean.setModules(collectBundles(load.get("modules")));
+        bean.setView(collectBundles(load.get("view")));
+        bean.setBaseConfig(loadBaseConfig(bean));
+        return bean;
+    }
+
+    @SuppressWarnings("unchecked")
+    static BaseConfig loadBaseConfig(BuildConfig local) throws Exception {
+        final Map<String,Object> load = (Map<String, Object>) new Yaml().load(local.makeUrl().openStream());
+        final BaseConfig bean = new BaseConfig();
+        BeanUtils.populate(bean, load);
+        bean.setBundles(collectBundles(load.get("bundles")));
+        return bean;
+    }
+
+    @SuppressWarnings("unchecked")
+    static List<BundleRef> collectBundles(Object arg) {
+        if(arg != null && arg instanceof List)
+            return ((List<Map<String,Object>>)arg).stream().map(m ->{
+                BundleRef b = new BundleRef();
+                try {
+                    BeanUtils.populate(b,m);
+                } catch (IllegalAccessException  | InvocationTargetException e) {
+                    throw new RuntimeException(e);
+                }
+                return b;
+            }).collect(Collectors.toList());
+        else
+            return new ArrayList<>();
+    }
+
+    static void checkAndSetupProjectDir() throws IOException{
         final File localCacheDir = FileSystems.getDefault().getPath(".fab").toFile();
 
         if(!localCacheDir.exists()) {
@@ -92,20 +121,6 @@ public class Application {
                 w.write("obr.repository.url=http://felix.apache.org/obr/releases.xml");
             }
         }
-    }
-
-    static String appBundlePath(String fileName, Map<String,Object> yaml) throws MalformedURLException {
-        final String s = new File("/Users/m410/Projects/fab(ricate)/fab-loader-bundle/" +
-                "target/fab-loader-0.1-SNAPSHOT.jar").toURI().toURL().toString();
-        System.out.println("-- add app: " + s);
-        return s;
-    }
-
-    static String moduleBundlePath(Map<String,Object> yaml) throws MalformedURLException {
-        final String s = new File("/Users/m410/Projects/fab(ricate)/fab-java-task-bundle/" +
-                "target/fab-java-task-0.1-SNAPSHOT.jar").toURI().toURL().toString();
-        System.out.println("-- add module: " + s);
-        return s;
     }
 
     static FrameworkFactory getFrameworkFactory() throws Exception {
