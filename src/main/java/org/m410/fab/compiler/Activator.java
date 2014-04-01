@@ -27,6 +27,7 @@ import org.osgi.framework.*;
  */
 public class Activator implements BundleActivator {
 
+    @SuppressWarnings("unchecked")
     public void start(BundleContext context) throws Exception {
         ServiceReference fabricateServiceReference = context.getServiceReference(FabricateService.class.getName());
 
