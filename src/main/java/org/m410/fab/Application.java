@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.felix.framework.util.Util;
 import org.apache.felix.main.Main;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
@@ -29,9 +30,6 @@ public class Application {
 
     public static void main(String[] args) throws Exception {
 
-        System.setProperty("m410.cli.arguments", Arrays.toString(args));
-        System.setProperty("m410.cli.environment", "dev");
-
         checkAndSetupProjectDir();
 
         Main.loadSystemProperties();
@@ -46,28 +44,53 @@ public class Application {
         try {
             framework.init();
             AutoProcessor.process(configProps, framework.getBundleContext());
+            framework.start();
             BundleContext ctx = framework.getBundleContext();
 
-            final File configFile = new File("configuration.m410.yml");
+            final File configFile = projectConfigFile();
             BuildConfig localConfig = loadLocalConfig(configFile);
             Set<String> violations = localConfig.verifyResources();
 
-            if(violations.size() > 0)
+            if(violations.size() > 0) {
                 System.out.println("got config errors");
-            else
+            }
+            else {
                 localConfig.resources().stream().forEach(s -> {
                     try {
-                        ctx.installBundle(s.makeUrl().toString()).start();
+                        final String bundlePath = s.makeUrl().toString();
+                        final boolean present = Arrays.asList(ctx.getBundles()).stream().filter(b ->
+                                        b.getSymbolicName().equals(s.getSymbolicName())
+                        ).findFirst().isPresent();
+
+                        if(!present)
+                            ctx.installBundle(bundlePath);
                     }
                     catch (BundleException e) {
                         throw new RuntimeException(e);
                     }
                 });
-            framework.start();
+                Arrays.asList(ctx.getBundles()).stream().forEach(b -> {
+                    try {
+                        b.start();
+                    } catch (BundleException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+
+                Object buildService = ctx.getService(ctx.getServiceReference("org.m410.fab.service.FabricateService"));
+                buildService.getClass().getMethod("postStartupWiring").invoke(buildService);
+                buildService.getClass().getMethod("execute",String[].class).invoke(buildService, new Object[]{args});
+            }
         }
         finally {
             framework.stop();
         }
+    }
+
+    private static File projectConfigFile() {
+        final File file = new File("garden.m410.yml");
+        System.out.println("project file:" + file.getAbsolutePath());
+        return file;
     }
 
     @SuppressWarnings("unchecked")

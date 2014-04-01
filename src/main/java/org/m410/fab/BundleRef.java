@@ -10,6 +10,7 @@ public class BundleRef {
     private String org;
     private String version;
     private URL url;
+    private String symbolicName;
 
     public URL makeUrl() {
         return url;
@@ -46,4 +47,23 @@ public class BundleRef {
     public void setUrl(URL url) {
         this.url = url;
     }
+
+    public String getSymbolicName() {
+        return symbolicName;
+    }
+
+    public void setSymbolicName(String symbolicName) {
+        this.symbolicName = symbolicName;
+    }
+
+    @Override
+    public String toString() {
+        return "BundleRef(" +
+                "name='" + name + '\'' +
+                ", org='" + org + '\'' +
+                ", version='" + version + '\'' +
+                ", url=" + url +
+                ')';
+    }
+
 }
