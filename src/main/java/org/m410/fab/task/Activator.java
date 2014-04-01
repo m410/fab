@@ -31,8 +31,8 @@ import java.util.Arrays;
 public class Activator implements BundleActivator {
 
 
+    @SuppressWarnings("unchecked")
     public void start(BundleContext context) throws Exception {
-        System.out.println("fab-task-bundle");
         ServiceReference fabricateServiceReference = context.getServiceReference(FabricateService.class.getName());
 
         FabricateService fabricateService = (FabricateService) context.getService(fabricateServiceReference);
