@@ -57,7 +57,7 @@ public class FabricateServiceImpl implements FabricateService {
     }
 
     @Override
-    public void modifyCommands() {
+    public void postStartupWiring() {
         for (CommandModifier commandModifier : commandModifiers) {
             for (Command command : commands) {
                 commandModifier.modify(command);
@@ -75,6 +75,10 @@ public class FabricateServiceImpl implements FabricateService {
     public void execute(String[] args) {
         BuildContext buildContext = configureInitialBuildContext();
 
+        // check environment
+        // check log level
+        // check each task to see if it takes args
+        // only the last command can take args
         for (String arg : Arrays.asList(args)) {
             for (Command command : commands) {
                 if(command.getName().equals(arg)) {
@@ -85,12 +89,6 @@ public class FabricateServiceImpl implements FabricateService {
                 }
             }
         }
-//        Arrays.asList(args).stream().forEach(cmd -> {
-//            commands.stream().filter(it -> it.getName().equals(cmd))
-//                    .findFirst()
-//                    .orElseThrow(UnknownCommandException::new)
-//                    .execute(new BuildContextImpl());
-//        });
     }
 
     BuildContext configureInitialBuildContext() {

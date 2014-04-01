@@ -23,5 +23,5 @@ public interface FabricateService {
 
     void addConfigListener(ConfigListener c);
 
-    void modifyCommands();
+    void postStartupWiring();
 }
