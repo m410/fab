@@ -9,7 +9,7 @@ import org.m410.fab.builder.*;
  */
 public interface FabricateService {
 
-    void addCommand(Command c);
+    FabricateService addCommand(Command c);
 
     void addCommandModifier(CommandModifier c);
 

@@ -21,7 +21,7 @@ public final class Step  implements Serializable {
         this.tasks = tasks;
     }
 
-    public Step withTask(Task task) {
+    public Step append(Task task) {
         tasks.add(task);
         return this;
     }

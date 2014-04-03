@@ -20,12 +20,13 @@ public class FabricateServiceImpl implements FabricateService {
     private List<ConfigListener> configListeners= new ArrayList<>();
 
     @Override
-    public void addCommand(Command c) {
+    public FabricateService addCommand(Command c) {
 //        commandListeners.stream().forEach(it -> it.notify(new CommandEvent()));
         for (CommandListener commandListener : commandListeners) {
             commandListener.notify(new CommandEvent(c));
         }
         commands.add(c);
+        return this;
     }
 
     @Override
@@ -75,8 +76,16 @@ public class FabricateServiceImpl implements FabricateService {
     public void execute(String[] args) {
         BuildContext buildContext = configureInitialBuildContext();
 
+        // todo all this needs to be done
         // check environment
         // check log level
+
+        // list commands
+        // list tasks
+
+        // list dependencies
+        // list build bundles
+
         // check each task to see if it takes args
         // only the last command can take args
         for (String arg : Arrays.asList(args)) {

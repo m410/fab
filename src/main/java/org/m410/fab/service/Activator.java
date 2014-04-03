@@ -4,7 +4,7 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 /**
- * @author m410
+ * @author Michael Fortin
  */
 public class Activator implements BundleActivator {
     @Override
