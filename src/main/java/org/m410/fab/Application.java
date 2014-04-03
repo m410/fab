@@ -62,8 +62,11 @@ public class Application {
                                         b.getSymbolicName().equals(s.getSymbolicName())
                         ).findFirst().isPresent();
 
-                        if(!present)
+
+                        if(!present) {
+                            System.out.println("loading: " + s.getSymbolicName());
                             ctx.installBundle(bundlePath);
+                        }
                     }
                     catch (BundleException e) {
                         throw new RuntimeException(e);
