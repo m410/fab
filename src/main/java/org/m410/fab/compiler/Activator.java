@@ -1,8 +1,6 @@
 package org.m410.fab.compiler;
 
-import org.m410.fab.builder.Command;
-import org.m410.fab.builder.CommandModifier;
-import org.m410.fab.builder.Step;
+import org.m410.fab.builder.*;
 import org.m410.fab.service.FabricateService;
 import org.osgi.framework.*;
 
@@ -29,6 +27,19 @@ public class Activator implements BundleActivator {
             }
         });
 
+        fabricateService.addCommandListener(new CommandListener() {
+            @Override
+            public void notify(CommandEvent e) {
+                System.out.println("command event: " + e);
+            }
+        });
+
+        fabricateService.addTaskListener(new TaskListener() {
+            @Override
+            public void notify(TaskEvent e) {
+                System.out.println("task event:" + e);
+            }
+        });
     }
 
     public void stop(BundleContext context) throws Exception {
