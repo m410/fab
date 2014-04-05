@@ -1,11 +1,20 @@
 package org.m410.fab.service;
 
 import org.m410.fab.builder.*;
-import org.m410.fab.config.*;
+import org.m410.fab.config.ConfigBuilder;
+import org.m410.fab.config.ConfigContext;
+import org.m410.fab.config.ConfigProvider;
+import org.yaml.snakeyaml.Yaml;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Document Me..
@@ -18,6 +27,7 @@ public class FabricateServiceImpl implements FabricateService {
     private List<CommandListener> commandListeners = new ArrayList<>();
     private List<TaskListener> taskListeners = new ArrayList<>();
     private List<ConfigListener> configListeners= new ArrayList<>();
+    private List<ConfigProvider> configProviders = new ArrayList<>();
 
     @Override
     public FabricateService addCommand(Command c) {
@@ -30,11 +40,8 @@ public class FabricateServiceImpl implements FabricateService {
     }
 
     @Override
-    public void addConfiguration(String config) {
-//        configListeners.stream().forEach(it -> it.notify(new ConfigEvent()));
-        for (ConfigListener configListener : configListeners) {
-            configListener.notify(new ConfigEvent());
-        }
+    public void addConfigProvider(ConfigProvider provider) {
+        configProviders.add(provider);
     }
 
     @Override
@@ -73,12 +80,10 @@ public class FabricateServiceImpl implements FabricateService {
     }
 
     @Override
-    public void execute(String[] args) {
-        BuildContext buildContext = configureInitialBuildContext();
-
-        // todo all this needs to be done
-        // check environment
-        // check log level
+    public void execute(String[] args) throws Exception {
+        String env = extractEnvironment(args);
+        String logLevel = extractLogLevel(args);
+        BuildContext buildContext = configureInitialBuildContext(env, logLevel);
 
         // list commands
         // list tasks
@@ -100,18 +105,45 @@ public class FabricateServiceImpl implements FabricateService {
         }
     }
 
-    BuildContext configureInitialBuildContext() {
-        // todo setup configuration
-        // pull config,
-        // apply modules,
-        // apply env overrides
+    private String extractLogLevel(String[] args) {
+        return "debug";
+    }
 
-        Cli cli = new CliStdOutImpl();
-        Application application = new ApplicationImpl();
-        String environment = "development";
-        Build build = new BuildImpl();
-        List<Dependency> dependencies = new ArrayList<>();
-        List<Module> modules = new ArrayList<>();
-        return new BuildContextImpl(cli, application, build, environment, dependencies, modules);
+    private String extractEnvironment(String[] args) {
+        return "dev";
+    }
+
+    @SuppressWarnings("unchecked")
+    BuildContext configureInitialBuildContext(String env, String logLevel) throws FileNotFoundException {
+        FileInputStream configFileInput = new FileInputStream(projectFile(new File("")));
+        ConfigContext config = new ConfigBuilder(((Map<String,Object>)new Yaml().load(configFileInput)))
+                .parseLocalProject()
+                .applyUnder(configProviders.stream().map(ConfigProvider::config).collect(Collectors.toList()))
+                .applyEnvOver(env)
+                .build();
+
+        return new BuildContextImpl(
+                new CliStdOutImpl(logLevel),
+                config.getApplication(),
+                config.getBuild(),
+                env,
+                config.getDependencies(),
+                config.getModules());
+    }
+
+    public File projectFile(File projectRoot){
+        File[] files = projectRoot.listFiles(new FilenameFilter() {
+            public boolean accept(File dir, String filename) {
+                return filename.endsWith(".fab.yml");
+            }
+        });
+
+        if(files.length >1)
+            throw new ToManyConfigurationFilesException();
+
+        if(files.length == 0)
+            throw new NoConfigurationFileException();
+
+        return files[0];
     }
 }

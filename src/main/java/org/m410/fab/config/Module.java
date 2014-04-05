@@ -8,7 +8,8 @@ public interface Module {
     static enum Type {
         Persistence,
         View,
-        Runtime
+        Runtime,
+        Logger
     }
 
     Type type();

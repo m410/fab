@@ -1,6 +1,7 @@
 package org.m410.fab.service;
 
 import org.m410.fab.builder.*;
+import org.m410.fab.config.ConfigProvider;
 
 /**
  * Document Me..
@@ -13,9 +14,9 @@ public interface FabricateService {
 
     void addCommandModifier(CommandModifier c);
 
-    void execute(String[] taskList);
+    void execute(String[] taskList) throws Exception;
 
-    void addConfiguration(String config);
+    void addConfigProvider(ConfigProvider provider);
 
     void addCommandListener(CommandListener c);
 
