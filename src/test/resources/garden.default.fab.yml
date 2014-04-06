@@ -7,68 +7,30 @@ bundles:
     name: runner-lib
     symbolicName: org.m410.fab.fab-lib
 
-application:
-  name: &name demo2
-  organization: m410
-  version: "1.0-SNAPSHOT"
-  package_name: org.m410
-  application_class: org.m410.angular.web.MyApplication
-  author: Michael Fortin
-  description: &desc My Demo App
 
 build:
-  package docs: true
-  deploy:
-    method: scp {}
-  publish:
-    url: http://some-maven-repo.com/
+  defaultEnvironment: someValue1
+  defaultCommand: someValue2
+  lang: someValue3
+  langVersion: someValue4
+  compilerArgs: someValue5
+  targetDir: someValue6
+  webappDir: someValue7
+  sourceDir: someValue8
+  sourceOutputDir: someValue9
+  resourceDir: someValue10
+  testDir: someValue12
+  testOutputDir: someValue13
+  testResourceDir: someValue14
+  vcs: someValue15
+  publishTo: someValue16
+  deployTo: someValue17
+  packageSource: false
+  packageDocs: false
+  packageClassifier: someValue20
+  packageName: someValue21
+  defaultLogLevel: someValue22
 
 dependencies:
-  - {scope: compile, org: org.apache, name: commons-lang, rev: 1.0.0}
-  - {scope: compile, org: org.apache, name: commons-util, rev: 1.0.0}
+  - {scope: compile, org: org.apache, name: my-app, rev: 1.0.0}
 
-persistence:
-  - name: m410-jpa
-    organization: "org.m410.mod.persistence"
-    version: "0.1"
-    url: file:/Users/m410/Projects/fab(ricate)/fab-java-task-bundle/target/fab-java-task-0.1-SNAPSHOT.jar
-    symbolicName: org.m410.fab-java-task
-    properties:
-      hibernate.dialect: org.hibernate.dialect.H2Dialect
-      hibernate.connection.driver_class: org.h2.Driver
-      hibernate.connection.username: sa
-      hibernate.connection.password: ""
-      hibernate.connection.url: "jdbc:h2:db/demo"
-      hibernate.hbm2ddl.auto: update
-
-modules:
-  - name: randomModule
-    org: org.m410.fab.module
-    version: 0.2.0
-    url: file:/Users/m410/Projects/fab(ricate)/fab-java-task-bundle/target/fab-java-task-0.1-SNAPSHOT.jar
-    symbolicName: org.m410.fab-java-task
-    organization: org.m410.mod
-
-logging:
-  - name: slf4j
-    org: org.m410.fab.logging
-    appenders:
-      - name: STDOUT
-        appender_class: ch.qos.logback.core.ConsoleAppender
-        layout: ch.qos.logback.classic.encoder.PatternLayoutEncoder
-        pattern: "%-4relative [%thread] %-5level %class - %msg%n"
-    logger:
-      - name: org.m410
-        level: TRACE
-    root:
-      level: DEBUG
-      ref: [STDOUT]
-
-web_xml:
-  - description: *desc
-  - display-name: *name
-
-environment_overrides:
-  - environment: developement
-  - environment: test
-  - environment: production

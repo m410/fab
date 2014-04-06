@@ -30,6 +30,10 @@ public class BuildImpl implements Build {
     private String defaultLogLevel;
 
     public BuildImpl(Map<String, Object> data) {
+
+        if(data == null)
+            return;
+
         defaultEnvironment = (String)data.get("defaultEnvironment");
         defaultCommand = (String)data.get("defaultCommand");
         lang = (String)data.get("lang");

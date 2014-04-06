@@ -23,7 +23,7 @@ public final class ConfigBuilder  {
 
     public ConfigBuilder applyUnder(List<Map<String,Object>> parentConfigurations) {
         for (Map<String, Object> parentConfiguration : parentConfigurations)
-            applyUnderProject(parentConfiguration);
+            merge(parentConfiguration, projectConfiguration);
 
         return this;
     }
@@ -32,17 +32,50 @@ public final class ConfigBuilder  {
 
         for (Map<String, Object> override : envConfig)
             if(override.get("environment").equals(env))
-                applyOverProject(override);
+                merge(projectConfiguration, override);
 
         return this;
     }
 
-    void applyOverProject(Map<String,Object> over) {
+    void merge(Map<String, Object> under, Map<String, Object> over) {
+        for (String s : over.keySet()) {
+            Object baseValue = under.get(s);
 
-    }
+            if(baseValue != null) {
 
-    void applyUnderProject(Map<String,Object> under) {
+                if(baseValue instanceof List){
+                    List baseListValues = (List)baseValue;
+                    List overListValues = (List)over.get(s);
 
+                    for (Object overObj : overListValues) {
+                        Map<String,Object> overMap = (Map<String,Object>)overObj;
+                        String mapName = (String)overMap.get("name");
+                        Map<String,Object> baseMap = null;
+
+                        for (Object row : baseListValues) {
+                            Map<String,Object> map = (Map<String,Object>)row;
+
+                            if(mapName.equals(map.get("name")))
+                                baseMap = map;
+                        }
+
+                        if(baseMap != null)
+                            merge(baseMap, overMap);
+                    }
+                }
+                else if(baseValue instanceof Map) {
+                    Map baseMapValues = (Map)baseValue;
+                    Map overMapValues = (Map)over.get(s);
+                    merge(baseMapValues, overMapValues);
+                }
+                else {
+                    under.put(s, over.get(s));
+                }
+            }
+            else {
+                under.put(s, over.get(s));
+            }
+        }
     }
 
     public ConfigContext build() {

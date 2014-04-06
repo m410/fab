@@ -1,6 +1,5 @@
 build_version: 0.1.0
 build_org: org.m410.fab
-url: file:/Users/m410/Projects/fab(ricate)/sample/garden.default.m410.yml
 
 bundles:
   - url: file:/Users/m410/Projects/fab(ricate)/fab-runner-lib/target/fab-lib-0.1-SNAPSHOT.jar
@@ -9,19 +8,16 @@ bundles:
 
 application:
   name: &name demo2
-  organization: m410
+  org: m410
   version: "1.0-SNAPSHOT"
-  package_name: org.m410
-  application_class: org.m410.angular.web.MyApplication
-  author: Michael Fortin
+  packageName: org.m410
+  applicationClass: org.m410.angular.web.MyApplication
+  authors: Michael Fortin
   description: &desc My Demo App
 
 build:
-  package docs: true
-  deploy:
-    method: scp {}
-  publish:
-    url: http://some-maven-repo.com/
+  defaultEnvironment: app_env
+  defaultCommand: app_command
 
 dependencies:
   - {scope: compile, org: org.apache, name: commons-lang, rev: 1.0.0}
@@ -65,12 +61,14 @@ logging:
       ref: [STDOUT]
 
 web_xml:
-  - description: *desc
-  - display-name: *name
+  description: *desc
+  display-name: *name
 
 environment_overrides:
-  - environment: developement
+  - environment: dev
     application:
-      organization: org.m410.development
+      org: org.m410.development
+    build:
+      defaultCommand: env_command
   - environment: test
   - environment: production

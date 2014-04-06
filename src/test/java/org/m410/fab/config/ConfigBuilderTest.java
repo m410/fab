@@ -21,12 +21,17 @@ public class ConfigBuilderTest {
 
     private String env = "dev";
     private Map<String, Object> projectFile;
+    private Map<String, Object> baseFile;
     private List<ConfigProvider> configProviders = new ArrayList<>();
 
     @Before @SuppressWarnings("unchecked")
     public void setup() {
+        InputStream baseFileInput = getClass().getResourceAsStream("/garden.default.fab.yml");
+        baseFile = (Map<String, Object>) new Yaml().load(baseFileInput);
+
         InputStream configFileInput = getClass().getResourceAsStream("/garden.test.fab.yml");
         projectFile = (Map<String, Object>) new Yaml().load(configFileInput);
+
         configProviders.add(new ConfigProvider() {
 
             @Override
@@ -65,6 +70,18 @@ public class ConfigBuilderTest {
     @Test
     public void testMakeApplication() {
         HashMap<String,Object> map = new HashMap<>();
+        HashMap<String,Object> propMap= new HashMap<>();
+        propMap.put("random","value");
+
+        map.put("name", "name1");
+        map.put("org", "org1");
+        map.put("description", "description1");
+        map.put("version", "version1");
+        map.put("applicationClass", "applicationClass1");
+        map.put("authors", "authors1");
+        map.put("properties", propMap);
+
+
         Application application = new ApplicationImpl(map);
         assertNotNull(application);
         assertNotNull(application.getName());
@@ -79,6 +96,29 @@ public class ConfigBuilderTest {
     @Test
     public void testMakeBuild() {
         HashMap<String,Object> map = new HashMap<>();
+        map.put("defaultEnvironment", "defaultEnvironment");
+        map.put("defaultCommand", "defaultCommand");
+        map.put("lang", "lang");
+        map.put("langVersion", "langVersion");
+        map.put("compilerArgs", "compilerArgs");
+        map.put("tarputDir", "tarputDir");
+        map.put("webappDir", "webappDir");
+        map.put("sourceDir", "sourceDir");
+        map.put("sourceOutputDir", "sourceOutputDir");
+        map.put("resourceDir", "resourceDir");
+        map.put("testDir", "testDir");
+        map.put("targetDir", "targetDir");
+        map.put("testOutputDir", "testOutputDir");
+        map.put("testResourceDir", "testResourceDir");
+        map.put("vcs", "vcs");
+        map.put("publishTo", "publishTo");
+        map.put("deployTo", "deployTo");
+        map.put(" packageSource", true);
+        map.put(" packageDocs", true);
+        map.put("packageClassifier", "packageClassifier");
+        map.put("packageName", "packageName");
+        map.put("defaultLogLevel", "defaultLogLevel");
+
         Build build = new BuildImpl(map);
 
         assertNotNull(build.getCompilerArgs());
@@ -101,8 +141,6 @@ public class ConfigBuilderTest {
         assertNotNull(build.getTestResourceDir());
         assertNotNull(build.getVcs());
         assertNotNull(build.getWebappDir());
-
-        assertTrue(false);
     }
 
     @Test
@@ -148,8 +186,12 @@ public class ConfigBuilderTest {
 
         assertNotNull(config);
         assertNotNull(config.getBuild());
-        assertNotNull(config.getBuild().isPackageDocs());
-        assertTrue(config.getBuild().isPackageDocs());
+
+        assertNotNull(config.getBuild().getDefaultEnvironment());
+        assertEquals("app_env",config.getBuild().getDefaultEnvironment());
+
+        assertNotNull(config.getBuild().getDefaultCommand());
+        assertEquals("env_command",config.getBuild().getDefaultCommand());
     }
 
     @Test
