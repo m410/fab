@@ -1,5 +1,7 @@
 package org.m410.fab.config;
 
+import java.util.Map;
+
 /**
  * @author m410
  */
@@ -12,11 +14,13 @@ public interface Module {
         Logger
     }
 
-    Type type();
+    Type getType();
 
-    String name();
+    String getName();
 
-    String organization();
+    String getOrg();
 
-    String version();
+    String getVersion();
+
+    Map<String,Object> getProperties();
 }

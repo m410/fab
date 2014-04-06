@@ -11,5 +11,5 @@ public interface Cli {
     void info(String in);
     void debug(String in);
     void error(String in);
-
+    void println(String s);
 }

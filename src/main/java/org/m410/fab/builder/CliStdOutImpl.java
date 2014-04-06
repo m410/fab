@@ -18,21 +18,26 @@ public class CliStdOutImpl implements Cli {
 
     @Override
     public void warn(String in) {
-        System.out.println("WARN: " + in);
+        System.out.println("  WARN|" + in);
     }
 
     @Override
     public void info(String in) {
-        System.out.println("INFO: " + in);
+        System.out.println("  INFO |" + in);
     }
 
     @Override
     public void debug(String in) {
-        System.out.println("DEBUG:" + in);
+        System.out.println("  DEBUG|" + in);
     }
 
     @Override
     public void error(String in) {
-        System.out.println("ERROR:" + in);
+        System.out.println("  ERROR|" + in);
+    }
+
+    @Override
+    public void println(String s) {
+        System.out.println("  " + s);
     }
 }

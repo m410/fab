@@ -8,8 +8,6 @@ import java.util.Set;
  */
 public interface ConfigProvider {
 
-    boolean isModule();
-
     Map<String, Object> config();
 
     Set<String> validate(Map<String,Object> fullConfig);

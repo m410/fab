@@ -81,15 +81,12 @@ public class FabricateServiceImpl implements FabricateService {
 
     @Override
     public void execute(String[] args) throws Exception {
+
+        // todo need to get defaults from base config
         String env = extractEnvironment(args);
         String logLevel = extractLogLevel(args);
+
         BuildContext buildContext = configureInitialBuildContext(env, logLevel);
-
-        // list commands
-        // list tasks
-
-        // list dependencies
-        // list build bundles
 
         // check each task to see if it takes args
         // only the last command can take args
