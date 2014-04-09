@@ -22,21 +22,18 @@ public final class ConfigBuilder  {
     }
 
     public ConfigBuilder applyUnder(List<Map<String,Object>> parentConfigurations) {
-        for (Map<String, Object> parentConfiguration : parentConfigurations)
-            merge(parentConfiguration, projectConfiguration);
-
+        parentConfigurations.stream().forEach(p -> merge(p,projectConfiguration));
         return this;
     }
 
     public ConfigBuilder applyEnvOver(String env) {
-
-        for (Map<String, Object> override : envConfig)
-            if(override.get("environment").equals(env))
-                merge(projectConfiguration, override);
-
+        envConfig.stream()
+                .filter(e -> e.get("environment").equals(env))
+                .forEach(e -> merge(projectConfiguration, e));
         return this;
     }
 
+    @SuppressWarnings("unchecked")
     void merge(Map<String, Object> under, Map<String, Object> over) {
         for (String s : over.keySet()) {
             Object baseValue = under.get(s);

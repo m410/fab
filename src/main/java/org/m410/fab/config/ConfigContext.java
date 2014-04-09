@@ -21,18 +21,18 @@ public class ConfigContext {
     private List<Module> modules;
 
     @SuppressWarnings("unchecked")
-    public ConfigContext(Map<String,Object> projectConfig) {
-        application = new ApplicationImpl((Map<String,Object>)projectConfig.get("application"));
-        build = new BuildImpl((Map<String,Object>)projectConfig.get("build"));
-        dependencies = ((List<Map<String,Object>>)projectConfig.getOrDefault("dependencies", new HashMap<>()))
+    public ConfigContext(Map<String,Object> base) {
+        application = new ApplicationImpl((Map<String,Object>)base.get("application"));
+        build = new BuildImpl((Map<String,Object>)base.get("build"));
+        dependencies = ((List<Map<String,Object>>)base.getOrDefault("dependencies", new HashMap<>()))
                 .stream().map(Dependency::new).collect(Collectors.toList());
-        modules = ((List<Map<String,Object>>)projectConfig.getOrDefault("modules", new ArrayList<>()))
+        modules = ((List<Map<String,Object>>)base.getOrDefault("modules", new ArrayList<>()))
                 .stream().map(ModuleImpl::new).collect(Collectors.toList());
-        modules.addAll(((List<Map<String,Object>>)projectConfig.getOrDefault("logging", new ArrayList<>()))
+        modules.addAll(((List<Map<String, Object>>) base.getOrDefault("logging", new ArrayList<>()))
                 .stream().map(ModuleImpl::new).collect(Collectors.toList()));
-        modules.addAll(((List<Map<String,Object>>)projectConfig.getOrDefault("persistence", new ArrayList<>()))
+        modules.addAll(((List<Map<String,Object>>)base.getOrDefault("persistence", new ArrayList<>()))
                 .stream().map(ModuleImpl::new).collect(Collectors.toList()));
-        modules.addAll(((List<Map<String,Object>>)projectConfig.getOrDefault("view", new ArrayList<>()))
+        modules.addAll(((List<Map<String, Object>>) base.getOrDefault("view", new ArrayList<>()))
                 .stream().map(ModuleImpl::new).collect(Collectors.toList()));
     }
 

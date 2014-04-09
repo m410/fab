@@ -31,10 +31,7 @@ public class FabricateServiceImpl implements FabricateService {
 
     @Override
     public FabricateService addCommand(Command c) {
-//        commandListeners.stream().forEach(it -> it.notify(new CommandEvent()));
-        for (CommandListener commandListener : commandListeners) {
-            commandListener.notify(new CommandEvent(c));
-        }
+        commandListeners.stream().forEach(it -> it.notify(new CommandEvent(c)));
         commands.add(c);
         return this;
     }
@@ -66,17 +63,12 @@ public class FabricateServiceImpl implements FabricateService {
 
     @Override
     public void postStartupWiring() {
-        for (CommandModifier commandModifier : commandModifiers) {
-            for (Command command : commands) {
+        commandModifiers.stream().forEach(commandModifier -> {
+            commands.stream().forEach(command -> {
                 commandModifier.modify(command);
-                for (CommandListener commandListener : commandListeners) {
-                    commandListener.notify(new CommandEvent(command));
-                }
-            }
-        }
-//        commands.stream().forEach(cmd ->{
-//            commandModifiers.stream().forEach(mod -> mod.modify(cmd));
-//        });
+                commandListeners.stream().forEach(l -> l.notify(new CommandEvent(command)));
+            });
+        } );
     }
 
     @Override
@@ -100,6 +92,8 @@ public class FabricateServiceImpl implements FabricateService {
                 }
             }
         }
+
+
     }
 
     private String extractLogLevel(String[] args) {
@@ -134,6 +128,9 @@ public class FabricateServiceImpl implements FabricateService {
                 return filename.endsWith(".fab.yml");
             }
         });
+
+        if(files == null)
+            throw new NoConfigurationFileException();
 
         if(files.length >1)
             throw new ToManyConfigurationFilesException();
