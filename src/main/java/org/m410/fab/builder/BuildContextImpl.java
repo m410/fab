@@ -30,12 +30,12 @@ public final class BuildContextImpl implements BuildContext {
     }
 
     @Override
-    public Application getApplication() {
+    public Application application() {
         return application;
     }
 
     @Override
-    public Build getBuild() {
+    public Build build() {
         return build;
     }
 

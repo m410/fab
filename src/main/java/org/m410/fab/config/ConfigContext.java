@@ -24,12 +24,11 @@ public class ConfigContext {
     public ConfigContext(Map<String,Object> base) {
         application = new ApplicationImpl((Map<String,Object>)base.get("application"));
         build = new BuildImpl((Map<String,Object>)base.get("build"));
-        dependencies = ((List<Map<String,Object>>)base.getOrDefault("dependencies", new HashMap<>()))
+        dependencies = ((List<Map<String,Object>>)base.getOrDefault("dependencies", new ArrayList<>()))
                 .stream().map(Dependency::new).collect(Collectors.toList());
         modules = ((List<Map<String,Object>>)base.getOrDefault("modules", new ArrayList<>()))
                 .stream().map(ModuleImpl::new).collect(Collectors.toList());
-        modules.addAll(((List<Map<String, Object>>) base.getOrDefault("logging", new ArrayList<>()))
-                .stream().map(ModuleImpl::new).collect(Collectors.toList()));
+        modules.add(new ModuleImpl(((Map<String, Object>) base.getOrDefault("logging", new HashMap<>()))));
         modules.addAll(((List<Map<String,Object>>)base.getOrDefault("persistence", new ArrayList<>()))
                 .stream().map(ModuleImpl::new).collect(Collectors.toList()));
         modules.addAll(((List<Map<String, Object>>) base.getOrDefault("view", new ArrayList<>()))

@@ -13,8 +13,8 @@ import java.util.List;
  * @author Michael Fortin
  */
 public interface BuildContext {
-    Application getApplication();
-    Build getBuild();
+    Application application();
+    Build build();
     String environment();
     List<Dependency> dependencies();
     List<? extends Module> modules();

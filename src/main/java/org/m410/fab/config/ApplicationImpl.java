@@ -59,4 +59,17 @@ public class ApplicationImpl implements Application {
     public String getDescription() {
         return description;
     }
+
+    @Override
+    public String toString() {
+        return "ApplicationImpl{" +
+                "name='" + name + '\'' +
+                ", org='" + org + '\'' +
+                ", version='" + version + '\'' +
+                ", properties=" + properties +
+                ", applicationClass='" + applicationClass + '\'' +
+                ", authors='" + authors + '\'' +
+                ", description='" + description + '\'' +
+                '}';
+    }
 }

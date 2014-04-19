@@ -1,9 +1,9 @@
 build_version: 0.1.0
 build_org: org.m410.fab
-url: file:/Users/m410/Projects/fab(ricate)/sample/garden.default.m410.yml
+url: file:/Users/m410/Projects/fabricate/sample/garden.default.m410.yml
 
 bundles:
-  - url: file:/Users/m410/Projects/fab(ricate)/fab-runner-lib/target/fab-lib-0.1-SNAPSHOT.jar
+  - url: file:/Users/m410/Projects/fabricate/fab-runner-lib/target/fab-lib-0.1-SNAPSHOT.jar
     name: runner-lib
     symbolicName: org.m410.fab.fab-lib
 

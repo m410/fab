@@ -2,7 +2,7 @@ build_version: 0.1.0
 build_org: org.m410.fab
 
 bundles:
-  - url: file:/Users/m410/Projects/fab(ricate)/fab-runner-lib/target/fab-lib-0.1-SNAPSHOT.jar
+  - url: file:/Users/m410/Projects/fabricate/fab-runner-lib/target/fab-lib-0.1-SNAPSHOT.jar
     name: runner-lib
     symbolicName: org.m410.fab.fab-lib
 
@@ -27,7 +27,7 @@ persistence:
   - name: m410-jpa
     organization: "org.m410.mod.persistence"
     version: "0.1"
-    url: file:/Users/m410/Projects/fab(ricate)/fab-java-task-bundle/target/fab-java-task-0.1-SNAPSHOT.jar
+    url: file:/Users/m410/Projects/fabricate/fab-java-task-bundle/target/fab-java-task-0.1-SNAPSHOT.jar
     symbolicName: org.m410.fab-java-task
     properties:
       hibernate.dialect: org.hibernate.dialect.H2Dialect
@@ -41,24 +41,24 @@ modules:
   - name: randomModule
     org: org.m410.fab.module
     version: 0.2.0
-    url: file:/Users/m410/Projects/fab(ricate)/fab-java-task-bundle/target/fab-java-task-0.1-SNAPSHOT.jar
+    url: file:/Users/m410/Projects/fabricate/fab-java-task-bundle/target/fab-java-task-0.1-SNAPSHOT.jar
     symbolicName: org.m410.fab-java-task
     organization: org.m410.mod
 
 logging:
-  - name: slf4j
-    org: org.m410.fab.logging
-    appenders:
-      - name: STDOUT
-        appender_class: ch.qos.logback.core.ConsoleAppender
-        layout: ch.qos.logback.classic.encoder.PatternLayoutEncoder
-        pattern: "%-4relative [%thread] %-5level %class - %msg%n"
-    logger:
-      - name: org.m410
-        level: TRACE
-    root:
-      level: DEBUG
-      ref: [STDOUT]
+  name: slf4j
+  org: org.m410.fab.logging
+  appenders:
+    - name: STDOUT
+      appender_class: ch.qos.logback.core.ConsoleAppender
+      layout: ch.qos.logback.classic.encoder.PatternLayoutEncoder
+      pattern: "%-4relative [%thread] %-5level %class - %msg%n"
+  logger:
+    - name: org.m410
+      level: TRACE
+  root:
+    level: DEBUG
+    ref: [STDOUT]
 
 web_xml:
   description: *desc

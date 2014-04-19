@@ -9,7 +9,7 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
+import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -106,7 +106,8 @@ public class FabricateServiceImpl implements FabricateService {
 
     @SuppressWarnings("unchecked")
     BuildContext configureInitialBuildContext(String env, String logLevel) throws FileNotFoundException {
-        FileInputStream configFileInput = new FileInputStream(projectFile(new File("")));
+        File currentDirectory = FileSystems.getDefault().getPath(System.getProperty("user.dir")).toFile();
+        FileInputStream configFileInput = new FileInputStream(projectFile(currentDirectory));
         ConfigContext config = new ConfigBuilder(((Map<String,Object>)new Yaml().load(configFileInput)))
                 .parseLocalProject()
                 .applyUnder(configProviders.stream().map(ConfigProvider::config).collect(Collectors.toList()))
@@ -122,12 +123,9 @@ public class FabricateServiceImpl implements FabricateService {
                 config.getModules());
     }
 
+
     public File projectFile(File projectRoot){
-        File[] files = projectRoot.listFiles(new FilenameFilter() {
-            public boolean accept(File dir, String filename) {
-                return filename.endsWith(".fab.yml");
-            }
-        });
+        File[] files = projectRoot.listFiles( (dir, filename) -> filename.endsWith(".fab.yml"));
 
         if(files == null)
             throw new NoConfigurationFileException();

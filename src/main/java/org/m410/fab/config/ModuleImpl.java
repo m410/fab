@@ -47,4 +47,14 @@ public class ModuleImpl implements Module {
     public Map<String, Object> getProperties() {
         return properties;
     }
+
+    @Override
+    public String toString() {
+        return "ModuleImpl{" +
+                "version='" + version + '\'' +
+                ", org='" + org + '\'' +
+                ", name='" + name + '\'' +
+                ", type=" + type +
+                '}';
+    }
 }

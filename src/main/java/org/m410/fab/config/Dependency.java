@@ -39,4 +39,15 @@ public class Dependency {
     public boolean isTransitive() {
         return transitive;
     }
+
+    @Override
+    public String toString() {
+        return "Dependency{" +
+                "org='" + org + '\'' +
+                ", name='" + name + '\'' +
+                ", rev='" + rev + '\'' +
+                ", scope='" + scope + '\'' +
+                ", transitive=" + transitive +
+                '}';
+    }
 }
