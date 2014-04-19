@@ -1,0 +1,5 @@
+bundles:
+  - {conf: name, name: name, org: org, rev: revision, transitive: false}
+  
+dependcies:
+  - {conf: name, name: name, org: org, rev: revision, transitive: false}
