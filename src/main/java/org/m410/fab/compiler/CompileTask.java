@@ -19,6 +19,11 @@ public class CompileTask implements Task {
 
     @Override
     public void execute(BuildContext context) {
+        context.cli().debug("build:" + context.build());
+        context.cli().debug("app:" + context.application());
+        context.cli().debug("env:" + context.environment());
+        context.cli().debug("env:" + context.dependencies());
+        context.cli().debug("env:" + context.modules());
         context.cli().debug("COMPILING BITCHES!!!");
     }
 }
