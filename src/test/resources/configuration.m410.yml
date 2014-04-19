@@ -25,7 +25,7 @@ persistence:
       hibernate.connection.url: "jdbc:h2:db/demo"
       hibernate.hbm2ddl.auto: update
 modules:
-  - url: file:/Users/m410/Projects/fab(ricate)/fab-loader-bundle/target/fab-loader-bundle-0.1-SNAPSHOT.jar
+  - url: file:/Users/m410/Projects/fabricate/fab-loader-bundle/target/fab-loader-bundle-0.1-SNAPSHOT.jar
     organization: org.m410.mod
     version: 0.2.0
 logging:

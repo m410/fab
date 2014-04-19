@@ -28,7 +28,7 @@ public class Application {
     static final String bundleDir = ".fab/bundles";
     static final String cacheDir = ".fab/cache";
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Throwable {
 
         checkAndSetupProjectDir();
 
@@ -81,8 +81,15 @@ public class Application {
                 });
 
                 Object buildService = ctx.getService(ctx.getServiceReference("org.m410.fab.service.FabricateService"));
-                buildService.getClass().getMethod("postStartupWiring").invoke(buildService);
-                buildService.getClass().getMethod("execute",String[].class).invoke(buildService, new Object[]{args});
+
+                try {
+                    buildService.getClass().getMethod("postStartupWiring").invoke(buildService);
+                    buildService.getClass().getMethod("execute",String[].class).invoke(buildService, new Object[]{args});
+
+                } catch (InvocationTargetException e) {
+                    // just throw the root cause
+                    throw e.getTargetException();
+                }
             }
         }
         finally {
@@ -91,9 +98,7 @@ public class Application {
     }
 
     private static File projectConfigFile() {
-        final File file = new File("garden.m410.yml");
-        System.out.println("project file:" + file.getAbsolutePath());
-        return file;
+        return new File("garden.fab.yml");
     }
 
     @SuppressWarnings("unchecked")
