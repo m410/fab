@@ -14,7 +14,7 @@ public class ApplicationTest {
 
     @Test
     public void testLoadConfig() throws Exception {
-        final String path = "/Users/m410/Projects/fabricate/sample/garden.fab.yml";
+        final String path = "/Users/m410/Projects/fabricate/demo/garden.fab.yml";
         File file = FileSystems.getDefault().getPath(path).toFile();
         assertTrue("sample config not found",file.exists());
         BuildConfig config = Application.loadLocalConfig(file);
