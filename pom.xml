@@ -12,7 +12,7 @@
     <packaging>pom</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <fab-runner-version>0.1-SNAPSHOT</fab-runner-version>
+        <fab-cli-version>0.1-SNAPSHOT</fab-cli-version>
     </properties>
     <build>
         <plugins>
@@ -60,9 +60,9 @@
     </distributionManagement>
     <dependencies>
         <dependency>
-            <groupId>org.m410</groupId>
-            <artifactId>fab-cil</artifactId>
-            <version>${fab-cil-version}</version>
+            <groupId>org.m410.fabricate</groupId>
+            <artifactId>fab-cli</artifactId>
+            <version>${fab-cli-version}</version>
         </dependency>
     </dependencies>
 </project>
