@@ -1,21 +1,29 @@
 package org.m410.fab.loader;
 
+import org.m410.fab.loader.ivy.DependencyScope;
 import org.m410.fab.service.FabricateService;
-import org.m410.fab.service.FabricateServiceImpl;
 import org.osgi.framework.*;
 
 /**
- *
  * @author Michael Fortin
  */
 public class Activator implements BundleActivator {
     ServiceRegistration fabricateServiceRegistration;
 
-    @SuppressWarnings("unchecked")
     public void start(BundleContext context) throws Exception {
-        FabricateService fabricateService = new FabricateServiceImpl();
-        final String name = FabricateService.class.getName();
-        fabricateServiceRegistration = context.registerService(name, fabricateService, null);
+        ServiceReference fabricateServiceReference = context.getServiceReference(FabricateService.class.getName());
+        FabricateService fabricateService = (FabricateService) context.getService(fabricateServiceReference);
+
+        fabricateService.addCommandModifier(modifier -> {
+                    modifier.getSteps().stream()
+                            .filter(step -> step.getName().equalsIgnoreCase("resolve-compile-dependencies"))
+                            .forEach(step -> step.append(new IvyDependencyTask(DependencyScope.Compile)));
+
+                    modifier.getSteps().stream()
+                            .filter(step -> step.getName().equalsIgnoreCase("resolve-test-dependencies"))
+                            .forEach(step -> step.append(new IvyDependencyTask(DependencyScope.Test)));
+                }
+        );
     }
 
     public void stop(BundleContext context) throws Exception {
