@@ -18,9 +18,11 @@ public class Activator implements BundleActivator {
         fabricateService.addCommand(
                 new Command("build", "Build project", false)
                         .withStep(new Step("pre-build").append(new CounterTask(1)))
+                        .withStep(new Step("resolve-compile-dependencies").append(new CounterTask(2)))
                         .withStep(new Step("pre-compile").append(new CounterTask(2)))
                         .withStep(new Step("compile").append(new BuildTask()).append(new CounterTask(3)))
                         .withStep(new Step("post-compile").append(new CounterTask(4)))
+                        .withStep(new Step("resolve-test-dependencies").append(new CounterTask(2)))
                         .withStep(new Step("pre-test-compile").append(new CounterTask(5)))
                         .withStep(new Step("test-compile").append(new CounterTask(6)))
                         .withStep(new Step("post-test-compile").append(new CounterTask(7)))
@@ -47,33 +49,6 @@ public class Activator implements BundleActivator {
                         .withStep(new Step("compile").append(new BuildTask()))
                         .withStep(new Step("post-compile"))
                         .withStep(new Step("pre-test-compile"))
-        ).addCommand(
-                new Command("deploy", "Copies artifacts to a destination", false)
-                        .withStep(new Step("default").append(new DeployTask()))
-        ).addCommand(
-                new Command("publish", "Copies artifacts to a remote maven repository", false)
-                        .withStep(new Step("default").append(new RemotePublishTask()))
-        ).addCommand(
-                new Command("publish-local", "Copies artifacts to a local maven repository", false)
-                        .withStep(new Step("default").append(new LocalPublishTask()))
-        ).addCommand(
-                new Command("commands", "List all available commands", false)
-                        .withStep(new Step("default").append(new DumpCommandsListTask()))
-        ).addCommand(
-                new Command("tasks", "List all available tasks", false)
-                        .withStep(new Step("default").append(new DumpTaskListTask()))
-        ).addCommand(
-                new Command("dependencies", "List dependencies for environment", false)
-                        .withStep(new Step("default").append(new DependencyDumpTask()))
-        ).addCommand(
-                new Command("info", "List all environment configuration properties", false)
-                        .withStep(new Step("default").append(new InfoDumpTask()))
-        ).addCommand(
-                new Command("help", "Display Help", false)
-                        .withStep(new Step("default").append(new HelpTask()))
-        ).addCommand(
-                new Command("bundles", "Display build bundles", false)
-                        .withStep(new Step("default").append(new BundleTask()))
         );
     }
 
