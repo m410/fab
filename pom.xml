@@ -28,9 +28,10 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.m410.fab</groupId>
-            <artifactId>fab-lib</artifactId>
+            <groupId>org.m410.fabricate</groupId>
+            <artifactId>fab-share</artifactId>
             <version>0.1-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.ivy</groupId>
