@@ -97,6 +97,7 @@ public class BuildConfig {
     }
 
     URL makeUrl() {
+        // todo need to test multiple urls
         return url;
     }
 
@@ -112,5 +113,20 @@ public class BuildConfig {
         list.addAll(persistence);
         list.addAll(view);
         return list;
+    }
+
+    @Override
+    public String toString() {
+        return "BuildConfig{" +
+                "url=" + url +
+                ", name='" + name + '\'' +
+                ", build_version='" + build_version + '\'' +
+                ", build_org='" + build_org + '\'' +
+                ", baseConfig=" + baseConfig +
+                ", bundles=" + bundles +
+                ", modules=" + modules +
+                ", persistence=" + persistence +
+                ", view=" + view +
+                '}';
     }
 }

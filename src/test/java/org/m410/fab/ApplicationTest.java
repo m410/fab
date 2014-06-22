@@ -25,10 +25,10 @@ public class ApplicationTest {
         assertNotNull("no version", config.getBuild_version());
         assertEquals("0.1.0", config.getBuild_version());
         assertNotNull("no bundles", config.getBundles());
-        assertEquals(1, config.getBundles().size());
+        assertEquals(0, config.getBundles().size());
         assertNotNull("no persistence", config.getPersistence());
         assertEquals(1, config.getPersistence().size());
         assertNotNull("no modules", config.getModules());
-        assertEquals(1, config.getModules().size());
+        assertEquals(0, config.getModules().size());
     }
 }

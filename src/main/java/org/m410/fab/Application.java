@@ -55,31 +55,8 @@ public class Application {
                 System.out.println("got config errors");
             }
             else {
-                localConfig.resources().stream().forEach(s -> {
-                    try {
-                        final String bundlePath = s.makeUrl().toString();
-                        final boolean present = Arrays.asList(ctx.getBundles()).stream().filter(b ->
-                                        b.getSymbolicName().equals(s.getSymbolicName())
-                        ).findFirst().isPresent();
-
-
-                        if(!present) {
-                            System.out.println("loading: " + s.getSymbolicName());
-                            ctx.installBundle(bundlePath);
-                        }
-                    }
-                    catch (BundleException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
-                Arrays.asList(ctx.getBundles()).stream().forEach(b -> {
-                    try {
-                        b.start();
-                    } catch (BundleException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
-
+                localConfig.resources().stream().forEach(s -> addBundle(ctx, s));
+                Arrays.asList(ctx.getBundles()).stream().forEach(Application::startBundle);
                 Object buildService = ctx.getService(ctx.getServiceReference("org.m410.fab.service.FabricateService"));
 
                 try {
@@ -97,6 +74,32 @@ public class Application {
         }
     }
 
+    private static void startBundle(Bundle b) {
+        try {
+            b.start();
+        } catch (BundleException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void addBundle(BundleContext ctx, BundleRef s) {
+        try {
+            final String bundlePath = s.makeUrl().toString();
+            final boolean present = Arrays.asList(ctx.getBundles()).stream().filter(b ->
+                            b.getSymbolicName().equals(s.getSymbolicName())
+            ).findFirst().isPresent();
+
+
+            if(!present) {
+                System.out.println("loading: " + s.getSymbolicName());
+                ctx.installBundle(bundlePath);
+            }
+        }
+        catch (BundleException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private static File projectConfigFile() {
         return new File("garden.fab.yml");
     }
@@ -105,6 +108,7 @@ public class Application {
     static BuildConfig loadLocalConfig(File configFile) throws Exception {
         final Map<String, Object> load = (Map<String, Object>) new Yaml().load(new FileInputStream(configFile));
         final BuildConfig bean = new BuildConfig();
+        System.out.println("### load=" + load);
         BeanUtils.populate(bean, load);
         bean.setBundles(collectBundles(load.get("bundles")));
         bean.setPersistence(collectBundles(load.get("persistence")));
@@ -116,6 +120,9 @@ public class Application {
 
     @SuppressWarnings("unchecked")
     static BaseConfig loadBaseConfig(BuildConfig local) throws Exception {
+        System.out.println("### local: " + local);
+        System.out.println("### local.makeUrl: " + local.makeUrl());
+        // todo this is a jar file, not a configuration file???
         final Map<String,Object> load = (Map<String, Object>) new Yaml().load(local.makeUrl().openStream());
         final BaseConfig bean = new BaseConfig();
         BeanUtils.populate(bean, load);
@@ -128,6 +135,7 @@ public class Application {
         if(arg != null && arg instanceof List)
             return ((List<Map<String,Object>>)arg).stream().map(m ->{
                 BundleRef b = new BundleRef();
+
                 try {
                     BeanUtils.populate(b,m);
                 } catch (IllegalAccessException  | InvocationTargetException e) {
