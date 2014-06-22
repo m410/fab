@@ -9,4 +9,8 @@ public class CommandEvent {
     public CommandEvent(Command command) {
         this.command = command;
     }
+
+    public Command getCommand() {
+        return command;
+    }
 }

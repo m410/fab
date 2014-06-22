@@ -15,8 +15,14 @@ public class Activator implements BundleActivator {
     public void start(BundleContext context) throws Exception {
 
         ServiceReference fabricateServiceReference = context.getServiceReference(FabricateService.class.getName());
-
         FabricateService fabricateService = (FabricateService) context.getService(fabricateServiceReference);
+
+//        fabricateService.addCommandListener(listener ->{
+//            System.out.println("  addcommand: " + listener);
+//            commandsListTask.addTask(listener.getCommand());
+//        });
+
+
         fabricateService.addCommand(
                         new Command("deploy", "Copies artifacts to a destination", false)
                                 .withStep(new Step("default").append(new DeployTask()))
