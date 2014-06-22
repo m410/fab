@@ -21,7 +21,7 @@
 
 JAVA_OPTS="-client -Xmx512m"
 LAUNCHER=org.m410.fab.Application
-FAB_HOME=/Users/m410/Projects/fabricate/fab
+FAB_HOME=/Users/m410/Projects/fabricate/bin/fabricate
 
 # OS specific support.  $var _must_ be set to either true or false.
 cygwin=false;
