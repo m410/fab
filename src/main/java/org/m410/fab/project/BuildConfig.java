@@ -1,8 +1,7 @@
-package org.m410.fab;
+package org.m410.fab.project;
 
 import java.net.URL;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * A projects configuration.  All projects at a minimum must define it's name version and
@@ -96,7 +95,7 @@ public class BuildConfig {
         this.build_org = build_org;
     }
 
-    URL makeUrl() {
+    public URL makeUrl() {
         // todo need to test multiple urls
         return url;
     }

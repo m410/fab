@@ -1,4 +1,4 @@
-package org.m410.fab;
+package org.m410.fab.project;
 
 import java.net.URL;
 import java.util.List;

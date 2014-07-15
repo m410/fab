@@ -1,6 +1,7 @@
 package org.m410.fab;
 
 import org.junit.Test;
+import org.m410.fab.project.BuildConfig;
 
 import java.io.File;
 import java.nio.file.FileSystems;

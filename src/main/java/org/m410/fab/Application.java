@@ -10,6 +10,9 @@ import java.util.stream.Collectors;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.felix.framework.util.Util;
 import org.apache.felix.main.Main;
+import org.m410.fab.project.BaseConfig;
+import org.m410.fab.project.BuildConfig;
+import org.m410.fab.project.BundleRef;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -23,7 +26,7 @@ import org.yaml.snakeyaml.Yaml;
  *
  * @author m410
  */
-public class Application {
+public final class Application {
 
     static final String bundleDir = ".fab/bundles";
     static final String cacheDir = ".fab/cache";
