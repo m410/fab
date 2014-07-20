@@ -1,4 +1,16 @@
-package org.m410.fab;
+package org.m410.fab.project;
+
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.felix.framework.util.Util;
+import org.apache.felix.main.AutoProcessor;
+import org.apache.felix.main.Main;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
+import org.osgi.framework.Constants;
+import org.osgi.framework.launch.Framework;
+import org.osgi.framework.launch.FrameworkFactory;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -7,35 +19,20 @@ import java.nio.file.FileSystems;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.felix.framework.util.Util;
-import org.apache.felix.main.Main;
-import org.m410.fab.project.BaseConfig;
-import org.m410.fab.project.BuildConfig;
-import org.m410.fab.project.BundleRef;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleException;
-import org.osgi.framework.Constants;
-import org.osgi.framework.launch.*;
-import org.apache.felix.main.AutoProcessor;
-import org.yaml.snakeyaml.Yaml;
-
 /**
- * http://felix.apache.org/site/apache-felix-framework-launching-and-embedding.html#ApacheFelixFrameworkLaunchingandEmbedding-customlauncher
- *
  * @author m410
  */
-@Deprecated
-public final class Application {
+public final class ProjectRunner {
 
     static final String bundleDir = ".fab/bundles";
     static final String cacheDir = ".fab/cache";
+    private final List<String> args;
 
-    public static void main(String[] args) throws Throwable {
+    public ProjectRunner(List<String> args) {
+        this.args = args;
+    }
 
-        checkAndSetupProjectDir();
-
+    public void run() throws Throwable {
         Main.loadSystemProperties();
         Map<String,String> configProps = loadConfigProperties();
         Main.copySystemProperties(configProps);
@@ -60,7 +57,7 @@ public final class Application {
             }
             else {
                 localConfig.resources().stream().forEach(s -> addBundle(ctx, s));
-                Arrays.asList(ctx.getBundles()).stream().forEach(Application::startBundle);
+                Arrays.asList(ctx.getBundles()).stream().forEach(this::startBundle);
                 Object buildService = ctx.getService(ctx.getServiceReference("org.m410.fab.service.FabricateService"));
 
                 try {
@@ -78,7 +75,8 @@ public final class Application {
         }
     }
 
-    private static void startBundle(Bundle b) {
+
+    private void startBundle(Bundle b) {
         try {
             b.start();
         } catch (BundleException e) {
@@ -151,7 +149,7 @@ public final class Application {
             return new ArrayList<>();
     }
 
-    static void checkAndSetupProjectDir() throws IOException{
+    static void checkAndSetupProjectDir() throws IOException {
         final File localCacheDir = FileSystems.getDefault().getPath(".fab").toFile();
 
         if(!localCacheDir.exists()) {

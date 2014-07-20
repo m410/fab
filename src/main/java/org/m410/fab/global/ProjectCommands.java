@@ -4,5 +4,7 @@ package org.m410.fab.global;
  * @author m410
  */
 public class ProjectCommands {
-    public void create() {}
+    public void create() {
+        System.out.println(" create project");
+    }
 }
