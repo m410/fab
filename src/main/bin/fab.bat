@@ -23,7 +23,7 @@
 
 @echo off
 
-set LAUNCHER=org.m410.fab.Application
+set LAUNCHER=org.m410.fab.Main
 set JAVA_OPTS="-client -Xmx512m"
 
 @REM set %HOME% to equivalent of $HOME
