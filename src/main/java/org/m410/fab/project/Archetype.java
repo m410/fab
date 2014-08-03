@@ -9,7 +9,8 @@ public class Archetype {
     private String name;
     private String version;
     private String organization;
-    private URL base;
+    private URL base_config;
+    private URL base_build;
 
     public String getName() {
         return name;
@@ -35,12 +36,20 @@ public class Archetype {
         this.organization = organization;
     }
 
-    public URL getBase() {
-        return base;
+    public URL getBase_config() {
+        return base_config;
     }
 
-    public void setBase(URL base) {
-        this.base = base;
+    public void setBase_config(URL base_config) {
+        this.base_config = base_config;
+    }
+
+    public URL getBase_build() {
+        return base_build;
+    }
+
+    public void setBase_build(URL base_build) {
+        this.base_build = base_build;
     }
 
     @Override
@@ -49,7 +58,7 @@ public class Archetype {
                 "name='" + name + '\'' +
                 ", version='" + version + '\'' +
                 ", organization='" + organization + '\'' +
-                ", url=" + base +
+                ", url=" + base_config +
                 '}';
     }
 }

@@ -49,7 +49,10 @@ public class BundleRef {
     }
 
     public String getSymbolicName() {
-        return symbolicName;
+        if(symbolicName != null)
+            return symbolicName;
+        else
+            return name;
     }
 
     public void setSymbolicName(String symbolicName) {

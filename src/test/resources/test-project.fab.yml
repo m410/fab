@@ -1,4 +1,9 @@
-version: "1.0"
+archetype:
+  name: test-project
+  version: 0.1-SNAPSHOT
+  organization: org.m410.fabricate.garden
+  base_config: file:/Users/m410/Projects/fabricate/fab-cli/src/test/resources/test-project.default.fab.yml
+
 application:
   name: &name demo2
   organization: m410

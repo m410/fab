@@ -66,7 +66,9 @@ public final class ProjectRunner {
 
                 try {
                     buildService.getClass().getMethod("postStartupWiring").invoke(buildService);
-                    buildService.getClass().getMethod("execute",String[].class).invoke(buildService, new Object[]{args});
+                    System.out.println("  ## args: " + args);
+                    final String[] objects = args.toArray(new String[args.size()]);
+                    buildService.getClass().getMethod("execute",String[].class).invoke(buildService, new Object[]{objects});
 
                 } catch (InvocationTargetException e) {
                     // just throw the root cause
@@ -89,8 +91,6 @@ public final class ProjectRunner {
     }
 
     private static void addBundle(BundleContext ctx, BundleRef s) {
-        System.out.println("ctx=" + ctx);
-        System.out.println("s=" + s);
         try {
             final String bundlePath = s.makeUrl().toString();
             final boolean present = Arrays.asList(ctx.getBundles()).stream().filter(b ->
@@ -99,7 +99,7 @@ public final class ProjectRunner {
 
 
             if(!present) {
-                System.out.println("loading: " + s.getSymbolicName());
+                System.out.println(" ## loading: " + s.getSymbolicName());
                 ctx.installBundle(bundlePath);
             }
         }
@@ -123,20 +123,24 @@ public final class ProjectRunner {
         buildConfigTypeDef.putListPropertyType("modules", BundleRef.class);
         buildConfigTypeDef.putListPropertyType("view", BundleRef.class);
         constructor.addTypeDescription(buildConfigTypeDef);
-        final BuildConfig bean = (BuildConfig)new Yaml(constructor,representer)
-                .load(new FileInputStream(configFile));
 
-        bean.setBaseConfig(loadBaseConfig(bean));
+        BuildConfig bean =  (BuildConfig)new Yaml(constructor,representer)
+                .load(new FileInputStream(configFile));
+        bean.merge(loadBaseConfig(bean));
         return bean;
     }
 
+
     @SuppressWarnings("unchecked")
     BaseConfig loadBaseConfig(BuildConfig local) throws Exception {
-        final Map<String,Object> load = (Map<String, Object>) new Yaml().load(local.makeUrl().openStream());
-        final BaseConfig bean = new BaseConfig();
-        BeanUtils.populate(bean, load);
-        bean.setBundles(collectBundles(load.get("bundles")));
-        return bean;
+        Representer representer = new Representer();
+        representer.getPropertyUtils().setSkipMissingProperties(true);
+        final Constructor constructor = new Constructor(BaseConfig.class);
+        TypeDescription buildConfigTypeDef = new TypeDescription(BaseConfig.class);
+        buildConfigTypeDef.putListPropertyType("bundles", BundleRef.class);
+        constructor.addTypeDescription(buildConfigTypeDef);
+        return (BaseConfig)new Yaml(constructor,representer)
+                .load(local.makeUrl().openStream());
     }
 
     @SuppressWarnings("unchecked")
