@@ -5,12 +5,12 @@ package org.m410.fab.global;
  */
 public class ArchetypesCommands {
     public void list() {
-        System.out.println(" list archetypes");
+        System.out.println("## list archetypes");
     }
     public void add() {
-        System.out.println(" add archetype");
+        System.out.println("## add archetype");
     }
     public void remove() {
-        System.out.println(" remove archetype");
+        System.out.println("## remove archetype");
     }
 }

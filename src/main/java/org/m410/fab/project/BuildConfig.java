@@ -1,5 +1,6 @@
 package org.m410.fab.project;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
@@ -11,11 +12,7 @@ import java.util.*;
  * @author m410
  */
 public class BuildConfig {
-    private URL url;
-
-    private String name;
-    private String build_version;
-    private String build_org;
+    private Archetype archetype;
     private BaseConfig baseConfig;
 
     private List<BundleRef> bundles;
@@ -63,41 +60,27 @@ public class BuildConfig {
         this.view = view;
     }
 
-    public URL getUrl() {
-        return url;
+    public Archetype getArchetype() {
+        return archetype;
     }
 
-    public void setUrl(URL url) {
-        this.url = url;
+    public void setArchetype(Archetype archetype) {
+        this.archetype = archetype;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getBuild_version() {
-        return build_version;
-    }
-
-    public void setBuild_version(String build_version) {
-        this.build_version = build_version;
-    }
-
-    public String getBuild_org() {
-        return build_org;
-    }
-
-    public void setBuild_org(String build_org) {
-        this.build_org = build_org;
-    }
-
-    public URL makeUrl() {
-        // todo need to test multiple urls
-        return url;
+    public URL makeUrl() throws MalformedURLException {
+        if(archetype.getBase() != null)
+            return archetype.getBase();
+        else
+            return new URL(new StringBuilder()
+                    .append("http://repo.m410.org/content/repositories/snapshots/")
+                    .append(archetype.getOrganization().replaceAll("\\.", "/"))
+                    .append("/")
+                    .append(archetype.getName())
+                    .append("/")
+                    .append(archetype.getVersion())
+                    .append(".yml")
+                    .toString());
     }
 
     public Set<String> verifyResources() {
@@ -106,21 +89,25 @@ public class BuildConfig {
 
     public List<BundleRef> resources() {
         List<BundleRef> list = new ArrayList<>();
-        list.addAll(baseConfig.getBundles());
-        list.addAll(bundles);
-        list.addAll(modules);
-        list.addAll(persistence);
-        list.addAll(view);
+
+        if(baseConfig != null && baseConfig.getBundles() != null)
+            list.addAll(baseConfig.getBundles());
+        if(bundles != null)
+            list.addAll(bundles);
+        if(modules != null)
+            list.addAll(modules);
+        if(persistence != null)
+            list.addAll(persistence);
+        if(view != null)
+            list.addAll(view);
+
         return list;
     }
 
     @Override
     public String toString() {
         return "BuildConfig{" +
-                "url=" + url +
-                ", name='" + name + '\'' +
-                ", build_version='" + build_version + '\'' +
-                ", build_org='" + build_org + '\'' +
+                "archetype=" + archetype +
                 ", baseConfig=" + baseConfig +
                 ", bundles=" + bundles +
                 ", modules=" + modules +

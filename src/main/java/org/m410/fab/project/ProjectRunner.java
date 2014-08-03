@@ -10,7 +10,10 @@ import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
+import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.representer.Representer;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -33,6 +36,7 @@ public final class ProjectRunner {
     }
 
     public void run() throws Throwable {
+        checkAndSetupProjectDir();
         Main.loadSystemProperties();
         Map<String,String> configProps = loadConfigProperties();
         Main.copySystemProperties(configProps);
@@ -85,6 +89,8 @@ public final class ProjectRunner {
     }
 
     private static void addBundle(BundleContext ctx, BundleRef s) {
+        System.out.println("ctx=" + ctx);
+        System.out.println("s=" + s);
         try {
             final String bundlePath = s.makeUrl().toString();
             final boolean present = Arrays.asList(ctx.getBundles()).stream().filter(b ->
@@ -107,24 +113,25 @@ public final class ProjectRunner {
     }
 
     @SuppressWarnings("unchecked")
-    static BuildConfig loadLocalConfig(File configFile) throws Exception {
-        final Map<String, Object> load = (Map<String, Object>) new Yaml().load(new FileInputStream(configFile));
-        final BuildConfig bean = new BuildConfig();
-        System.out.println("### load=" + load);
-        BeanUtils.populate(bean, load);
-        bean.setBundles(collectBundles(load.get("bundles")));
-        bean.setPersistence(collectBundles(load.get("persistence")));
-        bean.setModules(collectBundles(load.get("modules")));
-        bean.setView(collectBundles(load.get("view")));
+    BuildConfig loadLocalConfig(File configFile) throws Exception {
+        Representer representer = new Representer();
+        representer.getPropertyUtils().setSkipMissingProperties(true);
+        final Constructor constructor = new Constructor(BuildConfig.class);
+        TypeDescription buildConfigTypeDef = new TypeDescription(BuildConfig.class);
+        buildConfigTypeDef.putListPropertyType("bundles", BundleRef.class);
+        buildConfigTypeDef.putListPropertyType("persistence", BundleRef.class);
+        buildConfigTypeDef.putListPropertyType("modules", BundleRef.class);
+        buildConfigTypeDef.putListPropertyType("view", BundleRef.class);
+        constructor.addTypeDescription(buildConfigTypeDef);
+        final BuildConfig bean = (BuildConfig)new Yaml(constructor,representer)
+                .load(new FileInputStream(configFile));
+
         bean.setBaseConfig(loadBaseConfig(bean));
         return bean;
     }
 
     @SuppressWarnings("unchecked")
-    static BaseConfig loadBaseConfig(BuildConfig local) throws Exception {
-        System.out.println("### local: " + local);
-        System.out.println("### local.makeUrl: " + local.makeUrl());
-        // todo this is a jar file, not a configuration file???
+    BaseConfig loadBaseConfig(BuildConfig local) throws Exception {
         final Map<String,Object> load = (Map<String, Object>) new Yaml().load(local.makeUrl().openStream());
         final BaseConfig bean = new BaseConfig();
         BeanUtils.populate(bean, load);
@@ -133,7 +140,7 @@ public final class ProjectRunner {
     }
 
     @SuppressWarnings("unchecked")
-    static List<BundleRef> collectBundles(Object arg) {
+    List<BundleRef> collectBundles(Object arg) {
         if(arg != null && arg instanceof List)
             return ((List<Map<String,Object>>)arg).stream().map(m ->{
                 BundleRef b = new BundleRef();
@@ -149,7 +156,7 @@ public final class ProjectRunner {
             return new ArrayList<>();
     }
 
-    static void checkAndSetupProjectDir() throws IOException {
+    void checkAndSetupProjectDir() throws IOException {
         final File localCacheDir = FileSystems.getDefault().getPath(".fab").toFile();
 
         if(!localCacheDir.exists()) {
@@ -164,7 +171,7 @@ public final class ProjectRunner {
         }
     }
 
-    static FrameworkFactory getFrameworkFactory() throws Exception {
+    FrameworkFactory getFrameworkFactory() throws Exception {
         final String name = "META-INF/services/org.osgi.framework.launch.FrameworkFactory";
         java.net.URL url = Main.class.getClassLoader().getResource(name);
 
@@ -185,7 +192,7 @@ public final class ProjectRunner {
         throw new Exception("Could not find framework factory.");
     }
 
-    private static Map<String,String > loadConfigProperties() throws IOException {
+    private Map<String,String > loadConfigProperties() throws IOException {
         Properties props = new Properties();
         URL propURL = new File(new File(".fab"), Main.CONFIG_PROPERTIES_FILE_VALUE).toURI().toURL();
         InputStream is = propURL.openConnection().getInputStream();

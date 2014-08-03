@@ -5,6 +5,6 @@ package org.m410.fab.global;
  */
 public class ProjectCommands {
     public void create() {
-        System.out.println(" create project");
+        System.out.println("## create project");
     }
 }

@@ -4,9 +4,10 @@ import org.apache.commons.cli.*;
 import org.m410.fab.global.GlobalRunner;
 import org.m410.fab.project.ProjectRunner;
 
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.nio.file.PathMatcher;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 
 /**
@@ -37,23 +38,32 @@ public final class Main {
             System.out.println("The current directory is not a project directory or unknown command.  Try 'fab -help'");
     }
 
-    private static void runProjectCmd(List<String> argList) throws Throwable {
+    protected static void runProjectCmd(List<String> argList) throws Throwable {
         new ProjectRunner(argList).run();
     }
 
-    private static void runGlobalCmd(List<String> argList) {
+    protected static void runGlobalCmd(List<String> argList) {
         new GlobalRunner(argList).run();
     }
 
-    private static boolean isProjectDir(String property) {
-        String pattern = "*.fab.yml";
-        PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:" + pattern);
-        Path path = FileSystems.getDefault().getPath(property);
-        return matcher.matches(path);
+    protected static boolean isProjectDir(String userDir) throws IOException {
+        final String pattern = "**/*.fab.yml";
+        final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:" + pattern);
+        final Path path = FileSystems.getDefault().getPath(userDir);
+        final File file = path.toFile();
+        boolean dir = file.isDirectory();
+
+        return Files.walk(path, 1).filter((p) -> {
+            final boolean matched = matcher.matches(p);
+            return matched;
+        }).findFirst().isPresent();
     }
 
-    private static boolean isGlobal(String s) {
-
+    protected static boolean isGlobal(String s) {
         return GlobalRunner.isGlobalCommand(s);
+    }
+
+    static class Walker extends SimpleFileVisitor<Path> {
+
     }
 }

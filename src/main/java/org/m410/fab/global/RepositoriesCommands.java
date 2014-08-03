@@ -5,12 +5,12 @@ package org.m410.fab.global;
  */
 public class RepositoriesCommands {
     public void list() {
-        System.out.println(" list repositories");
+        System.out.println("## list repositories");
     }
     public void add() {
-        System.out.println(" add repository");
+        System.out.println("## add repository");
     }
     public void remove() {
-        System.out.println(" remove repository");
+        System.out.println("## remove repository");
     }
 }
