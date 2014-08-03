@@ -1,0 +1,7 @@
+mvn deploy:deploy-file\
+ -Dfile=src/main/resources/configuration.yml\
+ -DrepositoryId=repo.m410.org\
+ -DartifactId=fab-java-garden-project\
+ -DgroupId=org.m410.fabricate.garden\
+ -Dversion=1.1-SNAPSHOT\
+ -Durl=http://repo.m410.org/content/repositories/snapshots
