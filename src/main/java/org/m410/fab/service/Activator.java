@@ -14,6 +14,8 @@ public class Activator implements BundleActivator {
     @Override
     public void start(BundleContext context) throws Exception {
 
+        context.registerService(FabricateService.class.getName(),new FabricateServiceImpl(),null);
+
         ServiceReference fabricateServiceReference = context.getServiceReference(FabricateService.class.getName());
         FabricateService fabricateService = (FabricateService) context.getService(fabricateServiceReference);
 

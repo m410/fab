@@ -24,8 +24,6 @@ public interface Build extends Serializable {
     String getTestOutputDir();
     String getTestResourceDir();
     String getVcs();
-    String getPublishTo();
-    String getDeployTo();
 
     boolean isPackageSource();
     boolean isPackageDocs();
