@@ -49,12 +49,11 @@
     </build>
     <distributionManagement>
         <repository>
-            <id>m410-nexus</id>
-            <name>Nexus Staging Repo</name>
+            <id>repo.m410.org</id>
             <url>http://repo.m410.org/content/repositories/releases</url>
         </repository>
         <snapshotRepository>
-            <id>m410-nexus-snapshot</id>
+            <id>repo.m410.org</id>
             <url>http://repo.m410.org/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
