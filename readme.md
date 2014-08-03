@@ -3,7 +3,7 @@ Fab(ricate) Java compiler task for fab project build tool
 
 An OSGI bundle that's part of the fab build tool.
 
-deploy normally with source and javadoc, but you also need to deploy the configration file 
+deploy normally with source and javadoc, but you also need to deploy the configuration file 
 separately like this:
 
     mvn deploy:deploy-file\
