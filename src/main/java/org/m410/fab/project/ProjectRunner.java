@@ -66,7 +66,6 @@ public final class ProjectRunner {
 
                 try {
                     buildService.getClass().getMethod("postStartupWiring").invoke(buildService);
-                    System.out.println("  ## args: " + args);
                     final String[] objects = args.toArray(new String[args.size()]);
                     buildService.getClass().getMethod("execute",String[].class).invoke(buildService, new Object[]{objects});
 
@@ -99,7 +98,6 @@ public final class ProjectRunner {
 
 
             if(!present) {
-                System.out.println(" ## loading: " + s.getSymbolicName());
                 ctx.installBundle(bundlePath);
             }
         }
