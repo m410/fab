@@ -21,8 +21,6 @@ public class BuildImpl implements Build {
     private String testOutputDir;
     private String testResourceDir;
     private String vcs;
-    private String publishTo;
-    private String deployTo;
     private boolean packageSource;
     private boolean packageDocs;
     private String packageClassifier;
@@ -48,8 +46,6 @@ public class BuildImpl implements Build {
         testOutputDir = (String)data.get("testOutputDir");
         testResourceDir = (String)data.get("testResourceDir");
         vcs = (String)data.get("vcs");
-        publishTo = (String)data.get("publishTo");
-        deployTo = (String)data.get("deployTo");
         packageSource = (boolean)data.getOrDefault(" packageSource",false);
         packageDocs = (boolean)data.getOrDefault(" packageDocs",false);
         packageClassifier = (String)data.get("packageClassifier");
@@ -125,16 +121,6 @@ public class BuildImpl implements Build {
     @Override
     public String getVcs() {
         return vcs;
-    }
-
-    @Override
-    public String getPublishTo() {
-        return publishTo;
-    }
-
-    @Override
-    public String getDeployTo() {
-        return deployTo;
     }
 
     @Override

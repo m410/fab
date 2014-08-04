@@ -125,13 +125,11 @@ public class ConfigBuilderTest {
         assertNotNull(build.getDefaultCommand());
         assertNotNull(build.getDefaultEnvironment());
         assertNotNull(build.getDefaultLogLevel());
-        assertNotNull(build.getDeployTo());
         assertNotNull(build.getLang());
         assertNotNull(build.getLangVersion());
         assertNotNull(build.getPackageClassifier());
         assertNotNull(build.getPackageName());
         assertNotNull(build.getPackageName());
-        assertNotNull(build.getPublishTo());
         assertNotNull(build.getResourceDir());
         assertNotNull(build.getSourceDir());
         assertNotNull(build.getSourceOutputDir());
