@@ -118,7 +118,7 @@ public final class Application {
         bean.setPersistence(collectBundles(load.get("persistence")));
         bean.setModules(collectBundles(load.get("modules")));
         bean.setView(collectBundles(load.get("view")));
-        bean.setBaseConfig(loadBaseConfig(bean));
+//        bean.setBaseConfig(loadBaseConfig(bean));
         return bean;
     }
 

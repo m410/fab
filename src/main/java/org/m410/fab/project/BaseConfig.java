@@ -9,6 +9,7 @@ import java.util.List;
  */
 public class BaseConfig {
     private List<BundleRef> bundles;
+    private BuildProperties build;
 
     public List<BundleRef> getBundles() {
         return bundles;
@@ -16,5 +17,13 @@ public class BaseConfig {
 
     public void setBundles(List<BundleRef> bundles) {
         this.bundles = bundles;
+    }
+
+    public BuildProperties getBuild() {
+        return build;
+    }
+
+    public void setBuild(BuildProperties build) {
+        this.build = build;
     }
 }

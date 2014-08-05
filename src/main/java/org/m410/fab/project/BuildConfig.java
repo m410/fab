@@ -13,20 +13,11 @@ import java.util.*;
  */
 public class BuildConfig {
     private Archetype archetype;
-    private BaseConfig baseConfig;
-
+    private BuildProperties build;
     private List<BundleRef> bundles;
     private List<BundleRef> modules;
     private List<BundleRef> persistence;
     private List<BundleRef> view;
-
-    public BaseConfig getBaseConfig() {
-        return baseConfig;
-    }
-
-    public void setBaseConfig(BaseConfig baseConfig) {
-        this.baseConfig = baseConfig;
-    }
 
     public List<BundleRef> getBundles() {
         return bundles;
@@ -68,9 +59,17 @@ public class BuildConfig {
         this.archetype = archetype;
     }
 
+    public BuildProperties getBuild() {
+        return build;
+    }
+
+    public void setBuild(BuildProperties build) {
+        this.build = build;
+    }
+
     public URL makeUrl() throws MalformedURLException {
-        if(archetype.getBase() != null)
-            return archetype.getBase();
+        if(archetype.getBase_config() != null)
+            return archetype.getBase_config();
         else
             return new URL(new StringBuilder()
                     .append("http://repo.m410.org/content/repositories/snapshots/")
@@ -90,8 +89,6 @@ public class BuildConfig {
     public List<BundleRef> resources() {
         List<BundleRef> list = new ArrayList<>();
 
-        if(baseConfig != null && baseConfig.getBundles() != null)
-            list.addAll(baseConfig.getBundles());
         if(bundles != null)
             list.addAll(bundles);
         if(modules != null)
@@ -104,11 +101,21 @@ public class BuildConfig {
         return list;
     }
 
+    public BuildConfig merge(BaseConfig baseConfig) {
+        this.build.merge(baseConfig.getBuild());
+
+        if(this.bundles == null)
+            this.bundles = new ArrayList<>();
+
+        this.bundles.addAll(baseConfig.getBundles());
+
+        return this;
+    }
+
     @Override
     public String toString() {
         return "BuildConfig{" +
                 "archetype=" + archetype +
-                ", baseConfig=" + baseConfig +
                 ", bundles=" + bundles +
                 ", modules=" + modules +
                 ", persistence=" + persistence +
