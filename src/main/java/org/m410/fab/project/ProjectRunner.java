@@ -19,6 +19,9 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -52,7 +55,7 @@ public final class ProjectRunner {
             framework.start();
             BundleContext ctx = framework.getBundleContext();
 
-            final File configFile = projectConfigFile();
+            final File configFile = projectConfigFile(System.getProperty("user.dir"));
             BuildConfig localConfig = loadLocalConfig(configFile);
             Set<String> violations = localConfig.verifyResources();
 
@@ -91,11 +94,12 @@ public final class ProjectRunner {
 
     private static void addBundle(BundleContext ctx, BundleRef s) {
         try {
+            // todo check file sys cache, if not there put it there
+
             final String bundlePath = s.makeUrl().toString();
             final boolean present = Arrays.asList(ctx.getBundles()).stream().filter(b ->
                             b.getSymbolicName().equals(s.getSymbolicName())
             ).findFirst().isPresent();
-
 
             if(!present) {
                 ctx.installBundle(bundlePath);
@@ -106,12 +110,14 @@ public final class ProjectRunner {
         }
     }
 
-    private static File projectConfigFile() {
-        return new File("garden.fab.yml");
+    public File projectConfigFile(final String userDir) throws IOException {
+        PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**.fab.yml");
+        Path path = FileSystems.getDefault().getPath(userDir);
+        return Files.walk(path, 1).filter(matcher::matches).findFirst().get().toFile();
     }
 
     @SuppressWarnings("unchecked")
-    BuildConfig loadLocalConfig(File configFile) throws Exception {
+    public BuildConfig loadLocalConfig(File configFile) throws Exception {
         Representer representer = new Representer();
         representer.getPropertyUtils().setSkipMissingProperties(true);
         final Constructor constructor = new Constructor(BuildConfig.class);
@@ -124,6 +130,7 @@ public final class ProjectRunner {
 
         BuildConfig bean =  (BuildConfig)new Yaml(constructor,representer)
                 .load(new FileInputStream(configFile));
+        bean.setSource(configFile.getAbsolutePath());
         bean.merge(loadBaseConfig(bean));
         return bean;
     }
@@ -137,8 +144,10 @@ public final class ProjectRunner {
         TypeDescription buildConfigTypeDef = new TypeDescription(BaseConfig.class);
         buildConfigTypeDef.putListPropertyType("bundles", BundleRef.class);
         constructor.addTypeDescription(buildConfigTypeDef);
-        return (BaseConfig)new Yaml(constructor,representer)
+        final BaseConfig baseConfig = (BaseConfig) new Yaml(constructor, representer)
                 .load(local.makeUrl().openStream());
+        baseConfig.setSource(local.makeUrl().toString());
+        return baseConfig;
     }
 
     @SuppressWarnings("unchecked")

@@ -1,5 +1,6 @@
 package org.m410.fab.project;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
@@ -19,8 +20,15 @@ public class BuildConfig {
     private List<BundleRef> persistence;
     private List<BundleRef> view;
 
+    private List<BaseConfig> configurations = new ArrayList<>();
+    private String source;
+
     public List<BundleRef> getBundles() {
         return bundles;
+    }
+
+    public List<BaseConfig> getConfigurations() {
+        return configurations;
     }
 
     public void setBundles(List<BundleRef> bundles) {
@@ -102,6 +110,7 @@ public class BuildConfig {
     }
 
     public BuildConfig merge(BaseConfig baseConfig) {
+        this.configurations.add(baseConfig);
         this.build.merge(baseConfig.getBuild());
 
         if(this.bundles == null)
@@ -112,14 +121,25 @@ public class BuildConfig {
         return this;
     }
 
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
     @Override
     public String toString() {
         return "BuildConfig{" +
                 "archetype=" + archetype +
+                ", build=" + build +
                 ", bundles=" + bundles +
                 ", modules=" + modules +
                 ", persistence=" + persistence +
                 ", view=" + view +
+                ", configurations=" + configurations +
+                ", source='" + source + '\'' +
                 '}';
     }
 }
