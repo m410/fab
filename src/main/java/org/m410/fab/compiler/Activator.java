@@ -15,13 +15,19 @@ public class Activator implements BundleActivator {
         ServiceReference fabricateServiceReference = context.getServiceReference(FabricateService.class.getName());
         FabricateService fabricateService = (FabricateService) context.getService(fabricateServiceReference);
 
-        fabricateService.addCommandModifier(modifier -> {
-            if(modifier.getName().equalsIgnoreCase("build"))
-                modifier.lastStep().append(new CompileTask());
-        });
+        fabricateService.addCommandModifier(command -> {
+            if(command.getName().equalsIgnoreCase("build")) {
+                command.getSteps().stream()
+                        .filter(m->m.getName().equals("compile"))
+                        .findFirst()
+                        .ifPresent(m->m.append(new CompileTask()));
+                command.getSteps().stream()
+                        .filter(m->m.getName().equals("initialize"))
+                        .findFirst()
+                        .ifPresent(m->m.append(new DependencyTask()));
+            }
 
-//        fabricateService.addCommandListener((e) -> System.out.println(" -> command event: " + e));
-//        fabricateService.addTaskListener((e) -> System.out.println(" -> task event:" + e));
+        });
     }
 
     public void stop(BundleContext context) throws Exception {
