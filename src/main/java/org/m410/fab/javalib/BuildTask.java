@@ -1,10 +1,9 @@
-package org.m410.fab.task;
+package org.m410.fab.javalib;
 
 import org.m410.fab.builder.BuildContext;
 import org.m410.fab.builder.Task;
 import org.m410.fab.config.Dependency;
 import org.m410.fab.config.Module;
-import org.m410.fab.config.ModuleImpl;
 
 import java.util.stream.Collectors;
 

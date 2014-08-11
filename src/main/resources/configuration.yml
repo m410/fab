@@ -1,7 +1,7 @@
 archetype:
   name: garden
   version: 0.1-SNAPSHOT
-  organization: org.m410.fabricate.garden
+  organization: org.m410.fabricate.javalib
 
 bundles:
   - name: fab-share

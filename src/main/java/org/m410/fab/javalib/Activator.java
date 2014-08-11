@@ -1,4 +1,4 @@
-package org.m410.fab.task;
+package org.m410.fab.javalib;
 
 import org.m410.fab.builder.Command;
 import org.m410.fab.builder.Step;

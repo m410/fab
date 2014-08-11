@@ -2,12 +2,12 @@
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="Osmorc" name="OSGi">
-      <configuration manifestGenerationMode="OsmorcControlled" manifestLocation="" jarfileLocation="fab-java-lib-project-0.1-SNAPSHOT.jar" outputPathType="CompilerOutputPath" bndFileLocation="" bundlorFileLocation="" bundleActivator="org.m410.fab.task.Activator" bundleSymbolicName="org.m410.fabricate.javalib.fab-java-lib-project" bundleVersion="1.0.0" ignoreFilePattern="" useProjectDefaultManifestFileLocation="true" alwaysRebuildBundleJAR="false" doNotSynchronizeWithMaven="false">
+      <configuration manifestGenerationMode="OsmorcControlled" manifestLocation="" jarfileLocation="fab-java-lib-project-0.1-SNAPSHOT.jar" outputPathType="CompilerOutputPath" bndFileLocation="" bundlorFileLocation="" bundleActivator="org.m410.fab.javalib.Activator" bundleSymbolicName="org.m410.fabricate.javalib.fab-java-lib-project" bundleVersion="1.0.0" ignoreFilePattern="" useProjectDefaultManifestFileLocation="true" alwaysRebuildBundleJAR="false" doNotSynchronizeWithMaven="false">
         <additionalProperties>
           <property key="Bundle-Name" value="fab-java-lib-project" />
           <property key="Private-Package" value="org.m410.fab" />
           <property key="Import-Package" value="org.osgi.framework,org.m410.fab.service,org.m410.fab.builder,*;resolution:=optional" />
-          <property key="Export-Package" value="org.m410.fab.task" />
+          <property key="Export-Package" value="org.m410.fab.javalib" />
           <property key="Include-Resource" value="configuration.yml=$MODULE_DIR$/src/main/resources/configuration.yml" />
         </additionalProperties>
         <additionalJARContents />
