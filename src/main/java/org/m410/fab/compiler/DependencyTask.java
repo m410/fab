@@ -3,6 +3,23 @@ package org.m410.fab.compiler;
 import org.m410.fab.builder.BuildContext;
 import org.m410.fab.builder.Task;
 
+import java.io.File;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+
+
 /**
  * @author m410
  */
@@ -21,72 +38,105 @@ public class DependencyTask implements Task {
     public void execute(BuildContext context) {
         // todo add ivy code here to download dependencies, see IvyXml & IvySettingsXml.xml
 
-/*
- <ivy-module version="2.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation= "http://ant.apache.org/ivy/schemas/ivy.xsd"
-    xmlns:m="http://ant.apache.org/ivy/maven">
-  <info module={name} organisation={org} revision={version}/>
-  <configurations>
-    <conf name="default" />
-  </configurations>
-  <dependencies defaultconfmapping="*->*" defaultconf="default">
-  {if(config.modules.isDefined)
-    for(mod <-config.modules.get) yield
-    <dependency org={mod.org.get} name={mod.name.get} rev={mod.version.get} transitive="false">
-      <artifact name={mod.name.get} type="jar" m:classifier="module" />
-    </dependency>
-  }
-  {if(config.persistence.isDefined)
-    for(psst <- config.persistence.get) yield
-    <dependency org={psst.org.get} name={psst.name.get} rev={psst.version.get} transitive="false">
-      <artifact name={psst.name.get} type="jar" m:classifier="module" />
-    </dependency>
-  }
-  {if(config.views.isDefined){
-    val view = config.views.get
-    <dependency org={view.org.get} name={view.name.get} rev={view.version.get} transitive="false">
-      <artifact name={view.name.get} type="jar" m:classifier="module" />
-    </dependency>
-  }}
-  </dependencies>
-</ivy-module>
+        // generate ivy.xml
+        // generate ivy-setting.xml
+        // create read ivy default settings in ~/.fab
+        // call ivy to pull resources to local repository in ~/.fab/dependencies
+        // create environment classpaths and add them to the context
 
-
-
-
-
-
-<ivysettings>
-  <property name="revision" value="SNAPSHOT" override="false"/>
-  <property name="ivy.checksums" value=""/>
-  <settings defaultResolver="default"/>
-  <caches defaultCacheDir="${user.home}/.fab/ivy-cache" />
-  <resolvers>
-    <ibiblio name="maven-local" root="file://${user.home}/.m2/repository" m2compatible="true" />
-    {for(repo <- repos; if(repo.id.isDefined && repo.url.isDefined)) yield
-    <ibiblio name={repo.id.get} root={repo.url.get} m2compatible="true"  />
-    }
-    <filesystem name="pub-mvn-local" m2compatible="true">
-      <artifact pattern="${user.home}/.m2/repository/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"/>
-    </filesystem>
-    <filesystem name="pub-fab-local">
-      <ivy pattern="${user.home}/.fab/ivy-cache/[organisation]/[module]/[artifact]-[revision](-[classifier]).[ext]" />
-      <artifact pattern="${user.home}/.fab/ivy-cache/[organisation]/[module]/[type]s/[artifact]-[revision](-[classifier]).[ext]" />
-    </filesystem>
-    <chain name="default" returnFirst="true">
-      {for(repo <- repos;if(repo.id.isDefined && repo.url.isDefined)) yield
-      <resolver ref={repo.id.get} />
-      }
-      <resolver ref="maven-local"/>
-    </chain>
-  </resolvers>
-</ivysettings>
- */
-
-
-
+        // somehow compare base configuration to know if reloading is required
+        // write out classpaths to cache to quick access on second run
 
         context.cli().debug("need to load dependencies here");
+    }
+
+    public void makeIvyXml(BuildContext context) throws Exception {
+        DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+        Document doc = docBuilder.newDocument();
+        Element rootElement = doc.createElement("ivy-module");
+        doc.appendChild(rootElement);
+
+        /*
+        <ivy-module version="2.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:noNamespaceSchemaLocation= "http://ant.apache.org/ivy/schemas/ivy.xsd"
+           xmlns:m="http://ant.apache.org/ivy/maven">
+         <info module={name} organisation={org} revision={version}/>
+         <configurations>
+           <conf name="default" />
+         </configurations>
+         <dependencies defaultconfmapping="*->*" defaultconf="default">
+         {if(config.modules.isDefined)
+           for(mod <-config.modules.get) yield
+           <dependency org={mod.org.get} name={mod.name.get} rev={mod.version.get} transitive="false">
+             <artifact name={mod.name.get} type="jar" m:classifier="module" />
+           </dependency>
+         }
+         {if(config.persistence.isDefined)
+           for(psst <- config.persistence.get) yield
+           <dependency org={psst.org.get} name={psst.name.get} rev={psst.version.get} transitive="false">
+             <artifact name={psst.name.get} type="jar" m:classifier="module" />
+           </dependency>
+         }
+         {if(config.views.isDefined){
+           val view = config.views.get
+           <dependency org={view.org.get} name={view.name.get} rev={view.version.get} transitive="false">
+             <artifact name={view.name.get} type="jar" m:classifier="module" />
+           </dependency>
+         }}
+         </dependencies>
+       </ivy-module>
+        */
+
+
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        DOMSource source = new DOMSource(doc);
+        StreamResult result = new StreamResult(new File(".fab/ivy.xml"));
+        transformer.transform(source, result);
+    }
+
+    public void makeIvySettingsXml(BuildContext context) throws Exception {
+        DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+        Document doc = docBuilder.newDocument();
+		Element rootElement = doc.createElement("ivysettings");
+		doc.appendChild(rootElement);
+
+        /*
+        <ivysettings>
+          <property name="revision" value="SNAPSHOT" override="false"/>
+          <property name="ivy.checksums" value=""/>
+          <settings defaultResolver="default"/>
+          <caches defaultCacheDir="${user.home}/.fab/ivy-cache" />
+          <resolvers>
+            <ibiblio name="maven-local" root="file://${user.home}/.m2/repository" m2compatible="true" />
+            {for(repo <- repos; if(repo.id.isDefined && repo.url.isDefined)) yield
+            <ibiblio name={repo.id.get} root={repo.url.get} m2compatible="true"  />
+            }
+            <filesystem name="pub-mvn-local" m2compatible="true">
+              <artifact pattern="${user.home}/.m2/repository/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"/>
+            </filesystem>
+            <filesystem name="pub-fab-local">
+              <ivy pattern="${user.home}/.fab/ivy-cache/[organisation]/[module]/[artifact]-[revision](-[classifier]).[ext]" />
+              <artifact pattern="${user.home}/.fab/ivy-cache/[organisation]/[module]/[type]s/[artifact]-[revision](-[classifier]).[ext]" />
+            </filesystem>
+            <chain name="default" returnFirst="true">
+              {for(repo <- repos;if(repo.id.isDefined && repo.url.isDefined)) yield
+              <resolver ref={repo.id.get} />
+              }
+              <resolver ref="maven-local"/>
+            </chain>
+          </resolvers>
+        </ivysettings>
+         */
+
+
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		Transformer transformer = transformerFactory.newTransformer();
+		DOMSource source = new DOMSource(doc);
+		StreamResult result = new StreamResult(new File(".fab/ivy-settings.xml"));
+		transformer.transform(source, result);
     }
 }
