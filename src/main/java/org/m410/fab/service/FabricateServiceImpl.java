@@ -110,7 +110,7 @@ public class FabricateServiceImpl implements FabricateService {
         FileInputStream configFileInput = new FileInputStream(projectFile(currentDirectory));
         ConfigContext config = new ConfigBuilder(((Map<String,Object>)new Yaml().load(configFileInput)))
                 .parseLocalProject()
-                .applyUnder(configProviders.stream().map(ConfigProvider::config).collect(Collectors.toList()))
+//                .applyUnder(configProviders.stream().map(ConfigProvider::config).collect(Collectors.toList()))
                 .applyEnvOver(env)
                 .build();
 

@@ -1,5 +1,6 @@
 package org.m410.fab.config;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,8 +22,16 @@ public final class ConfigBuilder  {
         return this;
     }
 
-    public ConfigBuilder applyUnder(List<Map<String,Object>> parentConfigurations) {
-        parentConfigurations.stream().forEach(p -> merge(p,projectConfiguration));
+//    public ConfigBuilder applyUnder(List<Map<String,Object>> parentConfigurations) {
+//        parentConfigurations.stream().forEach(p -> merge(p,projectConfiguration));
+//        return this;
+//    }
+
+    public ConfigBuilder applyOver(Map<String,Object> base) {
+        HashMap<String, Object> outMap = new HashMap<>();
+        merge(outMap,base);
+        merge(outMap,projectConfiguration);
+        this.projectConfiguration = outMap;
         return this;
     }
 
@@ -35,14 +44,14 @@ public final class ConfigBuilder  {
 
     @SuppressWarnings("unchecked")
     void merge(Map<String, Object> under, Map<String, Object> over) {
-        for (String s : over.keySet()) {
-            Object baseValue = under.get(s);
+        for (String overKey : over.keySet()) {
+            Object underValue = under.get(overKey);
 
-            if(baseValue != null) {
+            if(underValue != null) {
 
-                if(baseValue instanceof List){
-                    List baseListValues = (List)baseValue;
-                    List overListValues = (List)over.get(s);
+                if(underValue instanceof List){
+                    List baseListValues = (List)underValue;
+                    List overListValues = (List)over.get(overKey);
 
                     for (Object overObj : overListValues) {
                         Map<String,Object> overMap = (Map<String,Object>)overObj;
@@ -58,19 +67,21 @@ public final class ConfigBuilder  {
 
                         if(baseMap != null)
                             merge(baseMap, overMap);
+                        else
+                            baseListValues.add(overMap);
                     }
                 }
-                else if(baseValue instanceof Map) {
-                    Map baseMapValues = (Map)baseValue;
-                    Map overMapValues = (Map)over.get(s);
+                else if(underValue instanceof Map) {
+                    Map baseMapValues = (Map)underValue;
+                    Map overMapValues = (Map)over.get(overKey);
                     merge(baseMapValues, overMapValues);
                 }
                 else {
-                    under.put(s, over.get(s));
+                    under.put(overKey, over.get(overKey));
                 }
             }
             else {
-                under.put(s, over.get(s));
+                under.put(overKey, over.get(overKey));
             }
         }
     }

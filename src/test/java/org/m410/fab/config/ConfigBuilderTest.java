@@ -22,10 +22,15 @@ public class ConfigBuilderTest {
     private String env = "dev";
     private Map<String, Object> projectFile;
     private Map<String, Object> baseFile;
+    private Map<String, Object> moduleFile;
     private List<ConfigProvider> configProviders = new ArrayList<>();
 
     @Before @SuppressWarnings("unchecked")
     public void setup() {
+
+        InputStream moduleFileInput = getClass().getResourceAsStream("/garden.persistence.fab.yml");
+        moduleFile = (Map<String, Object>) new Yaml().load(moduleFileInput);
+
         InputStream baseFileInput = getClass().getResourceAsStream("/garden.default.fab.yml");
         baseFile = (Map<String, Object>) new Yaml().load(baseFileInput);
 
@@ -54,7 +59,8 @@ public class ConfigBuilderTest {
     public void testAll() {
         ConfigContext config = new ConfigBuilder(projectFile)
                 .parseLocalProject()
-                .applyUnder(configProviders.stream().map(ConfigProvider::config).collect(Collectors.toList()))
+                .applyOver(baseFile)
+                .applyOver(moduleFile)
                 .applyEnvOver(env)
                 .build();
 
@@ -62,9 +68,15 @@ public class ConfigBuilderTest {
         assertNotNull(config.getApplication());
         assertNotNull(config.getBuild());
         assertNotNull(config.getDependencies());
-        assertEquals(2, config.getDependencies().size());
+        System.out.println(config.getDependencies());
+        assertEquals(6, config.getDependencies().size());
         assertNotNull(config.getModules());
         assertEquals(3, config.getModules().size());
+
+        Module persistence = config.getModules().stream()
+                .filter(e->e.getName().equals("m410-jpa"))
+                .findFirst().get();
+        assertNotNull(persistence);
     }
 
     @Test
@@ -178,7 +190,7 @@ public class ConfigBuilderTest {
     public void testApplyUnder() {
         ConfigContext config = new ConfigBuilder(projectFile)
                 .parseLocalProject()
-                .applyUnder(configProviders.stream().map(ConfigProvider::config).collect(Collectors.toList()))
+//                .applyUnder(configProviders.stream().map(ConfigProvider::config).collect(Collectors.toList()))
                 .applyEnvOver(env)
                 .build();
 
@@ -196,7 +208,7 @@ public class ConfigBuilderTest {
     public void testApplyOver() {
         ConfigContext config = new ConfigBuilder(projectFile)
                 .parseLocalProject()
-                .applyUnder(configProviders.stream().map(ConfigProvider::config).collect(Collectors.toList()))
+//                .applyUnder(configProviders.stream().map(ConfigProvider::config).collect(Collectors.toList()))
                 .applyEnvOver(env)
                 .build();
 

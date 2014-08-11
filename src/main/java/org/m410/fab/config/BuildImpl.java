@@ -148,5 +148,28 @@ public class BuildImpl implements Build {
         return defaultLogLevel;
     }
 
-
+    @Override
+    public String toString() {
+        return "BuildImpl{" +
+                "defaultEnvironment='" + defaultEnvironment + '\'' +
+                ", defaultCommand='" + defaultCommand + '\'' +
+                ", lang='" + lang + '\'' +
+                ", langVersion='" + langVersion + '\'' +
+                ", compilerArgs='" + compilerArgs + '\'' +
+                ", targetDir='" + targetDir + '\'' +
+                ", webappDir='" + webappDir + '\'' +
+                ", sourceDir='" + sourceDir + '\'' +
+                ", sourceOutputDir='" + sourceOutputDir + '\'' +
+                ", resourceDir='" + resourceDir + '\'' +
+                ", testDir='" + testDir + '\'' +
+                ", testOutputDir='" + testOutputDir + '\'' +
+                ", testResourceDir='" + testResourceDir + '\'' +
+                ", vcs='" + vcs + '\'' +
+                ", packageSource=" + packageSource +
+                ", packageDocs=" + packageDocs +
+                ", packageClassifier='" + packageClassifier + '\'' +
+                ", packageName='" + packageName + '\'' +
+                ", defaultLogLevel='" + defaultLogLevel + '\'' +
+                '}';
+    }
 }
