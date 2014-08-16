@@ -1,6 +1,5 @@
-package org.m410.fab.compiler;
+package org.m410.fab.garden;
 
-import org.m410.fab.builder.*;
 import org.m410.fab.service.FabricateService;
 import org.osgi.framework.*;
 
@@ -20,11 +19,11 @@ public class Activator implements BundleActivator {
                 command.getSteps().stream()
                         .filter(m->m.getName().equals("compile"))
                         .findFirst()
-                        .ifPresent(m->m.append(new CompileTask()));
+                        .ifPresent(m->m.append(new JavaCompileTask()));
                 command.getSteps().stream()
                         .filter(m->m.getName().equals("initialize"))
                         .findFirst()
-                        .ifPresent(m->m.append(new DependencyTask()));
+                        .ifPresent(m->m.append(new IvyDependencyTask()));
             }
 
         });
