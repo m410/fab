@@ -24,6 +24,10 @@ public class Activator implements BundleActivator {
                         .filter(m->m.getName().equals("initialize"))
                         .findFirst()
                         .ifPresent(m->m.append(new IvyDependencyTask()));
+                command.getSteps().stream()
+                        .filter(m->m.getName().equals("package"))
+                        .findFirst()
+                        .ifPresent(m->m.append(new JarTask()));
             }
 
         });
