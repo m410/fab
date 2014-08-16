@@ -33,25 +33,25 @@ public class BuildImpl implements Build {
         if(data == null)
             return;
 
-        defaultEnvironment = (String)data.get("defaultEnvironment");
-        defaultCommand = (String)data.get("defaultCommand");
-        lang = (String)data.get("lang");
-        langVersion = (String)data.get("langVersion");
-        compilerArgs = (String)data.get("compilerArgs");
-        targetDir = (String)data.get("targetDir");
-        webappDir = (String)data.get("webappDir");
-        sourceDir = (String)data.get("sourceDir");
-        sourceOutputDir = (String)data.get("sourceOutputDir");
-        resourceDir = (String)data.get("resourceDir");
-        testDir = (String)data.get("testDir");
-        testOutputDir = (String)data.get("testOutputDir");
-        testResourceDir = (String)data.get("testResourceDir");
-        vcs = (String)data.get("vcs");
+        defaultEnvironment = (String)data.getOrDefault("defaultEnvironment","development");
+        defaultCommand = (String)data.getOrDefault("defaultCommand","build");
+        lang = (String)data.getOrDefault("lang","java");
+        langVersion = (String)data.getOrDefault("langVersion","1.8");
+        compilerArgs = (String)data.getOrDefault("compilerArgs","-ea");
+        targetDir = (String)data.getOrDefault("targetDir","target");
+        webappDir = (String)data.getOrDefault("webappDir","webapp");
+        sourceDir = (String)data.getOrDefault("sourceDir","src/java");
+        sourceOutputDir = (String)data.getOrDefault("sourceOutputDir","target/classes");
+        resourceDir = (String)data.getOrDefault("resourceDir","src/resources");
+        testDir = (String)data.getOrDefault("testDir","test/java");
+        testOutputDir = (String)data.getOrDefault("testOutputDir","target/test-classes");
+        testResourceDir = (String)data.getOrDefault("testResourceDir","test/resources");
+        vcs = (String)data.getOrDefault("vcs","git");
         packageSource = (boolean)data.getOrDefault(" packageSource",false);
         packageDocs = (boolean)data.getOrDefault(" packageDocs",false);
         packageClassifier = (String)data.get("packageClassifier");
         packageName = (String)data.get("packageName");
-        defaultLogLevel = (String)data.get("defaultLogLevel");
+        defaultLogLevel = (String)data.getOrDefault("defaultLogLevel","info");
         cacheDir = (String)data.getOrDefault("cacheDir",".fab");
     }
 
