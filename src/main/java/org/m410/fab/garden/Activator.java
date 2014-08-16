@@ -1,5 +1,7 @@
 package org.m410.fab.garden;
 
+import org.m410.fab.builder.Command;
+import org.m410.fab.builder.Step;
 import org.m410.fab.service.FabricateService;
 import org.osgi.framework.*;
 
@@ -19,7 +21,15 @@ public class Activator implements BundleActivator {
                 command.getSteps().stream()
                         .filter(m->m.getName().equals("compile"))
                         .findFirst()
-                        .ifPresent(m->m.append(new JavaCompileTask()));
+                        .ifPresent(m->m.append(new JavaCompileTask(JavaCompileTask.COMPILE_SRC)));
+                command.getSteps().stream()
+                        .filter(m -> m.getName().equals("test-compile"))
+                        .findFirst()
+                        .ifPresent(m -> m.append(new JavaCompileTask(JavaCompileTask.COMPILE_TEST)));
+                command.getSteps().stream()
+                        .filter(m->m.getName().equals("test"))
+                        .findFirst()
+                        .ifPresent(m->m.append(new JUnitTestRunnerTask()));
                 command.getSteps().stream()
                         .filter(m->m.getName().equals("initialize"))
                         .findFirst()
@@ -31,6 +41,9 @@ public class Activator implements BundleActivator {
             }
 
         });
+
+//        fabricateService.addCommand(new Command("tomcat8","Run tomcat",false)
+//                .withStep(new Step("default").append(new TomcatReloadingServerTask())));
     }
 
     public void stop(BundleContext context) throws Exception {

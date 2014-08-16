@@ -17,11 +17,11 @@ import static org.junit.Assert.*;
 /**
  * @author m410
  */
-public class CompileTaskTest {
+public class JavaCompileTaskTest {
 
     @Test
     public void testCompile() {
-        JavaCompileTask task = new JavaCompileTask();
+        JavaCompileTask task = new JavaCompileTask(JavaCompileTask.COMPILE_SRC);
         Map<String,Object> map = new HashMap<>();
         final String src = "src/test/compiler-test-resources/src";
         map.put("sourceDir", FileSystems.getDefault().getPath(src).toFile().getAbsolutePath());
@@ -35,7 +35,8 @@ public class CompileTaskTest {
         try {
             task.execute(context);
             assertTrue("compiled",true);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
             assertTrue("Failed to compile", false);
         }

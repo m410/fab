@@ -47,6 +47,14 @@ import java.util.Optional;
  * @author m410
  */
 public final class JavaCompileTask implements Task {
+    private boolean testCompile = false;
+    public static final boolean COMPILE_SRC = false;
+    public static final boolean COMPILE_TEST = true;
+
+    public JavaCompileTask(boolean testCompile) {
+        this.testCompile = testCompile;
+    }
+
     @Override
     public String getName() {
         return "compile task";
