@@ -22,7 +22,7 @@ public class BuildTask implements Task {
     }
 
     @Override
-    public void execute(BuildContext context) {
+    public void execute(BuildContext context) throws Exception {
         context.cli().debug(context.environment());
         context.cli().debug(context.application().toString());
         context.cli().debug(context.build().toString());
