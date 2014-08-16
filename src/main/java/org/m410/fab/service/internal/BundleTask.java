@@ -19,7 +19,7 @@ public class BundleTask implements Task {
     }
 
     @Override
-    public void execute(BuildContext context) {
+    public void execute(BuildContext context) throws Exception {
         context.cli().println("bundle information");
     }
 }

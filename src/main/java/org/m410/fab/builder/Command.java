@@ -60,7 +60,11 @@ public final class Command implements Serializable{
                 for (TaskListener taskListener : taskListeners) {
                     taskListener.notify(new TaskEvent(task));
                 }
-                task.execute(buildContext);
+                try {
+                    task.execute(buildContext);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

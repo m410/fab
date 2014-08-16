@@ -26,6 +26,7 @@ public class BuildImpl implements Build {
     private String packageClassifier;
     private String packageName;
     private String defaultLogLevel;
+    private String cacheDir;
 
     public BuildImpl(Map<String, Object> data) {
 
@@ -51,6 +52,7 @@ public class BuildImpl implements Build {
         packageClassifier = (String)data.get("packageClassifier");
         packageName = (String)data.get("packageName");
         defaultLogLevel = (String)data.get("defaultLogLevel");
+        cacheDir = (String)data.getOrDefault("cacheDir",".fab");
     }
 
     @Override
@@ -121,6 +123,11 @@ public class BuildImpl implements Build {
     @Override
     public String getVcs() {
         return vcs;
+    }
+
+    @Override
+    public String getCacheDir() {
+        return cacheDir;
     }
 
     @Override

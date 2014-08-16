@@ -5,7 +5,9 @@ import org.m410.fab.config.Build;
 import org.m410.fab.config.Dependency;
 import org.m410.fab.config.Module;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author m410
@@ -17,6 +19,7 @@ public final class BuildContextImpl implements BuildContext {
     private final String environment;
     private final List<Dependency> dependencies;
     private final List<Module> modules;
+    private final Map<String,String> classpaths = new HashMap<>();
 
 
     public BuildContextImpl(Cli cli, Application application, Build build, String environment,
@@ -42,6 +45,11 @@ public final class BuildContextImpl implements BuildContext {
     @Override
     public Cli cli() {
         return cli;
+    }
+
+    @Override
+    public Map<String, String> classpaths() {
+        return classpaths;
     }
 
     @Override

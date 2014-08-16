@@ -20,6 +20,14 @@ public class Dependency {
         transitive = (boolean)data.getOrDefault("transitive",false);
     }
 
+    public Dependency(String scope, String org, String name, String rev, boolean transitive) {
+        this.scope = scope;
+        this.org = org;
+        this.name = name;
+        this.rev = rev;
+        this.transitive = transitive;
+    }
+
     public String getOrg() {
         return org;
     }

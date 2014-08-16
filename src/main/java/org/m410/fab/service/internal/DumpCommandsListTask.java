@@ -25,7 +25,7 @@ public class DumpCommandsListTask implements Task {
     }
 
     @Override
-    public void execute(BuildContext context) {
+    public void execute(BuildContext context) throws Exception {
         commands.entrySet().stream().forEach(entrySet ->{
             context.cli().println("  " + entrySet.getKey() +" - "+ entrySet.getValue());
         });

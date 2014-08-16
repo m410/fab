@@ -10,5 +10,5 @@ import java.io.Serializable;
 public interface Task extends Serializable {
     String getName(); // must be unique
     String getDescription();
-    void execute(BuildContext context);
+    void execute(BuildContext context) throws Exception;
 }

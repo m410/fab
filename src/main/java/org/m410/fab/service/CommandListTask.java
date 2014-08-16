@@ -28,7 +28,7 @@ public class CommandListTask implements Task{
     }
 
     @Override
-    public void execute(BuildContext context) {
+    public void execute(BuildContext context) throws Exception {
         commands.stream().forEach(c->{
             context.cli().println(c.getName() + " - "+ c.getDescription());
         });

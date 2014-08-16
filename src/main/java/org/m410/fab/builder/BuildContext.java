@@ -6,6 +6,7 @@ import org.m410.fab.config.Dependency;
 import org.m410.fab.config.Module;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Document Me..
@@ -19,4 +20,5 @@ public interface BuildContext {
     List<Dependency> dependencies();
     List<? extends Module> modules();
     Cli cli();
+    Map<String,String> classpaths();
 }
