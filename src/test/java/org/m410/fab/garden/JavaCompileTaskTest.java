@@ -23,9 +23,9 @@ public class JavaCompileTaskTest {
     public void testCompile() {
         JavaCompileTask task = new JavaCompileTask(JavaCompileTask.COMPILE_SRC);
         Map<String,Object> map = new HashMap<>();
-        final String src = "src/test/compiler-test-resources/src";
+        final String src = "src/test/assets/src";
         map.put("sourceDir", FileSystems.getDefault().getPath(src).toFile().getAbsolutePath());
-        final String tgt = "src/test/compiler-test-resources/target";
+        final String tgt = "src/test/assets/target/classes";
         map.put("sourceOutputDir", FileSystems.getDefault().getPath(tgt).toFile().getAbsolutePath());
         Build build = new BuildImpl(map);
         List<Dependency> deps = new ArrayList<>();
@@ -38,7 +38,7 @@ public class JavaCompileTaskTest {
         }
         catch (Exception e) {
             e.printStackTrace();
-            assertTrue("Failed to compile", false);
+            fail("Failed to compile");
         }
 
     }

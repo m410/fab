@@ -27,7 +27,7 @@ public class IvyDependencyTaskTest {
     @Before
     public void before() {
         Map<String,Object> map = new HashMap<>();
-        final String tgt = "src/test/dependencies";
+        final String tgt = "src/test/assets";
         final File file = FileSystems.getDefault().getPath(tgt).toFile();
 
         if(!file.exists() && !file.mkdirs())

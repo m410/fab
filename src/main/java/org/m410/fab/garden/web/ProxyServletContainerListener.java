@@ -33,12 +33,12 @@ public class ProxyServletContainerListener implements ServletContextListener {
         final ClassLoader threadClassLoader = Thread.currentThread().getContextClassLoader();
         classLoader = new LocalDevClassLoader(runPath, classesDir, threadClassLoader);
 
-        System.out.println("---- applicationClassName="+applicationClassName);
-        System.out.println("---- loaderClassName="+loaderClassName);
-        System.out.println("---- sourceDir="+sourceDir);
-        System.out.println("---- classesDir="+classesDir);
-        System.out.println("---- runPath="+runPath);
-        System.out.println("---- classLoader="+classLoader);
+        System.out.println("---- applicationClassName=" + applicationClassName);
+        System.out.println("---- loaderClassName=" + loaderClassName);
+        System.out.println("---- sourceDir=" + sourceDir);
+        System.out.println("---- classesDir=" + classesDir);
+        System.out.println("---- runPath=" + runPath);
+        System.out.println("---- classLoader=" + classLoader);
     }
 
     private List<File> toRunPath(String runPath) {
@@ -54,17 +54,15 @@ public class ProxyServletContainerListener implements ServletContextListener {
     @Override
     @SuppressWarnings("unchecked")
     public void contextInitialized(ServletContextEvent servletContextEvent) {
-        servletContextEvent.getServletContext().setAttribute("classLoader",classLoader);
+        servletContextEvent.getServletContext().setAttribute("classLoader", classLoader);
         Object application = null;
 
         try {
             Class appLoaderClass = classLoader.loadClass(loaderClassName);
             Object appLoader = appLoaderClass.newInstance();
-            Method loaderMethod = appLoaderClass.getMethod("load",null);
-            application = loaderMethod.invoke(appLoader,null);
-        }
-        catch (ClassNotFoundException|InstantiationException|
-                IllegalAccessException|NoSuchMethodException|InvocationTargetException e) {
+            Method loaderMethod = appLoaderClass.getMethod("load", null);
+            application = loaderMethod.invoke(appLoader, null);
+        } catch (Exception e) {
             System.err.println("EXCEPTION: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);

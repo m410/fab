@@ -19,6 +19,14 @@ public class JUnitTestRunnerTask implements Task {
 
     @Override
     public void execute(BuildContext context) throws Exception {
-
+//        List testCases = new ArrayList();
+//        testCases.add(TestFeatureOne.class);
+//        testCases.add(TestFeatureTwo.class);
+//        for (Class testCase : testCases)
+//            runTestCase(testCase);
+//        Result result = JUnitCore.runClasses(testCase);
+//        for (Failure failure : result.getFailures())
+//            System.out.println(failure.toString());
+//
     }
 }

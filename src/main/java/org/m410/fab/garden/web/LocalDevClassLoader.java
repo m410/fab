@@ -1,8 +1,5 @@
 package org.m410.fab.garden.web;
 
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -16,7 +13,6 @@ import java.util.List;
  * @author Michael Fortin
  */
 public class LocalDevClassLoader extends URLClassLoader {
-//    static final Logger log = LoggerFactory.getLogger(LocalDevClassLoader.class);
 
     static URL[] toURLs(List<URL> runPath, File classesDir) {
         List<URL> urls = new ArrayList<>();

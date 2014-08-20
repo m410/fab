@@ -1,4 +1,4 @@
-package org.m410.fab.garden;
+package org.m410.fab.garden.web;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -14,24 +14,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 /**
  * @author m410
  */
-public class JarTaskTest {
+public class ProxyServletTest {
 
     BuildContext context;
 
     @Before
     public void before() {
         Map<String,Object> map = new HashMap<>();
+        final String tgt = "src/test/dependencies";
+        final File file = FileSystems.getDefault().getPath(tgt).toFile();
 
-        final String src = "src/test/assets/src";
-        map.put("sourceOutputDir", FileSystems.getDefault().getPath(src).toFile().getAbsolutePath());
-        final String tgt = "src/test/assets/target/classes";
-        map.put("targetDir", FileSystems.getDefault().getPath(tgt).toFile().getAbsolutePath());
+        if(!file.exists() && !file.mkdirs())
+            fail("could not make cache directory");
 
+        map.put("cacheDir", file.getAbsolutePath());
         map.put("name", "test-app");
         map.put("org","org.m410.test");
         map.put("description","none");
@@ -40,7 +41,7 @@ public class JarTaskTest {
         map.put("authors","none");
         map.put("properties", new HashMap<String,Object>());
 
-        List<Dependency> deps = new ArrayList<Dependency>();
+        List<Dependency> deps = new ArrayList<>();
         deps.add(new Dependency("compile","org.apache.commons","commons-lang3","3.3.2",false));
 
         Build build = new BuildImpl(map);
@@ -55,15 +56,12 @@ public class JarTaskTest {
             @Override public void println(String s) { System.out.println(s); }
         };
 
-        context = new BuildContextImpl(cli,app,build,"dev",deps,null);
+        context = new BuildContextImpl(cli,app,build,"development",deps,null);
     }
 
+
     @Test
-    public void testMakeJar() throws Exception {
-        JarTask task = new JarTask();
-        task.execute(context);
-        final String jar = "src/test/assets/target/test-app-1.0.0.jar";
-        File f = FileSystems.getDefault().getPath(jar).toFile();
-        assert(f.exists());
+    public void testStart() throws Exception {
+        // load an app in a child classloader, call it from the servlet proxy
     }
 }
