@@ -68,5 +68,7 @@ public final class GlobalRunner {
         for (String globalCommand : globalCommands) {
             System.out.println("  " + globalCommand + " - description here");
         }
+        System.out.println("  tasks -  Only available in a project directory, lists available tasks" );
+        System.out.println("  info -  Only available in a project directory, list all project information" );
     }
 }
