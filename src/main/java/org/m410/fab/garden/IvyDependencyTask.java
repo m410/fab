@@ -82,7 +82,7 @@ public class IvyDependencyTask implements Task {
                 String resolveId = resolveReport.getResolveId();
 
                 ResolutionCacheManager manager = ivy1.getResolutionCacheManager();
-                final File reportCompile = manager.getConfigurationResolveReportInCache(resolveId, "compile");
+                final File reportCompile = manager.getConfigurationResolveReportInCache(resolveId, "default");
                 XmlReportParser parser = new XmlReportParser();
                 parser.parse(reportCompile);
                 reports = parser.getArtifactReports();
@@ -131,49 +131,49 @@ public class IvyDependencyTask implements Task {
         confElement1.setAttribute("visibility","public");
         configurationElement.appendChild(confElement1);
 
-        final Element confElement0 = doc.createElement("conf");
-        confElement0.setAttribute("name","provided");
-        confElement0.setAttribute("extends","default");
-        confElement0.setAttribute("visibility","public");
-        configurationElement.appendChild(confElement0);
-
-        final Element confElement2 = doc.createElement("conf");
-        confElement2.setAttribute("name","compile");
-        confElement2.setAttribute("visibility","public");
-        confElement2.setAttribute("extends","provided");
-        configurationElement.appendChild(confElement2);
-
-        final Element confElement3 = doc.createElement("conf");
-        confElement3.setAttribute("name","test");
-        confElement3.setAttribute("visibility","public");
-        confElement3.setAttribute("extends","compile");
-        configurationElement.appendChild(confElement3);
-
-        final Element confElement4 = doc.createElement("conf");
-        confElement4.setAttribute("name","javadoc");
-        confElement4.setAttribute("visibility","public");
-        configurationElement.appendChild(confElement4);
-
-        final Element confElement5 = doc.createElement("conf");
-        confElement5.setAttribute("name","sources");
-        confElement5.setAttribute("visibility","public");
-        configurationElement.appendChild(confElement5);
+//        final Element confElement0 = doc.createElement("conf");
+//        confElement0.setAttribute("name","provided");
+//        confElement0.setAttribute("extends","default");
+//        confElement0.setAttribute("visibility","public");
+//        configurationElement.appendChild(confElement0);
+//
+//        final Element confElement2 = doc.createElement("conf");
+//        confElement2.setAttribute("name","compile");
+//        confElement2.setAttribute("visibility","public");
+//        confElement2.setAttribute("extends","provided");
+//        configurationElement.appendChild(confElement2);
+//
+//        final Element confElement3 = doc.createElement("conf");
+//        confElement3.setAttribute("name","test");
+//        confElement3.setAttribute("visibility","public");
+//        confElement3.setAttribute("extends","compile");
+//        configurationElement.appendChild(confElement3);
+//
+//        final Element confElement4 = doc.createElement("conf");
+//        confElement4.setAttribute("name","javadoc");
+//        confElement4.setAttribute("visibility","public");
+//        configurationElement.appendChild(confElement4);
+//
+//        final Element confElement5 = doc.createElement("conf");
+//        confElement5.setAttribute("name","sources");
+//        confElement5.setAttribute("visibility","public");
+//        configurationElement.appendChild(confElement5);
         
         rootElement.appendChild(configurationElement);
 
 		Element pubElem = doc.createElement("publications");
 
-        final Element artifactElem = doc.createElement("artifact");
-        artifactElem.setAttribute("type","pom");
-        artifactElem.setAttribute("ext","pom");
-        artifactElem.setAttribute("conf","compile");
-        pubElem.appendChild(artifactElem);
-	
-		final Element artifactElem2 = doc.createElement("artifact");
-        artifactElem2.setAttribute("type","jar");
-        artifactElem2.setAttribute("ext","jar");
-        artifactElem2.setAttribute("conf","compile");
-        pubElem.appendChild(artifactElem2);
+//        final Element artifactElem = doc.createElement("artifact");
+//        artifactElem.setAttribute("type","pom");
+//        artifactElem.setAttribute("ext","pom");
+//        artifactElem.setAttribute("conf","compile");
+//        pubElem.appendChild(artifactElem);
+//
+//		final Element artifactElem2 = doc.createElement("artifact");
+//        artifactElem2.setAttribute("type","jar");
+//        artifactElem2.setAttribute("ext","jar");
+//        artifactElem2.setAttribute("conf","compile");
+//        pubElem.appendChild(artifactElem2);
 
         rootElement.appendChild(pubElem);
 
@@ -188,15 +188,15 @@ public class IvyDependencyTask implements Task {
             dependencyElem.setAttribute("name", dependency.getName());
             dependencyElem.setAttribute("rev", dependency.getRev());
             dependencyElem.setAttribute("transitive", "false");
-            dependencyElem.setAttribute("conf", dependency.getScope());
+//            dependencyElem.setAttribute("conf", dependency.getScope());
 
 			// conf = javadoc->javadoc;sources->sources;compile->default
 
-            // Element artifact = doc.createElement("artifact");
-            //artifact.setAttribute("name",dependency.getName());
-            //artifact.setAttribute("type","jar");
+            Element artifact = doc.createElement("artifact");
+            artifact.setAttribute("name",dependency.getName());
+            artifact.setAttribute("type","jar");
             // artifact.setAttribute("m:classifier","module");
-            //dependencyElem.appendChild(artifact);
+            dependencyElem.appendChild(artifact);
 
             dependenciesElement.appendChild(dependencyElem);
         }
@@ -228,13 +228,6 @@ public class IvyDependencyTask implements Task {
         prop2.setAttribute("value","");
         rootElement.appendChild(prop2);
 
-        Element prop3 = doc.createElement("property");
-        prop3.setAttribute("name","m2-pattern");
-//        prop3.setAttribute("value","${user.home}/.m2/repository/[organisation]/[module]/[revision]/[module]-[revision](-[classifier]).[ext]");
-        prop3.setAttribute("override","false");
-        rootElement.appendChild(prop3);
-
-   
         Element settings = doc.createElement("settings");
         settings.setAttribute("defaultResolver","default-chain");
         rootElement.appendChild(settings);
@@ -246,18 +239,7 @@ public class IvyDependencyTask implements Task {
         Element resolvers = doc.createElement("resolvers");
         Element chain = doc.createElement("chain");
         chain.setAttribute("name","default-chain");
-//
-//        Element m2Local = doc.createElement("filesystem");
-//		m2Local.setAttribute("name","m2-local");
-//		m2Local.setAttribute("m2compatible","true");
-//        Element m2Artifact = doc.createElement("artifact");
-//		m2Artifact.setAttribute("pattern","${m2-pattern}");
-//		m2Local.appendChild(m2Artifact);
-//        Element m2ivy = doc.createElement("ivy");
-//		m2ivy.setAttribute("pattern","${m2-pattern}");
-//		m2Local.appendChild(m2ivy);
-//		chain.appendChild(m2Local);
-//
+
         Element ibiblio = doc.createElement("ibiblio");
         ibiblio.setAttribute("name","maven-local");
         ibiblio.setAttribute("root","file://${user.home}/.m2/repository");

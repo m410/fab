@@ -44,6 +44,7 @@ public class IvyDependencyTaskTest {
 
         List<Dependency> deps = new ArrayList<>();
         deps.add(new Dependency("compile","org.apache.commons","commons-lang3","3.3.2",false));
+        deps.add(new Dependency("test","junit","junit","4.11",false));
 
         Build build = new BuildImpl(map);
         Application app = new ApplicationImpl(map);
@@ -80,6 +81,9 @@ public class IvyDependencyTaskTest {
         File ivyFile = task.makeIvyXml(context);
         File ivySettingFile = task.makeIvySettingsXml(context);
         task.resolveDependencies(context,ivySettingFile, ivyFile);
-        assertTrue(true);
+        assertNotNull(context.classpaths());
+        assertEquals(1, context.classpaths().size());
+        assertNotNull(context.classpaths().get("compile"));
+        assertTrue(context.classpaths().get("compile").length() > 10);
     }
 }
