@@ -27,7 +27,11 @@
             <artifactId>org.apache.felix.main</artifactId>
             <version>4.4.0</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.apache.ivy</groupId>
+            <artifactId>ivy</artifactId>
+            <version>2.3.0</version>
+        </dependency>
         <dependency>
             <groupId>org.m410.fabricate</groupId>
             <artifactId>fab-share</artifactId>
@@ -97,6 +101,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
+                        <Embed-Dependency>*;scope=compile|runtime;inline=true</Embed-Dependency>
                         <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Bundle-Version>1.0.0</Bundle-Version>
@@ -111,6 +116,9 @@
                         <Export-Package>
                             org.m410.fab.javalib
                         </Export-Package>
+                        <Include-Resource>
+                            {maven-dependencies}
+                        </Include-Resource>
                     </instructions>
                 </configuration>
             </plugin>
