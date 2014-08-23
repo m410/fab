@@ -1,0 +1,25 @@
+cache: "~/.fab"
+
+repositories:
+  - id: m410
+    url: "http://repo.m410.org/content/repositories/releases"
+  - id: maven-central
+    url: "http://repo.maven.apache.org/maven2"
+  - id: m410-snapshot
+    url: "http://repo.brzy.org/content/repositories/snapshots"
+
+archetypes:
+  - name: fab-java-garden-project
+    org: org.m410.fab.garden
+    rev: "0.1-SNAPSHOT"
+    description: A java web mvc framework that produces a war
+    home: http://m410.org
+  - org: org.m410.fab.javalib
+    name: fab-java-lib-project
+    rev: "0.1-SNAPSHOT"
+    description: A basic project that produces a jar
+    home: http://m410.org
+
+#  - {org: org.m410.fab.javalib, name: fab-java-lib-project, rev: "0.1"}
+#  - {org: org.m410.fab.javalib, name: fab-module-project,  rev: "0.1"}
+#  - {org: org.m410.fab.javalib, name: fab-project-project,  rev: "0.1"}
