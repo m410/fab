@@ -12,7 +12,9 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.text.ParseException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -74,36 +76,53 @@ public class IvyDependencyTask implements Task {
         };
 
         final Object result = ivy.execute((ivy1, ivyContext) -> {
-            ArtifactDownloadReport[] reports = new ArtifactDownloadReport[0];
+            Map<String,List<ArtifactDownloadReport>> reports = new HashMap<String, List<ArtifactDownloadReport>>();
 
             try {
                 ivy1.configure(settingsFile);
                 ResolveReport resolveReport = ivy1.getResolveEngine().resolve(ivyFile);
                 String resolveId = resolveReport.getResolveId();
-
                 ResolutionCacheManager manager = ivy1.getResolutionCacheManager();
-                final File reportCompile = manager.getConfigurationResolveReportInCache(resolveId, "default");
-                XmlReportParser parser = new XmlReportParser();
-                parser.parse(reportCompile);
-                reports = parser.getArtifactReports();
+
+                reports.put("test", Arrays.asList(makeReport("test", resolveId, manager)));
+                reports.put("compile", Arrays.asList(makeReport("compile", resolveId, manager)));
+                reports.put("provided", Arrays.asList(makeReport("provided", resolveId, manager)));
+                reports.put("sources", Arrays.asList(makeReport("sources", resolveId, manager)));
+                reports.put("javadoc", Arrays.asList(makeReport("javadoc", resolveId, manager)));
             }
             catch (Exception e) {
                 throw new RuntimeException(e);
             }
 
-            return Arrays.asList(reports).stream()
+            final String pathSeparator = System.getProperty("path.separator");
+
+            for (String s : reports.keySet()) {
+                StringBuilder sb = new StringBuilder();
+                reports.get(s).stream()
                     .map(ArtifactDownloadReport::getLocalFile)
-                    .collect(Collectors.toList());
+                    .filter(f->f!=null)
+                    .forEach(f -> {
+                        sb.append(f.getAbsolutePath());
+                        sb.append(pathSeparator);
+                    });
+
+                context.classpaths().put(s, sb.toString());
+            }
+            return null;
         });
+    }
 
-	// todo need to add provided, compile, and test to classpaths
-
-        StringBuilder sb = new StringBuilder();
-        ((List<File>)result).stream().forEach(f->{
-            sb.append(f.getAbsolutePath()).append(System.getProperty("path.separator"));
-        });
-
-        context.classpaths().put("compile", sb.toString());
+    private ArtifactDownloadReport[] makeReport(String conf, String resolveId, ResolutionCacheManager manager) {
+        ArtifactDownloadReport[] reports;
+        File reportCompile = manager.getConfigurationResolveReportInCache(resolveId, conf);
+        XmlReportParser parser = new XmlReportParser();
+        try {
+            parser.parse(reportCompile);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+        reports = parser.getArtifactReports();
+        return reports;
     }
 
     File makeIvyXml(final BuildContext context) throws Exception {
@@ -131,55 +150,53 @@ public class IvyDependencyTask implements Task {
         confElement1.setAttribute("visibility","public");
         configurationElement.appendChild(confElement1);
 
-//        final Element confElement0 = doc.createElement("conf");
-//        confElement0.setAttribute("name","provided");
-//        confElement0.setAttribute("extends","default");
-//        confElement0.setAttribute("visibility","public");
-//        configurationElement.appendChild(confElement0);
-//
-//        final Element confElement2 = doc.createElement("conf");
-//        confElement2.setAttribute("name","compile");
-//        confElement2.setAttribute("visibility","public");
-//        confElement2.setAttribute("extends","provided");
-//        configurationElement.appendChild(confElement2);
-//
-//        final Element confElement3 = doc.createElement("conf");
-//        confElement3.setAttribute("name","test");
-//        confElement3.setAttribute("visibility","public");
-//        confElement3.setAttribute("extends","compile");
-//        configurationElement.appendChild(confElement3);
-//
-//        final Element confElement4 = doc.createElement("conf");
-//        confElement4.setAttribute("name","javadoc");
-//        confElement4.setAttribute("visibility","public");
-//        configurationElement.appendChild(confElement4);
-//
-//        final Element confElement5 = doc.createElement("conf");
-//        confElement5.setAttribute("name","sources");
-//        confElement5.setAttribute("visibility","public");
-//        configurationElement.appendChild(confElement5);
+        final Element confElement0 = doc.createElement("conf");
+        confElement0.setAttribute("name","provided");
+        confElement0.setAttribute("extends","default");
+        confElement0.setAttribute("visibility","public");
+        configurationElement.appendChild(confElement0);
+
+        final Element confElement2 = doc.createElement("conf");
+        confElement2.setAttribute("name","compile");
+        confElement2.setAttribute("visibility","public");
+        confElement2.setAttribute("extends","provided");
+        configurationElement.appendChild(confElement2);
+
+        final Element confElement3 = doc.createElement("conf");
+        confElement3.setAttribute("name","test");
+        confElement3.setAttribute("visibility","public");
+        confElement3.setAttribute("extends","compile");
+        configurationElement.appendChild(confElement3);
+
+        final Element confElement4 = doc.createElement("conf");
+        confElement4.setAttribute("name","javadoc");
+        confElement4.setAttribute("visibility","public");
+        configurationElement.appendChild(confElement4);
+
+        final Element confElement5 = doc.createElement("conf");
+        confElement5.setAttribute("name","sources");
+        confElement5.setAttribute("visibility","public");
+        configurationElement.appendChild(confElement5);
         
         rootElement.appendChild(configurationElement);
 
 		Element pubElem = doc.createElement("publications");
 
-//        final Element artifactElem = doc.createElement("artifact");
-//        artifactElem.setAttribute("type","pom");
-//        artifactElem.setAttribute("ext","pom");
-//        artifactElem.setAttribute("conf","compile");
-//        pubElem.appendChild(artifactElem);
-//
-//		final Element artifactElem2 = doc.createElement("artifact");
-//        artifactElem2.setAttribute("type","jar");
-//        artifactElem2.setAttribute("ext","jar");
-//        artifactElem2.setAttribute("conf","compile");
-//        pubElem.appendChild(artifactElem2);
+        final Element artifactElem = doc.createElement("artifact");
+        artifactElem.setAttribute("type","pom");
+        artifactElem.setAttribute("ext","pom");
+        artifactElem.setAttribute("conf","compile");
+        pubElem.appendChild(artifactElem);
+
+		final Element artifactElem2 = doc.createElement("artifact");
+        artifactElem2.setAttribute("type","jar");
+        artifactElem2.setAttribute("ext","jar");
+        artifactElem2.setAttribute("conf","compile");
+        pubElem.appendChild(artifactElem2);
 
         rootElement.appendChild(pubElem);
 
         Element dependenciesElement = doc.createElement("dependencies");
-		//dependenciesElement.setAttribute("defaultconfmapping","*->*");
-		//dependenciesElement.setAttribute("defaultconf","compile,sources,javadoc");
         rootElement.appendChild(dependenciesElement);
 
         for (Dependency dependency : context.dependencies()) {
@@ -188,16 +205,7 @@ public class IvyDependencyTask implements Task {
             dependencyElem.setAttribute("name", dependency.getName());
             dependencyElem.setAttribute("rev", dependency.getRev());
             dependencyElem.setAttribute("transitive", "false");
-//            dependencyElem.setAttribute("conf", dependency.getScope());
-
-			// conf = javadoc->javadoc;sources->sources;compile->default
-
-            Element artifact = doc.createElement("artifact");
-            artifact.setAttribute("name",dependency.getName());
-            artifact.setAttribute("type","jar");
-            // artifact.setAttribute("m:classifier","module");
-            dependencyElem.appendChild(artifact);
-
+            dependencyElem.setAttribute("conf", dependency.getScope()+"->default;sources->sources;javadoc->javadoc");
             dependenciesElement.appendChild(dependencyElem);
         }
 
