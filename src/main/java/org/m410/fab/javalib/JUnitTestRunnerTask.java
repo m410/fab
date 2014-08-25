@@ -19,6 +19,14 @@ public class JUnitTestRunnerTask implements Task {
 
     @Override
     public void execute(BuildContext context) throws Exception {
+        // create a new classloader with the test classpath
+        // add classes and test classes directories
+        // check source for Test classes
+        // via reflection get a reference to those classes
+        // call org.junit.runner.JUnitCore.runClasses(<array of classes>)
+        // http://junit.sourceforge.net/javadoc/
+
+
 //        List testCases = new ArrayList();
 //        testCases.add(TestFeatureOne.class);
 //        testCases.add(TestFeatureTwo.class);

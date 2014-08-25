@@ -12,10 +12,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 
 /**
  *
@@ -92,7 +89,7 @@ public final class JavaCompileTask implements Task {
 
         if (!status) {
             for (Diagnostic diagnostic : diagnostics.getDiagnostics()) {
-                System.out.format("Error on line %d in %s\n", diagnostic.getLineNumber(), diagnostic);
+                System.err.format("Error on line %d in %s\n", diagnostic.getLineNumber(), diagnostic);
             }
         }
 
@@ -127,28 +124,19 @@ public final class JavaCompileTask implements Task {
     }
 
     private Optional<List<String>> makeTargetOption(BuildContext context) {
-        return Optional.empty();
+        return Optional.of(Arrays.asList("-source",context.build().getLangVersion()));
     }
 
-    private Optional<List<String>> makeSourceOption(BuildContext context) {
-        return Optional.empty();
+    private Optional<List<String>>  makeSourceOption(BuildContext context) {
+        return Optional.of(Arrays.asList("-target",context.build().getLangVersion()));
     }
 
     private Optional<List<String>> makeClasspathOption(BuildContext context) {
-        String path = toClassPath(context.dependencies());
 
         ArrayList<String> list = new ArrayList<>(2);
         list.add("-cp");
-        list.add(path);
+        list.add(context.classpaths().get(testCompile ? "test" : "compile"));
         return Optional.of(list);
-    }
-
-    private String toClassPath(List<Dependency> dependencies) {
-        StringBuilder sb = new StringBuilder();
-        dependencies.stream()
-                .filter(d -> "compile".equals(d.getScope()))
-                .forEach(d->{sb.append(sb.append(""));});
-        return sb.toString();
     }
 
     private List<JavaFileObject> makeSources(BuildContext context) throws IOException {
