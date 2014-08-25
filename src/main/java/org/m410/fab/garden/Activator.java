@@ -40,10 +40,13 @@ public class Activator implements BundleActivator {
                         .ifPresent(m->m.append(new JarTask()));
             }
 
+            if(command.getName().equalsIgnoreCase("dependencies")) {
+                command.getSteps().stream()
+                        .filter(m->m.getName().equals("initialize"))
+                        .findFirst()
+                        .ifPresent(m->m.append(new IvyDependencyTask()));
+            }
         });
-
-//        fabricateService.addCommand(new Command("tomcat8","Run tomcat",false)
-//                .withStep(new Step("default").append(new TomcatReloadingServerTask())));
 
         fabricateService.addCommand(new Command("jetty9","Run jetty",false)
                 .withStep(new Step("default").append(new Jetty9Task())));

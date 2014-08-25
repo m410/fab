@@ -37,6 +37,7 @@ import org.apache.ivy.util.MessageLoggerEngine;
  * @author m410
  */
 public class IvyDependencyTask implements Task {
+
     @Override
     public String getName() {
         return "compile task";
