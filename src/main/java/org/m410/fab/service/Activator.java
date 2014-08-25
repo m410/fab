@@ -98,7 +98,9 @@ public class Activator implements BundleActivator {
                                 .withStep(new Step("default").append(commandListTask)))
                 .addCommand(
                         new Command("dependencies", "List dependencies for environment", false)
-                                .withStep(new Step("default").append(new DependencyDumpTask())))
+                                .withStep(new Step("initialize"))
+                                .withStep(new Step("default").append(new DependencyDumpTask()))
+                )
                 .addCommand(
                         new Command("info", "List all environment configuration properties", false)
                                 .withStep(new Step("default").append(new InfoDumpTask())))

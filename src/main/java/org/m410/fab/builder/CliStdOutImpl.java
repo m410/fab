@@ -4,11 +4,27 @@ package org.m410.fab.builder;
  * @author m410
  */
 public class CliStdOutImpl implements Cli {
+    private static final String[] levels = {"debug","info","warn","error"};
 
-    private String logLevel = "debug";
+    private int level = 1;
 
-    public CliStdOutImpl(String logLevel) {
-        this.logLevel = logLevel;
+    public CliStdOutImpl(final String logLevel) {
+        switch(logLevel.toLowerCase()) {
+            case "debug":
+                level = 0;
+                break;
+            case "info":
+                level = 1;
+                break;
+            case "warn":
+                level = 2;
+                break;
+            case "error":
+                level = 3;
+                break;
+            default:
+                level = 1;
+        }
     }
 
     @Override
@@ -18,22 +34,26 @@ public class CliStdOutImpl implements Cli {
 
     @Override
     public void warn(String in) {
-        System.out.println("  WARN|" + in);
+        if(level <= 2 )
+            System.out.println("  WARN|" + in);
     }
 
     @Override
     public void info(String in) {
-        System.out.println("  INFO |" + in);
+        if(level <= 1 )
+            System.out.println("  INFO |" + in);
     }
 
     @Override
     public void debug(String in) {
-        System.out.println("  DEBUG|" + in);
+        if(level <= 0 )
+            System.out.println("  DEBUG|" + in);
     }
 
     @Override
     public void error(String in) {
-        System.out.println("  ERROR|" + in);
+        if(level <= 3 )
+            System.err.println("  ERROR|" + in);
     }
 
     @Override

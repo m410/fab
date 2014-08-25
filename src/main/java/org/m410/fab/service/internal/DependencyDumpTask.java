@@ -2,6 +2,7 @@ package org.m410.fab.service.internal;
 
 import org.m410.fab.builder.BuildContext;
 import org.m410.fab.builder.Task;
+import org.m410.fab.config.Dependency;
 
 
 /**
@@ -20,7 +21,16 @@ public class DependencyDumpTask implements Task {
 
     @Override
     public void execute(BuildContext context) throws Exception {
-        context.cli().debug("context: " + context);
-        context.cli().debug("dependency BITCHES!!!");
+
+        for (Dependency dependency : context.dependencies()) {
+            context.cli().println(dependency.toString());
+        }
+
+        context.cli().println("");
+
+        for (String s : context.classpaths().keySet()) {
+            context.cli().println(s + " - " + context.classpaths().get(s));
+        }
+
     }
 }
