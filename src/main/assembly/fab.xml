@@ -32,7 +32,7 @@
       <filtered>true</filtered>
     </file>
     <file>
-      <source>src/main/config/archetype-db.f.yml</source>
+      <source>src/main/config/archetype-db.fab.yml</source>
       <outputDirectory>/</outputDirectory>
       <filtered>true</filtered>
     </file>
