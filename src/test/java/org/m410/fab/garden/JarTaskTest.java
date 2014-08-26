@@ -29,7 +29,7 @@ public class JarTaskTest {
 
         final String src = "src/test/assets/src";
         map.put("sourceOutputDir", FileSystems.getDefault().getPath(src).toFile().getAbsolutePath());
-        final String tgt = "src/test/assets/target/classes";
+        final String tgt = "src/test/assets/target";
         map.put("targetDir", FileSystems.getDefault().getPath(tgt).toFile().getAbsolutePath());
 
         map.put("name", "test-app");
