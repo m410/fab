@@ -8,14 +8,12 @@ import org.m410.fab.builder.BuildContext;
 import org.m410.fab.builder.Task;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -72,6 +70,8 @@ public class IvyDependencyTask implements Task {
                     @Override public void error(String msg) { context.cli().error(msg); }
                     @Override public void info(String msg) { context.cli().info(msg); }
                     @Override public void debug(String msg) { context.cli().debug(msg); }
+                    @Override public void verbose(String msg) { context.cli().debug(msg); }
+                    @Override public void log(String msg, int level) { context.cli().debug(msg); }
                 };
             }
         };
