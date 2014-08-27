@@ -19,7 +19,12 @@ public class JUnitTestRunnerTask implements Task {
 
     @Override
     public void execute(BuildContext context) throws Exception {
+
         // create a new classloader with the test classpath
+        System.out.println("this.class.classLoader: " + this.getClass().getClassLoader());
+        System.out.println("this.class.classLoader.parent: " + this.getClass().getClassLoader().getParent());
+        System.out.println("Thread.currentThread.contextClassLoader: " + Thread.currentThread().getContextClassLoader());
+        System.out.println("Thread.currentThread.contextClassLoader.parent: " + Thread.currentThread().getContextClassLoader().getParent());
         // add classes and test classes directories
         // check source for Test classes
         // via reflection get a reference to those classes
