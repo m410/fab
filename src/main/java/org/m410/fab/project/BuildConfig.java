@@ -111,12 +111,17 @@ public class BuildConfig {
 
     public BuildConfig merge(BaseConfig baseConfig) {
         this.configurations.add(baseConfig);
-        this.build.merge(baseConfig.getBuild());
+
+        if(this.build == null)
+            this.build = baseConfig.getBuild();
+        else
+            this.build.merge(baseConfig.getBuild());
 
         if(this.bundles == null)
             this.bundles = new ArrayList<>();
 
-        this.bundles.addAll(baseConfig.getBundles());
+        if(baseConfig.getBundles() != null)
+            this.bundles.addAll(baseConfig.getBundles());
 
         return this;
     }

@@ -95,7 +95,6 @@ public final class ProjectRunner {
     private static void addBundle(BundleContext ctx, BundleRef s) {
         try {
             // todo check file sys cache, if not there put it there
-
             final String bundlePath = s.makeUrl().toString();
             final boolean present = Arrays.asList(ctx.getBundles()).stream().filter(b ->
                             b.getSymbolicName().equals(s.getSymbolicName())
