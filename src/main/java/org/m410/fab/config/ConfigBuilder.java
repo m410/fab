@@ -36,9 +36,10 @@ public final class ConfigBuilder  {
     }
 
     public ConfigBuilder applyEnvOver(String env) {
-        envConfig.stream()
-                .filter(e -> e.get("environment").equals(env))
-                .forEach(e -> merge(projectConfiguration, e));
+        if(envConfig != null && envConfig.size() > 0)
+            envConfig.stream()
+                    .filter(e -> e.get("environment").equals(env))
+                    .forEach(e -> merge(projectConfiguration, e));
         return this;
     }
 
