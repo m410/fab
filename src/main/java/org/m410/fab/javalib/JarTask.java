@@ -4,10 +4,8 @@ import org.m410.fab.builder.BuildContext;
 import org.m410.fab.builder.Task;
 
 import java.io.*;
-import java.nio.file.FileSystems;
-import java.util.zip.CRC32;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
+import java.nio.file.*;
+import java.util.zip.*;
 
 public final class JarTask implements Task {
 

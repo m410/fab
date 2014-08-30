@@ -20,8 +20,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.nio.file.FileSystems;
-import java.util.Arrays;
-import java.util.List;
+import java.text.ParseException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
  * @author m410
  */
 public class IvyDependencyTask implements Task {
+
     @Override
     public String getName() {
         return "compile task";
@@ -41,17 +42,9 @@ public class IvyDependencyTask implements Task {
 
     @Override
     public void execute(BuildContext context) throws Exception {
-        // generate ivy.xml
         File ivyFile = makeIvyXml(context);
-        // generate ivy-setting.xml
         File ivySettingFile = makeIvySettingsXml(context);
-        // create read ivy default settings in ~/.fab
-        // call ivy to pull resources to local repository in ~/.fab/dependencies
         resolveDependencies(context, ivySettingFile, ivyFile);
-
-        // create environment classpaths and add them to the context
-        // somehow compare base configuration to know if reloading is required
-        // write out classpaths to cache to quick access on second run
     }
 
     void resolveDependencies(BuildContext context, File settingsFile, File ivyFile) {
@@ -63,42 +56,62 @@ public class IvyDependencyTask implements Task {
                     @Override public void error(String msg) { context.cli().error(msg); }
                     @Override public void info(String msg) { context.cli().info(msg); }
                     @Override public void debug(String msg) { context.cli().debug(msg); }
+                    @Override public void verbose(String msg) { context.cli().debug(msg); }
+                    @Override public void log(String msg, int level) { context.cli().debug(msg); }
                 };
             }
         };
 
         final Object result = ivy.execute((ivy1, ivyContext) -> {
-            ArtifactDownloadReport[] reports = new ArtifactDownloadReport[0];
+            Map<String,List<ArtifactDownloadReport>> reports = new HashMap<String, List<ArtifactDownloadReport>>();
 
             try {
                 ivy1.configure(settingsFile);
                 ResolveReport resolveReport = ivy1.getResolveEngine().resolve(ivyFile);
                 String resolveId = resolveReport.getResolveId();
-
                 ResolutionCacheManager manager = ivy1.getResolutionCacheManager();
-                final File reportFile = manager.getConfigurationResolveReportInCache(resolveId, "default");
-                XmlReportParser parser = new XmlReportParser();
-                parser.parse(reportFile);
-                reports = parser.getArtifactReports();
-            }
-            catch (Exception e) {
+
+                reports.put("test", Arrays.asList(makeReport("test", resolveId, manager)));
+                reports.put("compile", Arrays.asList(makeReport("compile", resolveId, manager)));
+                reports.put("provided", Arrays.asList(makeReport("provided", resolveId, manager)));
+                reports.put("sources", Arrays.asList(makeReport("sources", resolveId, manager)));
+                reports.put("javadoc", Arrays.asList(makeReport("javadoc", resolveId, manager)));
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
 
-            return Arrays.asList(reports).stream()
-                    .map(ArtifactDownloadReport::getLocalFile)
-                    .collect(Collectors.toList());
-        });
+            final String pathSeparator = System.getProperty("path.separator");
 
-        StringBuilder sb = new StringBuilder();
-        ((List<File>)result).stream().forEach(f->{
-            sb.append(f.getAbsolutePath()).append(System.getProperty("path.separator"));
-        });
+            for (String s : reports.keySet()) {
+                StringBuilder sb = new StringBuilder();
+                reports.get(s).stream()
+                        .map(ArtifactDownloadReport::getLocalFile)
+                        .filter(f -> f != null)
+                        .forEach(f -> {
+                            sb.append(f.getAbsolutePath());
+                            sb.append(pathSeparator);
+                        });
 
-        context.classpaths().put("compile", sb.toString());
+                context.classpaths().put(s, sb.toString());
+            }
+            return null;
+        });
     }
 
-    File makeIvyXml(BuildContext context) throws Exception {
+    private ArtifactDownloadReport[] makeReport(String conf, String resolveId, ResolutionCacheManager manager) {
+        ArtifactDownloadReport[] reports;
+        File reportCompile = manager.getConfigurationResolveReportInCache(resolveId, conf);
+        XmlReportParser parser = new XmlReportParser();
+        try {
+            parser.parse(reportCompile);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+        reports = parser.getArtifactReports();
+        return reports;
+    }
+
+    File makeIvyXml(final BuildContext context) throws Exception {
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
         Document doc = docBuilder.newDocument();
@@ -117,10 +130,57 @@ public class IvyDependencyTask implements Task {
         rootElement.appendChild(infoElement);
 
         Element configurationElement = doc.createElement("configurations");
-        final Element confElement = doc.createElement("conf");
-        confElement.setAttribute("name","default");
-        configurationElement.appendChild(confElement);
+
+        final Element confElement1 = doc.createElement("conf");
+        confElement1.setAttribute("name","default");
+        confElement1.setAttribute("visibility","public");
+        configurationElement.appendChild(confElement1);
+
+        final Element confElement0 = doc.createElement("conf");
+        confElement0.setAttribute("name","provided");
+        confElement0.setAttribute("extends","default");
+        confElement0.setAttribute("visibility","public");
+        configurationElement.appendChild(confElement0);
+
+        final Element confElement2 = doc.createElement("conf");
+        confElement2.setAttribute("name","compile");
+        confElement2.setAttribute("visibility","public");
+        confElement2.setAttribute("extends","provided");
+        configurationElement.appendChild(confElement2);
+
+        final Element confElement3 = doc.createElement("conf");
+        confElement3.setAttribute("name","test");
+        confElement3.setAttribute("visibility","public");
+        confElement3.setAttribute("extends","compile");
+        configurationElement.appendChild(confElement3);
+
+        final Element confElement4 = doc.createElement("conf");
+        confElement4.setAttribute("name","javadoc");
+        confElement4.setAttribute("visibility","public");
+        configurationElement.appendChild(confElement4);
+
+        final Element confElement5 = doc.createElement("conf");
+        confElement5.setAttribute("name","sources");
+        confElement5.setAttribute("visibility","public");
+        configurationElement.appendChild(confElement5);
+
         rootElement.appendChild(configurationElement);
+
+        Element pubElem = doc.createElement("publications");
+
+        final Element artifactElem = doc.createElement("artifact");
+        artifactElem.setAttribute("type","pom");
+        artifactElem.setAttribute("ext","pom");
+        artifactElem.setAttribute("conf","compile");
+        pubElem.appendChild(artifactElem);
+
+        final Element artifactElem2 = doc.createElement("artifact");
+        artifactElem2.setAttribute("type","jar");
+        artifactElem2.setAttribute("ext","jar");
+        artifactElem2.setAttribute("conf","compile");
+        pubElem.appendChild(artifactElem2);
+
+        rootElement.appendChild(pubElem);
 
         Element dependenciesElement = doc.createElement("dependencies");
         rootElement.appendChild(dependenciesElement);
@@ -131,8 +191,7 @@ public class IvyDependencyTask implements Task {
             dependencyElem.setAttribute("name", dependency.getName());
             dependencyElem.setAttribute("rev", dependency.getRev());
             dependencyElem.setAttribute("transitive", "false");
-//            dependencyElem.setAttribute("conf", "false");
-
+            dependencyElem.setAttribute("conf", dependency.getScope()+"->default;sources->sources;javadoc->javadoc");
             dependenciesElement.appendChild(dependencyElem);
         }
 
@@ -147,10 +206,10 @@ public class IvyDependencyTask implements Task {
 
     File makeIvySettingsXml(BuildContext context) throws Exception {
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+        DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
         Document doc = docBuilder.newDocument();
-		Element rootElement = doc.createElement("ivysettings");
-		doc.appendChild(rootElement);
+        Element rootElement = doc.createElement("ivysettings");
+        doc.appendChild(rootElement);
 
         Element prop1 = doc.createElement("property");
         prop1.setAttribute("name","revision");
@@ -188,7 +247,7 @@ public class IvyDependencyTask implements Task {
 
         Element mavenCentral = doc.createElement("ibiblio");
         mavenCentral.setAttribute("name","maven-central");
-        ibiblio.setAttribute("root","http://repo1.maven.org/maven2/");
+        mavenCentral.setAttribute("root","http://repo1.maven.org/maven2/");
         mavenCentral.setAttribute("m2compatible","true");
         chain.appendChild(mavenCentral);
 
@@ -199,11 +258,11 @@ public class IvyDependencyTask implements Task {
         rootElement.appendChild(resolvers);
 
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
-		Transformer transformer = transformerFactory.newTransformer();
-		DOMSource source = new DOMSource(doc);
+        Transformer transformer = transformerFactory.newTransformer();
+        DOMSource source = new DOMSource(doc);
         File file = FileSystems.getDefault().getPath(context.build().getCacheDir(),"ivy-settings.xml").toFile();
         StreamResult result = new StreamResult(file);
-		transformer.transform(source, result);
+        transformer.transform(source, result);
         return file;
     }
 }

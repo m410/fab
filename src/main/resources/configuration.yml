@@ -1,5 +1,5 @@
 archetype:
-  name: garden
+  name: java-lib
   version: 0.1-SNAPSHOT
   organization: org.m410.fabricate.javalib
 
@@ -8,42 +8,27 @@ bundles:
     org: org.m410.fabricate
     version: 0.1-SNAPSHOT
     url: file:/Users/m410/Projects/fabricate/fab-share/target/fab-share-0.1-SNAPSHOT.jar
-  - name: fab-java-lib-project
-    org: org.m410.fabricate.javalib
+  - name: java-lib
+    org: org.m410.fabricate.garden
     version: 0.1-SNAPSHOT
     url: file:/Users/m410/Projects/fabricate/fab-java-lib-project/target/fab-java-lib-project-0.1-SNAPSHOT.jar
 
-dependencies:
-  - { scope: compile, org: org.apache.commons, name: commons-lang3, rev: 3.2.1 }
-  - { scope: test, org: junit, name: junit, rev: "4.11" }
-
 build:
+  cacheDir: .fab
   defaultEnvironment: development
-  defaultCommand: make
+  defaultCommand: build
   lang: java
-  langVersion: 1.8
+  langVersion: "1.8"
   compilerArgs: -ea
   targetDir: target
-  webappDir:
+  webappDir: webapp
   sourceDir: src/java
   sourceOutputDir: target/classes
   resourceDir: src/resources
   testDir: test/java
   testOutputDir: target/test-classes
   testResourceDir: test/resources
-  vcs: 
+  vcs:
   packageSource: false
   packageDocs: false
   packageName:
-
-deploy:
-
-publish:
-
-persistence:
-
-modules:
-
-logging:
-
-

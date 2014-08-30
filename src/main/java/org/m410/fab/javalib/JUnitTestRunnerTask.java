@@ -3,6 +3,21 @@ package org.m410.fab.javalib;
 import org.m410.fab.builder.BuildContext;
 import org.m410.fab.builder.Task;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.PathMatcher;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * @author m410
  */
@@ -19,27 +34,70 @@ public class JUnitTestRunnerTask implements Task {
 
     @Override
     public void execute(BuildContext context) throws Exception {
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader().getParent();
+        List<URL> urls = makeClasspath(context);
+        context.cli().debug("urls:" + urls);
 
-        // create a new classloader with the test classpath
-        System.out.println("this.class.classLoader: " + this.getClass().getClassLoader());
-        System.out.println("this.class.classLoader.parent: " + this.getClass().getClassLoader().getParent());
-        System.out.println("Thread.currentThread.contextClassLoader: " + Thread.currentThread().getContextClassLoader());
-        System.out.println("Thread.currentThread.contextClassLoader.parent: " + Thread.currentThread().getContextClassLoader().getParent());
-        // add classes and test classes directories
-        // check source for Test classes
-        // via reflection get a reference to those classes
-        // call org.junit.runner.JUnitCore.runClasses(<array of classes>)
-        // http://junit.sourceforge.net/javadoc/
+        ClassLoader classLoader = new URLClassLoader(urls.toArray(new URL[urls.size()]), parent);
+        List<String> classes = findTestClasses(context);
 
+        Class<?> runnerClass = classLoader.loadClass("org.junit.runner.JUnitCore");
+        Class<?> resultClass = classLoader.loadClass("org.junit.runner.Result");
 
-//        List testCases = new ArrayList();
-//        testCases.add(TestFeatureOne.class);
-//        testCases.add(TestFeatureTwo.class);
-//        for (Class testCase : testCases)
-//            runTestCase(testCase);
-//        Result result = JUnitCore.runClasses(testCase);
-//        for (Failure failure : result.getFailures())
-//            System.out.println(failure.toString());
-//
+        Object runnerInstance = runnerClass.newInstance();
+        Method runClasses = runnerClass.getMethod("runClasses", Class[].class);
+
+        context.cli().debug("test classes:" + classes);
+        context.cli().debug("runner:" + runClasses);
+        context.cli().debug("runnerInstance:" + runnerInstance);
+
+        for (String aClass : classes) {
+            Class testClass = classLoader.loadClass(aClass);
+            Object result = runClasses.invoke(runnerInstance, new Object[]{new Class[]{testClass}});
+            Method wasSuccessful = resultClass.getMethod("wasSuccessful");
+
+            if(!(Boolean)wasSuccessful.invoke(result)) {
+                Method failureMethod = resultClass.getMethod("getFailures");
+                List failures = (List)failureMethod.invoke(result);
+
+                for (Object failure : failures)
+                    context.cli().error(failure.toString());
+            }
+        }
+    }
+
+    private static List<String> findTestClasses(BuildContext context) throws IOException {
+        Path path = FileSystems.getDefault().getPath(context.build().getTestDir());
+        final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**/*Test.java");
+        return Files.walk(path).filter(matcher::matches)
+                .map(Path::toFile)
+                .map(File::getAbsolutePath)
+                .map(s->s.substring(path.toFile().getAbsolutePath().length() + 1))
+                .map(s->s.replace(".java",""))
+                .map(s -> s.replaceAll("[\\\\/]", "."))
+                .collect(Collectors.toList());
+    }
+
+    private static List<URL> makeClasspath(BuildContext context) throws MalformedURLException {
+        final ArrayList<URL> urls = new ArrayList<>();
+        List<String> paths = toPaths(context.classpaths().get("test"));
+
+        for (String path : paths)
+            urls.add(asUrl(path));
+
+        urls.add(asUrl(context.build().getSourceOutputDir()));
+        urls.add(asUrl(context.build().getTestOutputDir()));
+        return urls;
+    }
+
+    private static List<String> toPaths(String test) {
+        if(test != null)
+            return Arrays.asList(test.split(System.getProperty("path.separator")));
+        else
+            return new ArrayList<>();
+    }
+
+    private static URL asUrl(String sourceOutputDir) throws MalformedURLException {
+        return FileSystems.getDefault().getPath(sourceOutputDir).toFile().toURI().toURL();
     }
 }

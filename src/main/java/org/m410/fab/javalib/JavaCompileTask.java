@@ -12,7 +12,10 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
 /**
  *
@@ -64,6 +67,7 @@ public final class JavaCompileTask implements Task {
 
     @Override
     public void execute(BuildContext context) throws Exception {
+        context.cli().debug("testCompile:"+testCompile);
         ArrayList<String> options = new ArrayList<>();
         makeClasspathOption(context).ifPresent(options::addAll);
         makeSourceOption(context).ifPresent(options::addAll);
@@ -84,12 +88,14 @@ public final class JavaCompileTask implements Task {
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         StandardJavaFileManager stdFileManager = compiler.getStandardFileManager(null, Locale.getDefault(), null);
         DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
+        context.cli().debug("options:" + options);
+        context.cli().debug("sources:" + sources);
         JavaCompiler.CompilationTask compilerTask = compiler.getTask(null, stdFileManager, diagnostics, options, null, sources);
         boolean status = compilerTask.call();
 
         if (!status) {
             for (Diagnostic diagnostic : diagnostics.getDiagnostics()) {
-                System.err.format("Error on line %d in %s\n", diagnostic.getLineNumber(), diagnostic);
+                System.out.format("Error on line %d in %s\n", diagnostic.getLineNumber(), diagnostic);
             }
         }
 
@@ -102,7 +108,12 @@ public final class JavaCompileTask implements Task {
     }
 
     private Optional<List<String>> makeSourcePathOption(BuildContext context) {
-        final File file = FileSystems.getDefault().getPath(context.build().getSourceDir()).toFile();
+        final String sourceDir = testCompile
+                ? context.build().getTestDir()
+                : context.build().getSourceDir();
+
+        final File file = FileSystems.getDefault().getPath(sourceDir).toFile();
+
         if(!file.exists() && !file.mkdirs())
             System.out.println("Could not make source dir");
 
@@ -113,7 +124,10 @@ public final class JavaCompileTask implements Task {
     }
 
     private Optional<List<String>> makeOutputOption(BuildContext context) {
-        final File file = FileSystems.getDefault().getPath(context.build().getSourceOutputDir()).toFile();
+        final String outputDir = testCompile
+                ? context.build().getTestOutputDir()
+                : context.build().getSourceOutputDir();
+        final File file = FileSystems.getDefault().getPath(outputDir).toFile();
         if(!file.exists() && !file.mkdirs())
             System.out.println("Could not make classes dir");
 
@@ -124,29 +138,43 @@ public final class JavaCompileTask implements Task {
     }
 
     private Optional<List<String>> makeTargetOption(BuildContext context) {
-        return Optional.of(Arrays.asList("-source",context.build().getLangVersion()));
+        return Optional.empty();
     }
 
-    private Optional<List<String>>  makeSourceOption(BuildContext context) {
-        return Optional.of(Arrays.asList("-target",context.build().getLangVersion()));
+    private Optional<List<String>> makeSourceOption(BuildContext context) {
+        return Optional.empty();
     }
 
     private Optional<List<String>> makeClasspathOption(BuildContext context) {
+        String path = testCompile
+                ? classes(context) + context.classpaths().get("test")
+                : context.classpaths().get("compile");
 
         ArrayList<String> list = new ArrayList<>(2);
         list.add("-cp");
-        list.add(context.classpaths().get(testCompile ? "test" : "compile"));
+        list.add(path);
         return Optional.of(list);
+    }
+
+    private String classes(BuildContext context) {
+        final String outputDir = context.build().getSourceOutputDir();
+        final String path = FileSystems.getDefault().getPath(outputDir).toFile().getAbsolutePath();
+        return path + System.getProperty("path.separator");
     }
 
     private List<JavaFileObject> makeSources(BuildContext context) throws IOException {
         List<JavaFileObject> sources = new ArrayList<>();
 
         final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**/*.java");
-        final Path path = FileSystems.getDefault().getPath(context.build().getSourceDir());
+
+
+        final Path path = testCompile
+                ? FileSystems.getDefault().getPath(context.build().getTestDir())
+                : FileSystems.getDefault().getPath(context.build().getSourceDir());
+
         Files.walk(path).filter(matcher::matches).forEach(p->{
             final URI uri = p.toUri();
-            System.out.println("add source:" + uri);
+            context.cli().debug("add source:" + uri);
             sources.add(new JavaFileObj(uri, JavaFileObj.Kind.SOURCE));
         });
 
