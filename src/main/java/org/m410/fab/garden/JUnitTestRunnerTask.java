@@ -41,7 +41,7 @@ public class JUnitTestRunnerTask implements Task {
         ClassLoader classLoader = new URLClassLoader(urls.toArray(new URL[urls.size()]), parent);
         List<String> classes = findTestClasses(context);
 
-        Class runnerClass = classLoader.loadClass("org.junit.runner.JUnitCore");
+        Class<?> runnerClass = classLoader.loadClass("org.junit.runner.JUnitCore");
         Object runnerInstance = runnerClass.newInstance();
         Method runClasses = runnerClass.getMethod("runClasses", Class[].class);
 

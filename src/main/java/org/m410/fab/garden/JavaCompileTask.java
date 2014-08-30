@@ -3,6 +3,7 @@ package org.m410.fab.garden;
 import org.m410.fab.builder.BuildContext;
 import org.m410.fab.builder.Task;
 import org.m410.fab.config.Dependency;
+import org.m410.fab.garden.support.JavaFileObj;
 
 import javax.tools.*;
 import java.io.File;
