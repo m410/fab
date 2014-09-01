@@ -195,7 +195,7 @@ public class IvyDependencyTask implements Task {
             dependencyElem.setAttribute("org", dependency.getOrg());
             dependencyElem.setAttribute("name", dependency.getName());
             dependencyElem.setAttribute("rev", dependency.getRev());
-            dependencyElem.setAttribute("transitive", "false");
+            dependencyElem.setAttribute("transitive", Boolean.toString(dependency.isTransitive()));
             dependencyElem.setAttribute("conf", dependency.getScope()+"->default;sources->sources;javadoc->javadoc");
             dependenciesElement.appendChild(dependencyElem);
         }
