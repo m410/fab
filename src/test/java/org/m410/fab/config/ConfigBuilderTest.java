@@ -159,13 +159,14 @@ public class ConfigBuilderTest {
         map.put("scope","name2");
         map.put("org","name3");
         map.put("rev","name4");
-        map.put("transitive",false);
+        map.put("transitive",true);
         Dependency dependency = new Dependency(map);
         assertNotNull(dependency.getName());
         assertNotNull(dependency.getOrg());
         assertNotNull(dependency.getRev());
         assertNotNull(dependency.getScope());
         assertNotNull(dependency.isTransitive());
+        assertTrue(dependency.isTransitive());
     }
 
     @Test
