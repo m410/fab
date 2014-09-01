@@ -36,7 +36,6 @@ public class Jetty9Task implements Task {
         final ProxyServletContainerListener listener = new ProxyServletContainerListener(
                 applicationClass, appLoaderClass, sourceDir, classesDir, classpath);
 
-
         final Server server = new Server(8080);
         final WebAppContext webAppContext = new WebAppContext();
 

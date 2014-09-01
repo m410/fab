@@ -6,7 +6,7 @@
         <additionalProperties>
           <property key="Embed-Dependency" value="*;scope=compile|runtime;inline=true" />
           <property key="Bundle-Name" value="fab-java-garden-project" />
-          <property key="Private-Package" value="org.m410.fab" />
+          <property key="Private-Package" value="org.m410.fab.garden.support" />
           <property key="Import-Package" value="org.osgi.framework,org.m410.fab.service,org.m410.fab.builder,*;resolution:=optional" />
           <property key="Export-Package" value="org.m410.fab.garden" />
           <property key="Include-Resource" value="@$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.main/4.4.0/org.apache.felix.main-4.4.0.jar,@$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.framework/4.4.0/org.apache.felix.framework-4.4.0.jar,@$MAVEN_REPOSITORY$/org/apache/ivy/ivy/2.3.0/ivy-2.3.0.jar,@$MAVEN_REPOSITORY$/org/eclipse/jetty/aggregate/jetty-all/9.2.2.v20140723/jetty-all-9.2.2.v20140723.jar,@$MAVEN_REPOSITORY$/javax/websocket/javax.websocket-api/1.0/javax.websocket-api-1.0.jar,@$MAVEN_REPOSITORY$/javax/servlet/javax.servlet-api/3.1.0/javax.servlet-api-3.1.0.jar" />
@@ -36,6 +36,9 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.yaml:snakeyaml:1.13" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.11" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.3" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: ch.qos.logback:logback-classic:1.1.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: ch.qos.logback:logback-core:1.1.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.slf4j:slf4j-api:1.7.6" level="project" />
   </component>
 </module>
 

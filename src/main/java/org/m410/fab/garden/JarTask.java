@@ -19,6 +19,10 @@ public final class JarTask implements Task {
 
     public void execute(BuildContext context) throws Exception {
 
+        // todo need to create META-INF/MANIFEST.MF
+        // Manifest-Version: 1.0
+        // Created-By: 1.7.0_06 (Oracle Corporation)
+
         try {
             File targetFile = new File(context.build().getTargetDir());
 

@@ -36,25 +36,33 @@ public class JUnitTestRunnerTask implements Task {
     public void execute(BuildContext context) throws Exception {
         final ClassLoader parent = Thread.currentThread().getContextClassLoader().getParent();
         List<URL> urls = makeClasspath(context);
-        context.cli().println("urls:" + urls);
+        context.cli().debug("urls:" + urls);
 
         ClassLoader classLoader = new URLClassLoader(urls.toArray(new URL[urls.size()]), parent);
         List<String> classes = findTestClasses(context);
 
         Class<?> runnerClass = classLoader.loadClass("org.junit.runner.JUnitCore");
+        Class<?> resultClass = classLoader.loadClass("org.junit.runner.Result");
+
         Object runnerInstance = runnerClass.newInstance();
         Method runClasses = runnerClass.getMethod("runClasses", Class[].class);
 
-        context.cli().println("test classes:" + classes);
-        context.cli().println("runner:" + runClasses);
-        context.cli().println("runnerInstance:" + runnerInstance);
+        context.cli().debug("test classes:" + classes);
+        context.cli().debug("runner:" + runClasses);
+        context.cli().debug("runnerInstance:" + runnerInstance);
 
         for (String aClass : classes) {
             Class testClass = classLoader.loadClass(aClass);
             Object result = runClasses.invoke(runnerInstance, new Object[]{new Class[]{testClass}});
-            context.cli().println(result.toString());
-            // for (Failure failure : result.getFailures())
-            //    System.out.println(failure.toString());
+            Method wasSuccessful = resultClass.getMethod("wasSuccessful");
+
+            if(!(Boolean)wasSuccessful.invoke(result)) {
+                Method failureMethod = resultClass.getMethod("getFailures");
+                List failures = (List)failureMethod.invoke(result);
+
+                for (Object failure : failures)
+                    context.cli().error(failure.toString());
+            }
         }
     }
 
@@ -64,8 +72,9 @@ public class JUnitTestRunnerTask implements Task {
         return Files.walk(path).filter(matcher::matches)
                 .map(Path::toFile)
                 .map(File::getAbsolutePath)
-                .map(s->s.substring(path.toFile().getAbsolutePath().length()))
-                .map(s->s.replaceAll("[\\\\/]", "."))
+                .map(s->s.substring(path.toFile().getAbsolutePath().length() + 1))
+                .map(s->s.replace(".java",""))
+                .map(s -> s.replaceAll("[\\\\/]", "."))
                 .collect(Collectors.toList());
     }
 
@@ -82,7 +91,10 @@ public class JUnitTestRunnerTask implements Task {
     }
 
     private static List<String> toPaths(String test) {
-        return Arrays.asList(test.split(System.getProperty("path.separator")));
+        if(test != null)
+            return Arrays.asList(test.split(System.getProperty("path.separator")));
+        else
+            return new ArrayList<>();
     }
 
     private static URL asUrl(String sourceOutputDir) throws MalformedURLException {

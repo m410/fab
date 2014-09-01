@@ -27,7 +27,7 @@ build:
   defaultEnvironment: development
   defaultCommand: make
   lang: java
-  langVersion: 1.8
+  langVersion: "1.8"
   compilerArgs: -ea
   targetDir: target
   webappDir: webapp

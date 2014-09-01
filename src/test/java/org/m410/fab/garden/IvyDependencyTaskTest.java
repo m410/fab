@@ -6,6 +6,8 @@ import org.m410.fab.builder.BuildContext;
 import org.m410.fab.builder.BuildContextImpl;
 import org.m410.fab.builder.Cli;
 import org.m410.fab.config.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.nio.file.FileSystems;
@@ -50,11 +52,12 @@ public class IvyDependencyTaskTest {
         Application app = new ApplicationImpl(map);
 
         Cli cli = new Cli() {
-            @Override public String ask(String question) { System.out.println(question); return ""; }
-            @Override public void warn(String in) { System.out.println(in); }
-            @Override public void info(String in) { System.out.println(in); }
-            @Override public void debug(String in) { System.out.println(in); }
-            @Override public void error(String in) { System.out.println(in); }
+            Logger log = LoggerFactory.getLogger(this.getClass());
+            @Override public String ask(String question) { log.debug(question); return ""; }
+            @Override public void warn(String in) { log.warn(in); }
+            @Override public void info(String in) { log.info(in); }
+            @Override public void debug(String in) { log.debug(in); }
+            @Override public void error(String in) { log.error(in); }
             @Override public void println(String s) { System.out.println(s); }
         };
 

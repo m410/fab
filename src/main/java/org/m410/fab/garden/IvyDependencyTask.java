@@ -35,7 +35,6 @@ import org.apache.ivy.util.MessageLoggerEngine;
  * @author m410
  */
 public class IvyDependencyTask implements Task {
-
     @Override
     public String getName() {
         return "compile task";
@@ -48,17 +47,9 @@ public class IvyDependencyTask implements Task {
 
     @Override
     public void execute(BuildContext context) throws Exception {
-        // generate ivy.xml
         File ivyFile = makeIvyXml(context);
-        // generate ivy-setting.xml
         File ivySettingFile = makeIvySettingsXml(context);
-        // create read ivy default settings in ~/.fab
-        // call ivy to pull resources to local repository in ~/.fab/dependencies
         resolveDependencies(context, ivySettingFile, ivyFile);
-
-        // create environment classpaths and add them to the context
-        // somehow compare base configuration to know if reloading is required
-        // write out classpaths to cache to quick access on second run
     }
 
     void resolveDependencies(BuildContext context, File settingsFile, File ivyFile) {
@@ -90,8 +81,7 @@ public class IvyDependencyTask implements Task {
                 reports.put("provided", Arrays.asList(makeReport("provided", resolveId, manager)));
                 reports.put("sources", Arrays.asList(makeReport("sources", resolveId, manager)));
                 reports.put("javadoc", Arrays.asList(makeReport("javadoc", resolveId, manager)));
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
 
@@ -100,12 +90,12 @@ public class IvyDependencyTask implements Task {
             for (String s : reports.keySet()) {
                 StringBuilder sb = new StringBuilder();
                 reports.get(s).stream()
-                    .map(ArtifactDownloadReport::getLocalFile)
-                    .filter(f->f!=null)
-                    .forEach(f -> {
-                        sb.append(f.getAbsolutePath());
-                        sb.append(pathSeparator);
-                    });
+                        .map(ArtifactDownloadReport::getLocalFile)
+                        .filter(f -> f != null)
+                        .forEach(f -> {
+                            sb.append(f.getAbsolutePath());
+                            sb.append(pathSeparator);
+                        });
 
                 context.classpaths().put(s, sb.toString());
             }
@@ -178,10 +168,10 @@ public class IvyDependencyTask implements Task {
         confElement5.setAttribute("name","sources");
         confElement5.setAttribute("visibility","public");
         configurationElement.appendChild(confElement5);
-        
+
         rootElement.appendChild(configurationElement);
 
-		Element pubElem = doc.createElement("publications");
+        Element pubElem = doc.createElement("publications");
 
         final Element artifactElem = doc.createElement("artifact");
         artifactElem.setAttribute("type","pom");
@@ -189,7 +179,7 @@ public class IvyDependencyTask implements Task {
         artifactElem.setAttribute("conf","compile");
         pubElem.appendChild(artifactElem);
 
-		final Element artifactElem2 = doc.createElement("artifact");
+        final Element artifactElem2 = doc.createElement("artifact");
         artifactElem2.setAttribute("type","jar");
         artifactElem2.setAttribute("ext","jar");
         artifactElem2.setAttribute("conf","compile");
@@ -221,10 +211,10 @@ public class IvyDependencyTask implements Task {
 
     File makeIvySettingsXml(BuildContext context) throws Exception {
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+        DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
         Document doc = docBuilder.newDocument();
-		Element rootElement = doc.createElement("ivysettings");
-		doc.appendChild(rootElement);
+        Element rootElement = doc.createElement("ivysettings");
+        doc.appendChild(rootElement);
 
         Element prop1 = doc.createElement("property");
         prop1.setAttribute("name","revision");
@@ -273,11 +263,11 @@ public class IvyDependencyTask implements Task {
         rootElement.appendChild(resolvers);
 
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
-		Transformer transformer = transformerFactory.newTransformer();
-		DOMSource source = new DOMSource(doc);
+        Transformer transformer = transformerFactory.newTransformer();
+        DOMSource source = new DOMSource(doc);
         File file = FileSystems.getDefault().getPath(context.build().getCacheDir(),"ivy-settings.xml").toFile();
         StreamResult result = new StreamResult(file);
-		transformer.transform(source, result);
+        transformer.transform(source, result);
         return file;
     }
 }

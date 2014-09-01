@@ -2,9 +2,12 @@ package org.m410.fab.garden;
 
 import org.junit.Test;
 import org.m410.fab.builder.BuildContextImpl;
+import org.m410.fab.builder.Cli;
 import org.m410.fab.config.Build;
 import org.m410.fab.config.BuildImpl;
 import org.m410.fab.config.Dependency;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.file.FileSystems;
 import java.util.ArrayList;
@@ -29,8 +32,16 @@ public class JavaCompileTaskTest {
         map.put("sourceOutputDir", FileSystems.getDefault().getPath(tgt).toFile().getAbsolutePath());
         Build build = new BuildImpl(map);
         List<Dependency> deps = new ArrayList<>();
-
-        BuildContextImpl context = new BuildContextImpl(null,null,build,"dev",deps,null);
+        Cli cli = new Cli() {
+            Logger log = LoggerFactory.getLogger(this.getClass());
+            @Override public String ask(String question) { log.debug(question); return ""; }
+            @Override public void warn(String in) { log.warn(in); }
+            @Override public void info(String in) { log.info(in); }
+            @Override public void debug(String in) { log.debug(in); }
+            @Override public void error(String in) { log.error(in); }
+            @Override public void println(String s) { System.out.println(s); }
+        };
+        BuildContextImpl context = new BuildContextImpl(cli,null,build,"dev",deps,null);
 
         try {
             task.execute(context);
