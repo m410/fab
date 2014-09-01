@@ -12,7 +12,7 @@ import org.apache.felix.framework.util.Util;
 import org.apache.felix.main.Main;
 import org.m410.fab.project.BaseConfig;
 import org.m410.fab.project.BuildConfig;
-import org.m410.fab.project.BundleRef;
+import org.m410.fab.project.BundledRef;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -86,7 +86,7 @@ public final class Application {
         }
     }
 
-    private static void addBundle(BundleContext ctx, BundleRef s) {
+    private static void addBundle(BundleContext ctx, BundledRef s) {
         try {
             final String bundlePath = s.makeUrl().toString();
             final boolean present = Arrays.asList(ctx.getBundles()).stream().filter(b ->
@@ -135,10 +135,10 @@ public final class Application {
     }
 
     @SuppressWarnings("unchecked")
-    static List<BundleRef> collectBundles(Object arg) {
+    static List<BundledRef> collectBundles(Object arg) {
         if(arg != null && arg instanceof List)
             return ((List<Map<String,Object>>)arg).stream().map(m ->{
-                BundleRef b = new BundleRef();
+                BundledRef b = new BundledRef();
 
                 try {
                     BeanUtils.populate(b,m);

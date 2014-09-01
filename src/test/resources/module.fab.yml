@@ -1,0 +1,9 @@
+module:
+  organization: org.m410.mod
+  version: 0.2.0
+  name: any-module
+
+bundles:
+  - name: module
+    org: org.m410.fabricate
+    version: 0.1-SNAPSHOT

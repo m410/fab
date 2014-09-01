@@ -5,7 +5,8 @@ import java.net.URL;
 /**
  * @author m410
  */
-public class BundleRef {
+@Deprecated
+public class BundledRef {
     private String name;
     private String org;
     private String version;
