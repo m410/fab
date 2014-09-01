@@ -10,10 +10,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.file.FileSystems;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -23,10 +20,10 @@ import java.util.stream.Collectors;
  */
 public class FabricateServiceImpl implements FabricateService {
     private List<Command> commands = new ArrayList<>();
-    private List<CommandModifier> commandModifiers= new ArrayList<>();
+    private List<CommandModifier> commandModifiers = new ArrayList<>();
     private List<CommandListener> commandListeners = new ArrayList<>();
     private List<TaskListener> taskListeners = new ArrayList<>();
-    private List<ConfigListener> configListeners= new ArrayList<>();
+    private List<ConfigListener> configListeners = new ArrayList<>();
     private List<ConfigProvider> configProviders = new ArrayList<>();
 
     @Override
@@ -39,6 +36,11 @@ public class FabricateServiceImpl implements FabricateService {
     @Override
     public void addConfigProvider(ConfigProvider provider) {
         configProviders.add(provider);
+    }
+
+    @Override
+    public void addFullConfig(Map<String, Object> fullConfig) {
+        configProviders.add(new ConfigProviderImpl(fullConfig));
     }
 
     @Override
@@ -68,7 +70,7 @@ public class FabricateServiceImpl implements FabricateService {
                 commandModifier.modify(command);
                 commandListeners.stream().forEach(l -> l.notify(new CommandEvent(command)));
             });
-        } );
+        });
     }
 
     @Override
@@ -84,7 +86,7 @@ public class FabricateServiceImpl implements FabricateService {
         // only the last command can take args
         for (String arg : Arrays.asList(args)) {
             for (Command command : commands) {
-                if(command.getName().equals(arg)) {
+                if (command.getName().equals(arg)) {
                     for (CommandListener commandListener : commandListeners) {
                         commandListener.notify(new CommandEvent(command));
                     }
@@ -106,13 +108,9 @@ public class FabricateServiceImpl implements FabricateService {
 
     @SuppressWarnings("unchecked")
     BuildContext configureInitialBuildContext(String env, String logLevel) throws FileNotFoundException {
-        File currentDirectory = FileSystems.getDefault().getPath(System.getProperty("user.dir")).toFile();
-        FileInputStream configFileInput = new FileInputStream(projectFile(currentDirectory));
-        ConfigContext config = new ConfigBuilder(((Map<String,Object>)new Yaml().load(configFileInput)))
-                .parseLocalProject()
-//                .applyUnder(configProviders.stream().map(ConfigProvider::config).collect(Collectors.toList()))
-                .applyEnvOver(env)
-                .build();
+        ConfigBuilder builder = new ConfigBuilder(configProviders.get(0).config()).parseLocalProject();
+        configProviders.stream().skip(1).map(ConfigProvider::config).forEach(builder::applyOver);
+        ConfigContext config = builder.applyEnvOver(env).build();
 
         return new BuildContextImpl(
                 new CliStdOutImpl(logLevel),
@@ -124,16 +122,16 @@ public class FabricateServiceImpl implements FabricateService {
     }
 
 
-    public File projectFile(File projectRoot){
-        File[] files = projectRoot.listFiles( (dir, filename) -> filename.endsWith(".fab.yml"));
+    public File projectFile(File projectRoot) {
+        File[] files = projectRoot.listFiles((dir, filename) -> filename.endsWith(".fab.yml"));
 
-        if(files == null)
+        if (files == null)
             throw new NoConfigurationFileException();
 
-        if(files.length >1)
+        if (files.length > 1)
             throw new ToManyConfigurationFilesException();
 
-        if(files.length == 0)
+        if (files.length == 0)
             throw new NoConfigurationFileException();
 
         return files[0];

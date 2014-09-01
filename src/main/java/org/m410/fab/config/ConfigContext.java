@@ -5,10 +5,7 @@ import org.m410.fab.config.Build;
 import org.m410.fab.config.Dependency;
 import org.m410.fab.config.Module;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -26,11 +23,19 @@ public class ConfigContext {
         build = new BuildImpl((Map<String,Object>)base.get("build"));
         dependencies = ((List<Map<String,Object>>)base.getOrDefault("dependencies", new ArrayList<>()))
                 .stream().map(Dependency::new).collect(Collectors.toList());
-        modules = ((List<Map<String,Object>>)base.getOrDefault("modules", new ArrayList<>()))
-                .stream().map(ModuleImpl::new).collect(Collectors.toList());
+
+        modules = new ArrayList<>();
+
+        Optional.ofNullable(base.getOrDefault("modules", new ArrayList<>())).ifPresent(m ->{
+            modules.addAll(((List<Map<String,Object>>)m).stream().map(ModuleImpl::new).collect(Collectors.toList()));
+        });
+
         modules.add(new ModuleImpl(((Map<String, Object>) base.getOrDefault("logging", new HashMap<>()))));
-        modules.addAll(((List<Map<String,Object>>)base.getOrDefault("persistence", new ArrayList<>()))
-                .stream().map(ModuleImpl::new).collect(Collectors.toList()));
+
+        Optional.ofNullable(base.getOrDefault("persistence", new ArrayList<>())).ifPresent(m -> {
+            modules.addAll(((List<Map<String, Object>>) m).stream().map(ModuleImpl::new).collect(Collectors.toList()));
+        });
+
         modules.addAll(((List<Map<String, Object>>) base.getOrDefault("view", new ArrayList<>()))
                 .stream().map(ModuleImpl::new).collect(Collectors.toList()));
     }

@@ -17,10 +17,10 @@ public interface Build extends Serializable {
     String getCompilerArgs();
     String getTargetDir();
     String getWebappDir();
-    String getSourceDir();
-    String getSourceOutputDir();
-    String getResourceDir();
-    String getTestDir();
+    String getSourceDir();// mainSourceDir
+    String getSourceOutputDir();// mainSourceOutput
+    String getResourceDir();// mainResourcesDir
+    String getTestDir(); //testSourceDir
     String getTestOutputDir();
     String getTestResourceDir();
     String getVcs();

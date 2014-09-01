@@ -3,6 +3,8 @@ package org.m410.fab.service;
 import org.m410.fab.builder.*;
 import org.m410.fab.config.ConfigProvider;
 
+import java.util.Map;
+
 /**
  * Document Me..
  *
@@ -17,6 +19,8 @@ public interface FabricateService {
     void execute(String[] taskList) throws Exception;
 
     void addConfigProvider(ConfigProvider provider);
+
+    void addFullConfig(Map<String,Object> fullConfig);
 
     void addCommandListener(CommandListener c);
 
