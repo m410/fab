@@ -43,6 +43,7 @@ modules:
     organization: org.m410.mod
 
 logging:
+  module: [org.m410.fabricate,slf4j,0.1.0]
   name: slf4j
   org: org.m410.fab.logging
   appenders:

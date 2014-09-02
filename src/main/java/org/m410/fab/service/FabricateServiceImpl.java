@@ -95,7 +95,7 @@ public class FabricateServiceImpl implements FabricateService {
             }
         }
 
-
+        dumpContext(buildContext)
     }
 
     private String extractLogLevel(String[] args) {
@@ -112,6 +112,7 @@ public class FabricateServiceImpl implements FabricateService {
         configProviders.stream().skip(1).map(ConfigProvider::config).forEach(builder::applyOver);
         ConfigContext config = builder.applyEnvOver(env).build();
 
+        // todo load from file if exists and hash is same as project file
         return new BuildContextImpl(
                 new CliStdOutImpl(logLevel),
                 config.getApplication(),
@@ -121,6 +122,9 @@ public class FabricateServiceImpl implements FabricateService {
                 config.getModules());
     }
 
+    public void dumpContext(BuildContext buildContext) {
+        // if exists and hash is same, do nothing, else save context
+    }
 
     public File projectFile(File projectRoot) {
         File[] files = projectRoot.listFiles((dir, filename) -> filename.endsWith(".fab.yml"));
