@@ -112,6 +112,17 @@ public class FabricateServiceImpl implements FabricateService {
         configProviders.stream().skip(1).map(ConfigProvider::config).forEach(builder::applyOver);
         ConfigContext config = builder.applyEnvOver(env).build();
 
+        // get project file hash
+        // load file from cache
+
+        // if no file
+            // load config
+        // if hashes don't match
+            // load config
+            // delete cache
+        // load context from file
+            // use cached file
+
         // todo load from file if exists and hash is same as project file
         return new BuildContextImpl(
                 new CliStdOutImpl(logLevel),

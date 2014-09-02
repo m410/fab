@@ -15,12 +15,15 @@ import java.util.Map;
  */
 public interface BuildContext {
     String getHash();
-    void setHash(String hash);
+    boolean isCachedConfig();
+    String environment();
+    Cli cli();
+
+    // how to handle caching of environments, maybe separate files?
+    // cached elements
     Application getApplication();
     Build getBuild();
-    String environment();
     List<Dependency> getDependencies();
     List<? extends Module> getModules();
-    Cli cli();
     Map<String,String> getClasspath();
 }
