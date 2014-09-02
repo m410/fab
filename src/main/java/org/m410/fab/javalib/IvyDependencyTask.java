@@ -22,7 +22,6 @@ import java.io.File;
 import java.nio.file.FileSystems;
 import java.text.ParseException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 /**
@@ -92,7 +91,7 @@ public class IvyDependencyTask implements Task {
                             sb.append(pathSeparator);
                         });
 
-                context.classpaths().put(s, sb.toString());
+                context.getClasspath().put(s, sb.toString());
             }
             return null;
         });
@@ -124,9 +123,9 @@ public class IvyDependencyTask implements Task {
         doc.appendChild(rootElement);
 
         Element infoElement = doc.createElement("info");
-        infoElement.setAttribute("module",context.application().getName());
-        infoElement.setAttribute("organisation",context.application().getOrg());
-        infoElement.setAttribute("revision",context.application().getVersion());
+        infoElement.setAttribute("module",context.getApplication().getName());
+        infoElement.setAttribute("organisation",context.getApplication().getOrg());
+        infoElement.setAttribute("revision",context.getApplication().getVersion());
         rootElement.appendChild(infoElement);
 
         Element configurationElement = doc.createElement("configurations");
@@ -185,7 +184,7 @@ public class IvyDependencyTask implements Task {
         Element dependenciesElement = doc.createElement("dependencies");
         rootElement.appendChild(dependenciesElement);
 
-        for (Dependency dependency : context.dependencies()) {
+        for (Dependency dependency : context.getDependencies()) {
             Element dependencyElem = doc.createElement("dependency");
             dependencyElem.setAttribute("org", dependency.getOrg());
             dependencyElem.setAttribute("name", dependency.getName());
@@ -198,7 +197,7 @@ public class IvyDependencyTask implements Task {
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
         DOMSource source = new DOMSource(doc);
-        File file = FileSystems.getDefault().getPath(context.build().getCacheDir(),"ivy.xml").toFile();
+        File file = FileSystems.getDefault().getPath(context.getBuild().getCacheDir(),"ivy.xml").toFile();
         StreamResult result = new StreamResult(file);
         transformer.transform(source, result);
         return file;
@@ -260,7 +259,7 @@ public class IvyDependencyTask implements Task {
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
         DOMSource source = new DOMSource(doc);
-        File file = FileSystems.getDefault().getPath(context.build().getCacheDir(),"ivy-settings.xml").toFile();
+        File file = FileSystems.getDefault().getPath(context.getBuild().getCacheDir(),"ivy-settings.xml").toFile();
         StreamResult result = new StreamResult(file);
         transformer.transform(source, result);
         return file;
