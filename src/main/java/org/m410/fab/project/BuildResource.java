@@ -6,6 +6,7 @@ import java.util.List;
 /**
  * @author m410
  */
+@Deprecated
 public interface BuildResource {
 
 }

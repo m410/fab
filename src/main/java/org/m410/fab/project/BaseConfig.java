@@ -1,22 +1,27 @@
 package org.m410.fab.project;
 
+import org.m410.fab.config.BuildProperties;
+
 import java.util.List;
+import java.util.Map;
 
 /**
  * A reference to base bundles and configuration
  *
  * @author m410
  */
+@Deprecated
 public class BaseConfig {
-    private List<BundleRef> bundles;
+    private List<BundledRef> bundles;
     private BuildProperties build;
     private String source;
+    private Map<String, Object> fullConfig;
 
-    public List<BundleRef> getBundles() {
+    public List<BundledRef> getBundles() {
         return bundles;
     }
 
-    public void setBundles(List<BundleRef> bundles) {
+    public void setBundles(List<BundledRef> bundles) {
         this.bundles = bundles;
     }
 
@@ -43,5 +48,13 @@ public class BaseConfig {
                 ", build=" + build +
                 ", source='" + source + '\'' +
                 '}';
+    }
+
+    public void setFullConfig(Map<String, Object> fullConfig) {
+        this.fullConfig = fullConfig;
+    }
+
+    public Map<String, Object> getFullConfig() {
+        return fullConfig;
     }
 }

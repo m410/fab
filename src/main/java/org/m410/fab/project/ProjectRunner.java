@@ -1,29 +1,23 @@
 package org.m410.fab.project;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.felix.framework.util.Util;
 import org.apache.felix.main.AutoProcessor;
 import org.apache.felix.main.Main;
+import org.m410.fab.config.BundleRef;
+import org.m410.fab.config.ConfigUtil;
+import org.m410.fab.config.ProjectConfig;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
-import org.yaml.snakeyaml.TypeDescription;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
-import org.yaml.snakeyaml.representer.Representer;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.PathMatcher;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author m410
@@ -33,15 +27,17 @@ public final class ProjectRunner {
     static final String bundleDir = ".fab/bundles";
     static final String cacheDir = ".fab/cache";
     private final List<String> args;
+    private final boolean debug;
 
-    public ProjectRunner(List<String> args) {
+    public ProjectRunner(List<String> args, boolean debug) {
         this.args = args;
+        this.debug = debug;
     }
 
     public void run() throws Throwable {
         checkAndSetupProjectDir();
         Main.loadSystemProperties();
-        Map<String,String> configProps = loadConfigProperties();
+        Map<String, String> configProps = loadConfigProperties();
         Main.copySystemProperties(configProps);
         configProps.put(AutoProcessor.AUTO_DEPLOY_DIR_PROPERY, bundleDir);
         configProps.put(Constants.FRAMEWORK_STORAGE, cacheDir);
@@ -55,30 +51,30 @@ public final class ProjectRunner {
             framework.start();
             BundleContext ctx = framework.getBundleContext();
 
-            final File configFile = projectConfigFile(System.getProperty("user.dir"));
-            BuildConfig localConfig = loadLocalConfig(configFile);
-            Set<String> violations = localConfig.verifyResources();
+            final File configFile = ConfigUtil.projectConfigFile(System.getProperty("user.dir"));
+            ProjectConfig config = new ProjectConfig(configFile);
 
-            if(violations.size() > 0) {
-                System.out.println("got config errors");
+            config.getBundles().stream().forEach(s -> addBundle(ctx, s));
+            Arrays.asList(ctx.getBundles()).stream().forEach(this::startBundle);
+            // todo after start need to get configuration Providers from each module
+
+            Object buildService = ctx.getService(ctx.getServiceReference("org.m410.fab.service.FabricateService"));
+
+            try {
+                // load full configurations
+                for (Map<String, Object> fullConfig : config.getConfigurations())
+                    buildService.getClass().getMethod("addFullConfig", Map.class).invoke(buildService, fullConfig);
+
+                buildService.getClass().getMethod("postStartupWiring").invoke(buildService);
+                final String[] objects = args.toArray(new String[args.size()]);
+                buildService.getClass().getMethod("execute", String[].class).invoke(buildService, new Object[]{objects});
+
             }
-            else {
-                localConfig.resources().stream().forEach(s -> addBundle(ctx, s));
-                Arrays.asList(ctx.getBundles()).stream().forEach(this::startBundle);
-                Object buildService = ctx.getService(ctx.getServiceReference("org.m410.fab.service.FabricateService"));
-
-                try {
-                    buildService.getClass().getMethod("postStartupWiring").invoke(buildService);
-                    final String[] objects = args.toArray(new String[args.size()]);
-                    buildService.getClass().getMethod("execute",String[].class).invoke(buildService, new Object[]{objects});
-
-                } catch (InvocationTargetException e) {
-                    // just throw the root cause
-                    throw e.getTargetException();
-                }
+            catch (InvocationTargetException e) {
+                // just throw the root cause
+                throw e.getTargetException();
             }
-        }
-        finally {
+        } finally {
             framework.stop();
         }
     }
@@ -94,87 +90,29 @@ public final class ProjectRunner {
 
     private static void addBundle(BundleContext ctx, BundleRef s) {
         try {
-            // todo check file sys cache, if not there put it there
-
+            // todo check project file sys cache, if not there put it there
             final String bundlePath = s.makeUrl().toString();
-            final boolean present = Arrays.asList(ctx.getBundles()).stream().filter(b ->
-                            b.getSymbolicName().equals(s.getSymbolicName())
-            ).findFirst().isPresent();
+            final boolean present = Arrays.asList(ctx.getBundles()).stream()
+                    .filter(b -> b.getSymbolicName().equals(s.getSymbolicName()))
+                    .findFirst()
+                    .isPresent();
 
-            if(!present) {
+            if (!present) {
                 ctx.installBundle(bundlePath);
             }
-        }
-        catch (BundleException e) {
+        } catch (BundleException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public File projectConfigFile(final String userDir) throws IOException {
-        PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**.fab.yml");
-        Path path = FileSystems.getDefault().getPath(userDir);
-        return Files.walk(path, 1).filter(matcher::matches).findFirst().get().toFile();
-    }
-
-    @SuppressWarnings("unchecked")
-    public BuildConfig loadLocalConfig(File configFile) throws Exception {
-        Representer representer = new Representer();
-        representer.getPropertyUtils().setSkipMissingProperties(true);
-        final Constructor constructor = new Constructor(BuildConfig.class);
-        TypeDescription buildConfigTypeDef = new TypeDescription(BuildConfig.class);
-        buildConfigTypeDef.putListPropertyType("bundles", BundleRef.class);
-        buildConfigTypeDef.putListPropertyType("persistence", BundleRef.class);
-        buildConfigTypeDef.putListPropertyType("modules", BundleRef.class);
-        buildConfigTypeDef.putListPropertyType("view", BundleRef.class);
-        constructor.addTypeDescription(buildConfigTypeDef);
-
-        BuildConfig bean =  (BuildConfig)new Yaml(constructor,representer)
-                .load(new FileInputStream(configFile));
-        bean.setSource(configFile.getAbsolutePath());
-        bean.merge(loadBaseConfig(bean));
-        return bean;
-    }
-
-
-    @SuppressWarnings("unchecked")
-    BaseConfig loadBaseConfig(BuildConfig local) throws Exception {
-        Representer representer = new Representer();
-        representer.getPropertyUtils().setSkipMissingProperties(true);
-        final Constructor constructor = new Constructor(BaseConfig.class);
-        TypeDescription buildConfigTypeDef = new TypeDescription(BaseConfig.class);
-        buildConfigTypeDef.putListPropertyType("bundles", BundleRef.class);
-        constructor.addTypeDescription(buildConfigTypeDef);
-        final BaseConfig baseConfig = (BaseConfig) new Yaml(constructor, representer)
-                .load(local.makeUrl().openStream());
-        baseConfig.setSource(local.makeUrl().toString());
-        return baseConfig;
-    }
-
-    @SuppressWarnings("unchecked")
-    List<BundleRef> collectBundles(Object arg) {
-        if(arg != null && arg instanceof List)
-            return ((List<Map<String,Object>>)arg).stream().map(m ->{
-                BundleRef b = new BundleRef();
-
-                try {
-                    BeanUtils.populate(b,m);
-                } catch (IllegalAccessException  | InvocationTargetException e) {
-                    throw new RuntimeException(e);
-                }
-                return b;
-            }).collect(Collectors.toList());
-        else
-            return new ArrayList<>();
     }
 
     void checkAndSetupProjectDir() throws IOException {
         final File localCacheDir = FileSystems.getDefault().getPath(".fab").toFile();
 
-        if(!localCacheDir.exists()) {
+        if (!localCacheDir.exists()) {
             localCacheDir.mkdir();
-            new File(localCacheDir,"bundles").mkdir();
-            new File(localCacheDir,"cache").mkdir();
-            File confFile = new File(localCacheDir,"config.properties");
+            new File(localCacheDir, "bundles").mkdir();
+            new File(localCacheDir, "cache").mkdir();
+            File confFile = new File(localCacheDir, "config.properties");
 
             try (FileWriter w = new FileWriter(confFile)) {
                 w.write("obr.repository.url=http://felix.apache.org/obr/releases.xml");
@@ -188,7 +126,7 @@ public final class ProjectRunner {
 
         if (url != null) {
 
-            try(BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()))) {
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()))) {
 
                 for (String s = br.readLine(); s != null; s = br.readLine()) {
                     s = s.trim();
@@ -203,7 +141,7 @@ public final class ProjectRunner {
         throw new Exception("Could not find framework factory.");
     }
 
-    private Map<String,String > loadConfigProperties() throws IOException {
+    private Map<String, String> loadConfigProperties() throws IOException {
         Properties props = new Properties();
         URL propURL = new File(new File(".fab"), Main.CONFIG_PROPERTIES_FILE_VALUE).toURI().toURL();
         InputStream is = propURL.openConnection().getInputStream();

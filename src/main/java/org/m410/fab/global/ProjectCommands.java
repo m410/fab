@@ -1,6 +1,6 @@
 package org.m410.fab.global;
 
-import org.m410.fab.project.BuildConfig;
+import org.m410.fab.config.ProjectConfig;
 
 /**
  * @author m410
@@ -10,12 +10,12 @@ public class ProjectCommands {
         System.out.println("## create project");
     }
 
-    public void resources(BuildConfig build) {
+    public void resources(ProjectConfig build) {
         System.out.println("");
         System.out.println("  " + build.getArchetype());
         build.getConfigurations().stream().forEach(r -> System.out.println("  " + r));
-        System.out.println("");
-        build.resources().stream().forEach(r -> System.out.println("  " + r));
+//        System.out.println("");
+//        build.resources().stream().forEach(r -> System.out.println("  " + r));
         System.out.println("");
     }
 }

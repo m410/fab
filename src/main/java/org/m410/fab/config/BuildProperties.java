@@ -1,4 +1,6 @@
-package org.m410.fab.project;
+package org.m410.fab.config;
+
+import java.util.Map;
 
 /**
  * @author m410
@@ -23,6 +25,13 @@ public class BuildProperties {
     private String packageClassifier;
     private String packageName;
 
+    public BuildProperties(Map<String, Object> base) {
+
+    }
+
+    public BuildProperties with(Map<String, Object> base) {
+        return null;
+    }
 
     public String getDefaultEnvironment() {
         return defaultEnvironment;

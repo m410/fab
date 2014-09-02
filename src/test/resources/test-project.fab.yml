@@ -22,6 +22,7 @@ persistence:
   - name: m410-jpa
     organization: "org.m410.mod.persistence"
     version: "0.1"
+    base_config: file:/Users/m410/Projects/fabricate/fab-cli/src/test/resources/persistence.fab.yml
     properties:
       hibernate.dialect: org.hibernate.dialect.H2Dialect
       hibernate.connection.driver_class: org.h2.Driver
@@ -30,9 +31,10 @@ persistence:
       hibernate.connection.url: "jdbc:h2:db/demo"
       hibernate.hbm2ddl.auto: update
 modules:
-  - url: file:/Users/m410/Projects/fabricate/fab-loader-bundle/target/fab-loader-bundle-0.1-SNAPSHOT.jar
+  - base_config: file:/Users/m410/Projects/fabricate/fab-cli/src/test/resources/module.fab.yml
     organization: org.m410.mod
     version: 0.2.0
+    name: any-module
 logging:
   appenders:
     - name: STDOUT

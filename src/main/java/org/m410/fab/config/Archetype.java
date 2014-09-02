@@ -1,6 +1,8 @@
-package org.m410.fab.project;
+package org.m410.fab.config;
 
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map;
 
 /**
  * @author m410
@@ -11,6 +13,17 @@ public class Archetype {
     private String organization;
     private URL base_config;
     private URL base_build;
+
+    public Archetype() {
+    }
+
+    public Archetype(Map<String, String> archetype) throws MalformedURLException {
+        this.name = archetype.get("name");
+        this.organization = archetype.get("organization");
+        this.version = archetype.get("version");
+        this.base_build = archetype.containsKey("base_build") ? new URL(archetype.get("base_build")) : null;
+        this.base_config = archetype.containsKey("base_config") ? new URL(archetype.get("base_config")) : null;
+    }
 
     public String getName() {
         return name;

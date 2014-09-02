@@ -1,6 +1,8 @@
 package org.m410.fab.project;
 
-import java.io.File;
+import org.m410.fab.config.Archetype;
+import org.m410.fab.config.BuildProperties;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
@@ -12,18 +14,19 @@ import java.util.*;
  *
  * @author m410
  */
+@Deprecated
 public class BuildConfig {
     private Archetype archetype;
     private BuildProperties build;
-    private List<BundleRef> bundles;
-    private List<BundleRef> modules;
-    private List<BundleRef> persistence;
-    private List<BundleRef> view;
+    private List<BundledRef> bundles;
+    private List<BundledRef> modules;
+    private List<BundledRef> persistence;
+    private List<BundledRef> view;
 
     private List<BaseConfig> configurations = new ArrayList<>();
     private String source;
 
-    public List<BundleRef> getBundles() {
+    public List<BundledRef> getBundles() {
         return bundles;
     }
 
@@ -31,31 +34,31 @@ public class BuildConfig {
         return configurations;
     }
 
-    public void setBundles(List<BundleRef> bundles) {
+    public void setBundles(List<BundledRef> bundles) {
         this.bundles = bundles;
     }
 
-    public List<BundleRef> getModules() {
+    public List<BundledRef> getModules() {
         return modules;
     }
 
-    public void setModules(List<BundleRef> modules) {
+    public void setModules(List<BundledRef> modules) {
         this.modules = modules;
     }
 
-    public List<BundleRef> getPersistence() {
+    public List<BundledRef> getPersistence() {
         return persistence;
     }
 
-    public void setPersistence(List<BundleRef> persistence) {
+    public void setPersistence(List<BundledRef> persistence) {
         this.persistence = persistence;
     }
 
-    public List<BundleRef> getView() {
+    public List<BundledRef> getView() {
         return view;
     }
 
-    public void setView(List<BundleRef> view) {
+    public void setView(List<BundledRef> view) {
         this.view = view;
     }
 
@@ -91,11 +94,11 @@ public class BuildConfig {
     }
 
     public Set<String> verifyResources() {
-        return new HashSet<>();
+        return new HashSet<String>();
     }
 
-    public List<BundleRef> resources() {
-        List<BundleRef> list = new ArrayList<>();
+    public List<BundledRef> resources() {
+        List<BundledRef> list = new ArrayList<>();
 
         if(bundles != null)
             list.addAll(bundles);
@@ -111,12 +114,17 @@ public class BuildConfig {
 
     public BuildConfig merge(BaseConfig baseConfig) {
         this.configurations.add(baseConfig);
-        this.build.merge(baseConfig.getBuild());
+
+        if(this.build == null)
+            this.build = baseConfig.getBuild();
+        else
+            this.build.merge(baseConfig.getBuild());
 
         if(this.bundles == null)
             this.bundles = new ArrayList<>();
 
-        this.bundles.addAll(baseConfig.getBundles());
+        if(baseConfig.getBundles() != null)
+            this.bundles.addAll(baseConfig.getBundles());
 
         return this;
     }
@@ -142,4 +150,5 @@ public class BuildConfig {
                 ", source='" + source + '\'' +
                 '}';
     }
+
 }

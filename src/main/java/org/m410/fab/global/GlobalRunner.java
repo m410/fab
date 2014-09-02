@@ -1,9 +1,9 @@
 package org.m410.fab.global;
 
-import org.m410.fab.project.ProjectRunner;
+import org.m410.fab.config.ConfigUtil;
+import org.m410.fab.config.ProjectConfig;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,9 +31,8 @@ public final class GlobalRunner {
     public void run() throws Exception {
         switch(args.get(0)) {
             case cmd0:
-                final ProjectRunner build = new ProjectRunner(Arrays.asList("build"));
-                final File file = build.projectConfigFile(System.getProperty("user.dir"));
-                new ProjectCommands().resources(build.loadLocalConfig(file));
+                final File configFile = ConfigUtil.projectConfigFile(System.getProperty("user.dir"));
+                new ProjectCommands().resources(new ProjectConfig(configFile));
                 break;
             case cmd1:
                 new ProjectCommands().create();
