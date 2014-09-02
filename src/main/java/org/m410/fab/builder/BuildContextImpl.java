@@ -20,7 +20,7 @@ public final class BuildContextImpl implements BuildContext {
     private final List<Dependency> dependencies;
     private final List<Module> modules;
     private final Map<String,String> classpaths = new HashMap<>();
-
+    private String hash;
 
     public BuildContextImpl(Cli cli, Application application, Build build, String environment,
                             List<Dependency> dependencies, List<Module> modules) {
@@ -33,12 +33,22 @@ public final class BuildContextImpl implements BuildContext {
     }
 
     @Override
-    public Application application() {
+    public String getHash() {
+        return hash;
+    }
+
+    @Override
+    public void setHash(String hash) {
+        this.hash = hash;
+    }
+
+    @Override
+    public Application getApplication() {
         return application;
     }
 
     @Override
-    public Build build() {
+    public Build getBuild() {
         return build;
     }
 
@@ -48,7 +58,7 @@ public final class BuildContextImpl implements BuildContext {
     }
 
     @Override
-    public Map<String, String> classpaths() {
+    public Map<String, String> getClasspath() {
         return classpaths;
     }
 
@@ -58,12 +68,12 @@ public final class BuildContextImpl implements BuildContext {
     }
 
     @Override
-    public List<Dependency> dependencies() {
+    public List<Dependency> getDependencies() {
         return dependencies;
     }
 
     @Override
-    public List<? extends Module> modules() {
+    public List<? extends Module> getModules() {
         return modules;
     }
 }

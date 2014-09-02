@@ -7,6 +7,7 @@ import org.m410.fab.builder.Task;
 /**
  * @author m410
  */
+@Deprecated
 public class CounterTask implements Task {
     private final int count;
 

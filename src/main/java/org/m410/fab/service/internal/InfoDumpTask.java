@@ -20,10 +20,10 @@ public class InfoDumpTask implements Task {
 
     @Override
     public void execute(BuildContext context) throws Exception {
-        context.cli().println("build:" + context.build());
-        context.cli().println("app:" + context.application());
+        context.cli().println("build:" + context.getBuild());
+        context.cli().println("app:" + context.getApplication());
         context.cli().println("env:" + context.environment());
-        context.cli().println("dependencies:" + context.dependencies());
-        context.cli().println("modules:" + context.modules());
+        context.cli().println("dependencies:" + context.getDependencies());
+        context.cli().println("modules:" + context.getModules());
     }
 }

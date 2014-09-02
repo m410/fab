@@ -6,6 +6,7 @@ import org.m410.fab.builder.Task;
 /**
  * @author m410
  */
+@Deprecated
 public class BuildTask implements Task {
     @Override
     public String getName() {

@@ -14,11 +14,13 @@ import java.util.Map;
  * @author Michael Fortin
  */
 public interface BuildContext {
-    Application application();
-    Build build();
+    String getHash();
+    void setHash(String hash);
+    Application getApplication();
+    Build getBuild();
     String environment();
-    List<Dependency> dependencies();
-    List<? extends Module> modules();
+    List<Dependency> getDependencies();
+    List<? extends Module> getModules();
     Cli cli();
-    Map<String,String> classpaths();
+    Map<String,String> getClasspath();
 }

@@ -99,7 +99,7 @@ public class FabricateServiceImpl implements FabricateService {
     }
 
     private String extractLogLevel(String[] args) {
-        return "debug";
+        return "info";
     }
 
     private String extractEnvironment(String[] args) {
