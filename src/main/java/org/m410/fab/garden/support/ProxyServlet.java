@@ -1,9 +1,7 @@
-package org.m410.fab.garden.web;
+package org.m410.fab.garden.support;
 
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
-
-import org.m410.fab.garden.web.ClassLoaderRuntimeException;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServlet;

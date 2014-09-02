@@ -1,4 +1,4 @@
-package org.m410.fab.garden.web;
+package org.m410.fab.garden.support.web;
 
 import org.junit.Before;
 import org.junit.Test;

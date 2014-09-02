@@ -67,7 +67,7 @@ public class JUnitTestRunnerTask implements Task {
     }
 
     private static List<String> findTestClasses(BuildContext context) throws IOException {
-        Path path = FileSystems.getDefault().getPath(context.build().getTestDir());
+        Path path = FileSystems.getDefault().getPath(context.getBuild().getTestDir());
         final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**/*Test.java");
         return Files.walk(path).filter(matcher::matches)
                 .map(Path::toFile)
@@ -80,13 +80,13 @@ public class JUnitTestRunnerTask implements Task {
 
     private static List<URL> makeClasspath(BuildContext context) throws MalformedURLException {
         final ArrayList<URL> urls = new ArrayList<>();
-        List<String> paths = toPaths(context.classpaths().get("test"));
+        List<String> paths = toPaths(context.getClasspath().get("test"));
 
         for (String path : paths)
             urls.add(asUrl(path));
 
-        urls.add(asUrl(context.build().getSourceOutputDir()));
-        urls.add(asUrl(context.build().getTestOutputDir()));
+        urls.add(asUrl(context.getBuild().getSourceOutputDir()));
+        urls.add(asUrl(context.getBuild().getTestOutputDir()));
         return urls;
     }
 

@@ -2,7 +2,6 @@ package org.m410.fab.garden;
 
 import org.m410.fab.builder.BuildContext;
 import org.m410.fab.builder.Task;
-import org.m410.fab.config.Dependency;
 import org.m410.fab.garden.support.JavaFileObj;
 
 import javax.tools.*;
@@ -110,8 +109,8 @@ public final class JavaCompileTask implements Task {
 
     private Optional<List<String>> makeSourcePathOption(BuildContext context) {
         final String sourceDir = testCompile
-                ? context.build().getTestDir()
-                : context.build().getSourceDir();
+                ? context.getBuild().getTestDir()
+                : context.getBuild().getSourceDir();
 
         final File file = FileSystems.getDefault().getPath(sourceDir).toFile();
 
@@ -126,8 +125,8 @@ public final class JavaCompileTask implements Task {
 
     private Optional<List<String>> makeOutputOption(BuildContext context) {
         final String outputDir = testCompile
-                ? context.build().getTestOutputDir()
-                : context.build().getSourceOutputDir();
+                ? context.getBuild().getTestOutputDir()
+                : context.getBuild().getSourceOutputDir();
         final File file = FileSystems.getDefault().getPath(outputDir).toFile();
         if(!file.exists() && !file.mkdirs())
             System.out.println("Could not make classes dir");
@@ -148,8 +147,8 @@ public final class JavaCompileTask implements Task {
 
     private Optional<List<String>> makeClasspathOption(BuildContext context) {
         String path = testCompile
-                ? classes(context) + context.classpaths().get("test")
-                : context.classpaths().get("compile");
+                ? classes(context) + context.getClasspath().get("test")
+                : context.getClasspath().get("compile");
 
         ArrayList<String> list = null;
 
@@ -163,7 +162,7 @@ public final class JavaCompileTask implements Task {
     }
 
     private String classes(BuildContext context) {
-        final String outputDir = context.build().getSourceOutputDir();
+        final String outputDir = context.getBuild().getSourceOutputDir();
         final String path = FileSystems.getDefault().getPath(outputDir).toFile().getAbsolutePath();
         return path + System.getProperty("path.separator");
     }
@@ -175,8 +174,8 @@ public final class JavaCompileTask implements Task {
 
 
         final Path path = testCompile
-                ? FileSystems.getDefault().getPath(context.build().getTestDir())
-                : FileSystems.getDefault().getPath(context.build().getSourceDir());
+                ? FileSystems.getDefault().getPath(context.getBuild().getTestDir())
+                : FileSystems.getDefault().getPath(context.getBuild().getSourceDir());
 
         Files.walk(path).filter(matcher::matches).forEach(p->{
             final URI uri = p.toUri();

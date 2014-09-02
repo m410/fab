@@ -1,4 +1,4 @@
-package org.m410.fab.garden.web;
+package org.m410.fab.garden.support;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -24,12 +24,13 @@ public class LocalDevClassLoader extends URLClassLoader {
             throw new RuntimeException(e);
         }
 
-        urls.addAll(runPath);
+        if(runPath != null)
+            urls.addAll(runPath);
 
-//        log.debug("CLASSPATH: {}", urls);
-//        for (URL url : urls) {
-//            System.out.println("    " + url);
-//        }
+        System.out.println("CLASSPATH: " + urls);
+        for (URL url : urls) {
+            System.out.println("    " + url);
+        }
 
         return urls.toArray(new URL[urls.size()]);
     }

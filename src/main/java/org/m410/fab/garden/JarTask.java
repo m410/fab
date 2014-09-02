@@ -24,16 +24,16 @@ public final class JarTask implements Task {
         // Created-By: 1.7.0_06 (Oracle Corporation)
 
         try {
-            File targetFile = new File(context.build().getTargetDir());
+            File targetFile = new File(context.getBuild().getTargetDir());
 
             if(!targetFile.exists() && !targetFile.mkdirs())
                 System.out.println("could not make target dir");
 
-            String name = context.application().getName() + "-"+ context.application().getVersion() +".jar";
+            String name = context.getApplication().getName() + "-"+ context.getApplication().getVersion() +".jar";
             File zipFile = new File(targetFile, name);
             FileOutputStream fout = new FileOutputStream(zipFile);
             ZipOutputStream zout = new ZipOutputStream(fout);
-            File fileSource = FileSystems.getDefault().getPath(context.build().getSourceOutputDir()).toFile();
+            File fileSource = FileSystems.getDefault().getPath(context.getBuild().getSourceOutputDir()).toFile();
             addDirectory(zout, fileSource);
             zout.close();
         } catch (Exception e) {
