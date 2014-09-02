@@ -18,7 +18,7 @@ public final class Main {
     @SuppressWarnings("unchecked")
     public static void main(String[] args) throws Throwable {
         Options options = new Options();
-        options.addOption("verbose", false, "Verbose output");
+        options.addOption("debug", false, "Debug output");
         options.addOption("help", false, "Display help information");
         options.addOption("version", false, "Display version information");
         CommandLineParser parser = new GnuParser();
@@ -35,15 +35,15 @@ public final class Main {
             runGlobalCmd(cmd.getArgList());
         }
         else if(isProjectDir(System.getProperty("user.dir"))) {
-            runProjectCmd(cmd.getArgList());
+            runProjectCmd(cmd.getArgList(),cmd.hasOption("debug"));
         }
         else {
             System.out.println("The current directory is not a project directory or unknown command.  Try 'fab -help'");
         }
     }
 
-    protected static void runProjectCmd(List<String> argList) throws Throwable {
-        new ProjectRunner(argList).run();
+    protected static void runProjectCmd(List<String> argList, boolean debug) throws Throwable {
+        new ProjectRunner(argList, debug).run();
     }
 
     protected static void runGlobalCmd(List<String> argList) throws Exception {

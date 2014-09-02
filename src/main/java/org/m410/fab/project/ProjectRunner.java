@@ -15,7 +15,6 @@ import org.osgi.framework.launch.FrameworkFactory;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.nio.file.FileSystems;
 import java.util.*;
@@ -28,9 +27,11 @@ public final class ProjectRunner {
     static final String bundleDir = ".fab/bundles";
     static final String cacheDir = ".fab/cache";
     private final List<String> args;
+    private final boolean debug;
 
-    public ProjectRunner(List<String> args) {
+    public ProjectRunner(List<String> args, boolean debug) {
         this.args = args;
+        this.debug = debug;
     }
 
     public void run() throws Throwable {
