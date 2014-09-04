@@ -3,7 +3,6 @@ package org.m410.fab.garden;
 import org.m410.fab.builder.Command;
 import org.m410.fab.builder.Step;
 import org.m410.fab.service.FabricateService;
-import org.m410.fab.service.internal.ConfigLoadTask;
 import org.osgi.framework.*;
 
 
@@ -34,10 +33,7 @@ public class Activator implements BundleActivator {
                 command.getSteps().stream()
                         .filter(m->m.getName().equals("initialize"))
                         .findFirst()
-                        .ifPresent(m-> {
-                            m.append(new IvyDependencyTask());
-                            m.append(new ConfigLoadTask());
-                        });
+                        .ifPresent(m-> m.append(new IvyDependencyTask()));
                 command.getSteps().stream()
                         .filter(m->m.getName().equals("package"))
                         .findFirst()
