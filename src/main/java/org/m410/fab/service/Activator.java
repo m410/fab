@@ -2,7 +2,7 @@ package org.m410.fab.service;
 
 import org.m410.fab.builder.Command;
 import org.m410.fab.builder.Step;
-import org.m410.fab.service.internal.*;
+import org.m410.fab.service.internal.task.*;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -46,8 +46,7 @@ public class Activator implements BundleActivator {
                                 .withStep(new Step("process-test-classes"))
                                 .withStep(new Step("test"))
 
-                                .withStep(new Step("prepare-package"))
-                                .withStep(new Step("package").append(new ConfigDumpTask())))
+                                .withStep(new Step("prepare-package")))
                 .addCommand(
                         new Command("build-no-test", "Builds the project and produces it's artifact", false)
                                 .withStep(new Step("validate"))

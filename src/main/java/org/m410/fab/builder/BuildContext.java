@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public interface BuildContext {
     String getHash();
-    boolean isCachedConfig();
+    boolean isFromCache();
     String environment();
     Cli cli();
 
@@ -24,6 +24,6 @@ public interface BuildContext {
     Application getApplication();
     Build getBuild();
     List<Dependency> getDependencies();
-    List<? extends Module> getModules();
+    List<Module> getModules();
     Map<String,String> getClasspath();
 }

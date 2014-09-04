@@ -1,9 +1,7 @@
 package org.m410.fab.builder;
 
-import org.m410.fab.config.Application;
-import org.m410.fab.config.Build;
-import org.m410.fab.config.Dependency;
-import org.m410.fab.config.Module;
+import org.m410.fab.config.*;
+import org.m410.fab.service.internal.serialize.CachedProject;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,8 +17,9 @@ public final class BuildContextImpl implements BuildContext {
     private final String environment;
     private final List<Dependency> dependencies;
     private final List<Module> modules;
-    private final Map<String,String> classpaths = new HashMap<>();
-    private String hash;
+    private final Map<String,String> classpaths;
+    private final String hash;
+    private final boolean fromCache;
 
     public BuildContextImpl(Cli cli, Application application, Build build, String environment,
                             List<Dependency> dependencies, List<Module> modules) {
@@ -30,16 +29,43 @@ public final class BuildContextImpl implements BuildContext {
         this.environment = environment;
         this.dependencies = dependencies;
         this.modules = modules;
+        this.fromCache = false;
+        this.classpaths = new HashMap<>();
+        this.hash = null;
+    }
+
+    public BuildContextImpl(Cli cli, ConfigContext context, String hash, String environment) {
+        this.hash = hash;
+        this.fromCache = false;
+        this.cli = cli;
+        this.application = context.getApplication();
+        this.build = context.getBuild();
+        this.environment = environment;
+        this.dependencies = context.getDependencies();
+        this.modules = context.getModules();
+        this.classpaths = new HashMap<>();
+    }
+
+    public BuildContextImpl(CliStdOutImpl cli, CachedProject cacheProj, String env) {
+        this.cli = cli;
+        this.hash = cacheProj.getHash();
+        this.application = cacheProj.getApplication();
+        this.build = cacheProj.getBuild();
+        this.environment = env;
+        this.dependencies = cacheProj.getDependencies();
+        this.modules = cacheProj.getModules();
+        this.classpaths = cacheProj.getClasspath();
+        this.fromCache = true;
+    }
+
+    @Override
+    public boolean isFromCache() {
+        return fromCache;
     }
 
     @Override
     public String getHash() {
         return hash;
-    }
-
-    @Override
-    public void setHash(String hash) {
-        this.hash = hash;
     }
 
     @Override
@@ -73,7 +99,7 @@ public final class BuildContextImpl implements BuildContext {
     }
 
     @Override
-    public List<? extends Module> getModules() {
+    public List<Module> getModules() {
         return modules;
     }
 }

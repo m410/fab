@@ -1,4 +1,4 @@
-package org.m410.fab.service.internal;
+package org.m410.fab.service.internal.task;
 
 import org.m410.fab.builder.BuildContext;
 import org.m410.fab.builder.Task;
@@ -6,19 +6,19 @@ import org.m410.fab.builder.Task;
 /**
  * @author m410
  */
-public class HelpTask implements Task {
+public class DumpTaskListTask implements Task {
     @Override
     public String getName() {
-        return "Help";
+        return "dump-tasks";
     }
 
     @Override
     public String getDescription() {
-        return "Display Help Information";
+        return "Dump the list of tasks to standard out";
     }
 
     @Override
     public void execute(BuildContext context) throws Exception {
-        context.cli().println("Display help information");
+        context.cli().debug("tasks!!!");
     }
 }

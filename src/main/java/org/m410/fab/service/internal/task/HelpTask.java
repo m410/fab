@@ -1,4 +1,4 @@
-package org.m410.fab.service.internal;
+package org.m410.fab.service.internal.task;
 
 import org.m410.fab.builder.BuildContext;
 import org.m410.fab.builder.Task;
@@ -6,20 +6,19 @@ import org.m410.fab.builder.Task;
 /**
  * @author m410
  */
-public class BundleTask implements Task {
-
+public class HelpTask implements Task {
     @Override
     public String getName() {
-        return "bundle";
+        return "Help";
     }
 
     @Override
     public String getDescription() {
-        return "Display Bundle list";
+        return "Display Help Information";
     }
 
     @Override
     public void execute(BuildContext context) throws Exception {
-        context.cli().println("bundle information");
+        context.cli().println("Display help information");
     }
 }

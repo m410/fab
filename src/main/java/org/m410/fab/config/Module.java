@@ -11,7 +11,8 @@ public interface Module {
         Persistence,
         View,
         Runtime,
-        Logger
+        Logger,
+        Test
     }
 
     Type getType();

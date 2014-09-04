@@ -4,14 +4,15 @@ import org.m410.fab.builder.*;
 import org.m410.fab.config.ConfigBuilder;
 import org.m410.fab.config.ConfigContext;
 import org.m410.fab.config.ConfigProvider;
+import org.m410.fab.service.internal.serialize.CachedProject;
+import org.m410.fab.service.internal.serialize.HashUtil;
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.nio.file.FileSystems;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Document Me..
@@ -95,7 +96,7 @@ public class FabricateServiceImpl implements FabricateService {
             }
         }
 
-        dumpContext(buildContext)
+        dumpContext(buildContext, env);
     }
 
     private String extractLogLevel(String[] args) {
@@ -107,34 +108,46 @@ public class FabricateServiceImpl implements FabricateService {
     }
 
     @SuppressWarnings("unchecked")
-    BuildContext configureInitialBuildContext(String env, String logLevel) throws FileNotFoundException {
+    BuildContext configureInitialBuildContext(String env, String logLevel) throws Exception {
         ConfigBuilder builder = new ConfigBuilder(configProviders.get(0).config()).parseLocalProject();
         configProviders.stream().skip(1).map(ConfigProvider::config).forEach(builder::applyOver);
         ConfigContext config = builder.applyEnvOver(env).build();
 
-        // get project file hash
-        // load file from cache
+        String hash = HashUtil.getMD5Checksum(HashUtil.projectFile());
+        File projectCacheFile = projectConfigFile(config.getBuild().getCacheDir(), env);
 
-        // if no file
-            // load config
-        // if hashes don't match
-            // load config
-            // delete cache
-        // load context from file
-            // use cached file
+        if(!projectCacheFile.exists()) {
+            return new BuildContextImpl(new CliStdOutImpl(logLevel), config, hash, env);
+        }
+        else {
+            CachedProject cachedProject = (CachedProject) new Yaml(new Constructor(CachedProject.class))
+                    .load(new FileInputStream(projectCacheFile));
 
-        // todo load from file if exists and hash is same as project file
-        return new BuildContextImpl(
-                new CliStdOutImpl(logLevel),
-                config.getApplication(),
-                config.getBuild(),
-                env,
-                config.getDependencies(),
-                config.getModules());
+            if(!hash.equals(cachedProject.getHash())) {
+                projectCacheFile.delete();
+                return new BuildContextImpl(new CliStdOutImpl(logLevel), config, hash, env);
+            }
+            else {
+                return new BuildContextImpl(new CliStdOutImpl(logLevel), cachedProject, env);
+            }
+        }
     }
 
-    public void dumpContext(BuildContext buildContext) {
-        // if exists and hash is same, do nothing, else save context
+    private File projectConfigFile(String cacheDir, String env) {
+        final String fileName = "project." + env + ".yml";
+        return FileSystems.getDefault().getPath(cacheDir, fileName).toFile();
+    }
+
+    public void dumpContext(BuildContext ctx, String env) throws IOException {
+        CachedProject cachedProject = new CachedProject(ctx);
+        File projectCacheFile = projectConfigFile(ctx.getBuild().getCacheDir(), env);
+        final FileWriter fileWriter = new FileWriter(projectCacheFile);
+        DumperOptions options = new DumperOptions();
+        options.setExplicitStart(true);
+        options.setAllowReadOnlyProperties(true);
+        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+        options.setDefaultScalarStyle(DumperOptions.ScalarStyle.DOUBLE_QUOTED);
+        new Yaml(options).dump(cachedProject, fileWriter);
     }
 
     public File projectFile(File projectRoot) {

@@ -1,4 +1,4 @@
-package org.m410.fab.service.internal;
+package org.m410.fab.service.internal.task;
 
 import org.m410.fab.builder.BuildContext;
 import org.m410.fab.builder.Command;
