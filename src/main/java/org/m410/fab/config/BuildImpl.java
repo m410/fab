@@ -28,6 +28,9 @@ public class BuildImpl implements Build {
     private String defaultLogLevel;
     private String cacheDir;
 
+    public BuildImpl() {
+    }
+
     public BuildImpl(Map<String, Object> data) {
 
         if(data == null)
@@ -153,6 +156,86 @@ public class BuildImpl implements Build {
     @Override
     public String getDefaultLogLevel() {
         return defaultLogLevel;
+    }
+
+    public void setDefaultEnvironment(String defaultEnvironment) {
+        this.defaultEnvironment = defaultEnvironment;
+    }
+
+    public void setDefaultCommand(String defaultCommand) {
+        this.defaultCommand = defaultCommand;
+    }
+
+    public void setLang(String lang) {
+        this.lang = lang;
+    }
+
+    public void setLangVersion(String langVersion) {
+        this.langVersion = langVersion;
+    }
+
+    public void setCompilerArgs(String compilerArgs) {
+        this.compilerArgs = compilerArgs;
+    }
+
+    public void setTargetDir(String targetDir) {
+        this.targetDir = targetDir;
+    }
+
+    public void setWebappDir(String webappDir) {
+        this.webappDir = webappDir;
+    }
+
+    public void setSourceDir(String sourceDir) {
+        this.sourceDir = sourceDir;
+    }
+
+    public void setSourceOutputDir(String sourceOutputDir) {
+        this.sourceOutputDir = sourceOutputDir;
+    }
+
+    public void setResourceDir(String resourceDir) {
+        this.resourceDir = resourceDir;
+    }
+
+    public void setTestDir(String testDir) {
+        this.testDir = testDir;
+    }
+
+    public void setTestOutputDir(String testOutputDir) {
+        this.testOutputDir = testOutputDir;
+    }
+
+    public void setTestResourceDir(String testResourceDir) {
+        this.testResourceDir = testResourceDir;
+    }
+
+    public void setVcs(String vcs) {
+        this.vcs = vcs;
+    }
+
+    public void setPackageSource(boolean packageSource) {
+        this.packageSource = packageSource;
+    }
+
+    public void setPackageDocs(boolean packageDocs) {
+        this.packageDocs = packageDocs;
+    }
+
+    public void setPackageClassifier(String packageClassifier) {
+        this.packageClassifier = packageClassifier;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
+    }
+
+    public void setDefaultLogLevel(String defaultLogLevel) {
+        this.defaultLogLevel = defaultLogLevel;
+    }
+
+    public void setCacheDir(String cacheDir) {
+        this.cacheDir = cacheDir;
     }
 
     @Override

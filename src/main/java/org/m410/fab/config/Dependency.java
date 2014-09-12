@@ -12,6 +12,9 @@ public class Dependency {
     private String scope;
     private boolean transitive = false;
 
+    public Dependency() {
+    }
+
     public Dependency(Map<String,Object> data) {
         org = (String)data.get("org");
         name = (String)data.get("name");
@@ -46,6 +49,26 @@ public class Dependency {
 
     public boolean isTransitive() {
         return transitive;
+    }
+
+    public void setOrg(String org) {
+        this.org = org;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setRev(String rev) {
+        this.rev = rev;
+    }
+
+    public void setScope(String scope) {
+        this.scope = scope;
+    }
+
+    public void setTransitive(boolean transitive) {
+        this.transitive = transitive;
     }
 
     @Override

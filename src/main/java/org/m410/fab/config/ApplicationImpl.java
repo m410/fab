@@ -14,6 +14,9 @@ public class ApplicationImpl implements Application {
     private String authors;
     private String description;
 
+    public ApplicationImpl() {
+    }
+
     @SuppressWarnings("unchecked")
     public ApplicationImpl(Map<String, Object> data) {
         name = (String)data.get("name");
@@ -58,6 +61,34 @@ public class ApplicationImpl implements Application {
     @Override
     public String getDescription() {
         return description;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setOrg(String org) {
+        this.org = org;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public void setProperties(Map<String, Object> properties) {
+        this.properties = properties;
+    }
+
+    public void setApplicationClass(String applicationClass) {
+        this.applicationClass = applicationClass;
+    }
+
+    public void setAuthors(String authors) {
+        this.authors = authors;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override

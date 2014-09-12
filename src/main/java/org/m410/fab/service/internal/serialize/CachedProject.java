@@ -26,6 +26,7 @@ public class CachedProject {
         this.dependencies = ctx.getDependencies();
         this.modules = ctx.getModules();
         this.classpath = ctx.getClasspath();
+        this.application = ctx.getApplication();
     }
 
     public CachedProject() {

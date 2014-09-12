@@ -12,6 +12,9 @@ public class ModuleImpl implements Module {
     private String version;
     private Map<String,Object> properties;
 
+    public ModuleImpl() {
+    }
+
     public ModuleImpl(Map<String,Object> data) {
 //        type = (String)data.get("type");
         name = (String)data.get("name");
@@ -46,6 +49,26 @@ public class ModuleImpl implements Module {
     @Override
     public Map<String, Object> getProperties() {
         return properties;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setOrg(String org) {
+        this.org = org;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public void setProperties(Map<String, Object> properties) {
+        this.properties = properties;
     }
 
     @Override
