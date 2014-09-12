@@ -30,6 +30,10 @@ public class Jetty9Task implements Task {
 
     @Override
     public void execute(BuildContext context) throws Exception {
+        System.out.println("context:"+context);
+        System.out.println("context.app:"+context.getApplication());
+        System.out.println("context.build:"+context.getBuild());
+        System.out.println("context.classpath:"+context.getClasspath());
         final String applicationClass = context.getApplication().getApplicationClass();
         final String appLoaderClass = applicationClass + "Loader";
         final File sourceDir = FileSystems.getDefault().getPath(context.getBuild().getSourceDir()).toFile();
