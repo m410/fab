@@ -39,9 +39,13 @@ public class FabricateServiceImpl implements FabricateService {
         configProviders.add(provider);
     }
 
+    /**
+     * Adds all the configuration files to the context.
+     * @param config
+     */
     @Override
-    public void addFullConfig(Map<String, Object> fullConfig) {
-        configProviders.add(new ConfigProviderImpl(fullConfig));
+    public void addConfig(Map<String, Object> config) {
+        configProviders.add(new ConfigProviderImpl(config));
     }
 
     @Override

@@ -46,7 +46,8 @@ public class Activator implements BundleActivator {
                                 .withStep(new Step("process-test-classes"))
                                 .withStep(new Step("test"))
 
-                                .withStep(new Step("prepare-package")))
+                                .withStep(new Step("prepare-package"))
+                                .withStep(new Step("package")))
                 .addCommand(
                         new Command("build-no-test", "Builds the project and produces it's artifact", false)
                                 .withStep(new Step("validate"))

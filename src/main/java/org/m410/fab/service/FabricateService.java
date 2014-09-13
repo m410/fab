@@ -20,7 +20,7 @@ public interface FabricateService {
 
     void addConfigProvider(ConfigProvider provider);
 
-    void addFullConfig(Map<String,Object> fullConfig);
+    void addConfig(Map<String, Object> config);
 
     void addCommandListener(CommandListener c);
 
