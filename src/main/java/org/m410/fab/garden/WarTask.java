@@ -4,10 +4,15 @@ import org.m410.fab.builder.BuildContext;
 import org.m410.fab.builder.Task;
 
 import java.io.*;
-import java.nio.file.FileSystems;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.stream.Collectors;
 import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+
 
 /**
  * @author m410
@@ -29,24 +34,53 @@ public class WarTask implements Task {
 
         try {
             File fileSource = FileSystems.getDefault().getPath(context.getBuild().getSourceOutputDir()).toFile();
-            File targetFile = new File(context.getBuild().getTargetDir());
+            File targetDir = new File(context.getBuild().getTargetDir());
+            File webDir = FileSystems.getDefault().getPath(context.getBuild().getWebappDir()).toFile();
+            String cp = context.getClasspath().get("compile");
+            File explodedDir = makeExploded(targetDir, fileSource,webDir, toFiles(cp));
 
-            writeManifestTo(fileSource);
-            writeWebXml(fileSource);
-
-            if(!targetFile.exists() && !targetFile.mkdirs())
+            if(!explodedDir.exists() && !explodedDir.mkdirs())
                 System.out.println("could not make target dir");
 
             String name = context.getApplication().getName() + "-"+ context.getApplication().getVersion() +".war";
-            File zipFile = new File(targetFile, name);
+            File zipFile = new File(targetDir, name);
             FileOutputStream fout = new FileOutputStream(zipFile);
-            ZipOutputStream zout = new ZipOutputStream(fout);
 
-            addDirectory(zout, fileSource);
-            zout.close();
-        } catch (Exception e) {
+            try (ZipOutputStream zout = new ZipOutputStream(fout)) {
+                addDirectory(zout, explodedDir);
+            }
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private Collection<File> toFiles(String cp) {
+        return Arrays.asList(cp.split(System.getProperty("path.separator")))
+                .stream()
+                .map(File::new)
+                .collect(Collectors.toList());
+    }
+
+    private File makeExploded(File targetDir, File sourcesDir, File webDir, Collection<File> libs)
+            throws IOException {
+        File exploded = new File(targetDir,"war-exploded");
+        Files.walkFileTree(webDir.toPath(), new CopyFileVisitor(exploded.toPath()));
+        writeWebXml(exploded);
+
+        final File webInfDir = new File(exploded, "WEB-INF");
+
+        File classesDir = new File(webInfDir,"classes");
+        classesDir.mkdirs();
+        Files.walkFileTree(sourcesDir.toPath(), new CopyFileVisitor(classesDir.toPath()));
+
+        File libDir = new File(webInfDir,"lib");
+        libDir.mkdirs();
+
+        for (File lib : libs)
+            Files.copy(lib.toPath(),new File(libDir, lib.getName()).toPath());
+
+        return exploded;
     }
 
     private void writeWebXml(File fileSource) throws IOException {
@@ -131,4 +165,34 @@ public class WarTask implements Task {
             }
         }
     }
+
+    public class CopyFileVisitor extends SimpleFileVisitor<Path> {
+        private final Path targetPath;
+        private Path sourcePath = null;
+
+        public CopyFileVisitor(Path targetPath) {
+            this.targetPath = targetPath;
+        }
+
+        @Override
+        public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs)
+                throws IOException {
+            if (sourcePath == null) {
+                sourcePath = dir;
+            }
+            else {
+                Files.createDirectories(targetPath.resolve(sourcePath
+                        .relativize(dir)));
+            }
+            return FileVisitResult.CONTINUE;
+        }
+
+        @Override
+        public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs)
+                throws IOException {
+            Files.copy(file, targetPath.resolve(sourcePath.relativize(file)));
+            return FileVisitResult.CONTINUE;
+        }
+    }
+
 }
