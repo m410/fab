@@ -12,7 +12,13 @@ public class ProjectConfigTest {
     @Test
     public void testCreate() throws IOException {
         File file = FileSystems.getDefault().getPath("src/test/resources/test-project.fab.yml").toFile();
-        ProjectConfig config = new ProjectConfig(file);
+        final File configCacheDir = FileSystems.getDefault().getPath("target/test-output").toFile();
+
+        if(!configCacheDir.exists() && !configCacheDir.mkdirs())
+            fail("could not make test output directories");
+
+        assertNotNull(configCacheDir);
+        ProjectConfig config = new ProjectConfig(file, configCacheDir);
         assertNotNull(config);
         assertEquals(3, config.getBundles().size());
         assertEquals(2, config.getModules().size());

@@ -17,4 +17,8 @@ public class ConfigUtil {
         return Files.walk(path, 1).filter(matcher::matches).findFirst().get().toFile();
     }
 
+    public static File projectConfCache(String property) {
+        // todo fix hardcode
+        return FileSystems.getDefault().getPath("",".fab/config").toFile();
+    }
 }

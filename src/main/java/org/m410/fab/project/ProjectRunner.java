@@ -52,18 +52,19 @@ public final class ProjectRunner {
             BundleContext ctx = framework.getBundleContext();
 
             final File configFile = ConfigUtil.projectConfigFile(System.getProperty("user.dir"));
-            ProjectConfig config = new ProjectConfig(configFile);
+            final File configCacheDir = ConfigUtil.projectConfCache(System.getProperty("user.dir"));
+            ProjectConfig config = new ProjectConfig(configFile, configCacheDir);
 
             config.getBundles().stream().forEach(s -> addBundle(ctx, s));
             Arrays.asList(ctx.getBundles()).stream().forEach(this::startBundle);
-            // todo after start need to get configuration Providers from each module
 
             Object buildService = ctx.getService(ctx.getServiceReference("org.m410.fab.service.FabricateService"));
 
             try {
-                // load full configurations
-                for (Map<String, Object> fullConfig : config.getConfigurations())
-                    buildService.getClass().getMethod("addFullConfig", Map.class).invoke(buildService, fullConfig);
+                // load each full configuration
+                // todo might want to add each type of configuration, so the service can sort as needed
+                for (Map<String, Object> conf : config.getConfigurations())
+                    buildService.getClass().getMethod("addConfig", Map.class).invoke(buildService, conf);
 
                 buildService.getClass().getMethod("postStartupWiring").invoke(buildService);
                 final String[] objects = args.toArray(new String[args.size()]);

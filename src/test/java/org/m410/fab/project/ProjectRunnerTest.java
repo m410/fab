@@ -18,7 +18,13 @@ public class ProjectRunnerTest {
         final String path = "/Users/m410/Projects/fabricate/fab-cli/src/test/resources/test-project.fab.yml";
         File file = FileSystems.getDefault().getPath(path).toFile();
         assertTrue("sample config not found",file.exists());
-        ProjectConfig config = new ProjectConfig(file);
+
+        final File configCacheDir = FileSystems.getDefault().getPath("target/test-output").toFile();
+
+        if(!configCacheDir.exists() && !configCacheDir.mkdirs())
+            fail("could not make test output directories");
+
+        ProjectConfig config = new ProjectConfig(file,configCacheDir);
         assertNotNull("no config created", config);
 
         assertNotNull("no archetype", config.getArchetype());

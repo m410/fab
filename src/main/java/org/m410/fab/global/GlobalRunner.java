@@ -32,7 +32,8 @@ public final class GlobalRunner {
         switch(args.get(0)) {
             case cmd0:
                 final File configFile = ConfigUtil.projectConfigFile(System.getProperty("user.dir"));
-                new ProjectCommands().resources(new ProjectConfig(configFile));
+                final File configCacheDir = ConfigUtil.projectConfCache(System.getProperty("user.dir"));
+                new ProjectCommands().resources(new ProjectConfig(configFile, configCacheDir));
                 break;
             case cmd1:
                 new ProjectCommands().create();

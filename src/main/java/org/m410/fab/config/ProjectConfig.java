@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,22 +16,20 @@ import java.util.Map;
  * @author m410
  */
 public final class ProjectConfig extends Base {
-    File projectFile;
+    private File projectFile;
 
     private Archetype archetype;
     private BuildProperties build;
 
-    ConfigRef parent;
-    List<ConfigRef> modules;
+    private ConfigRef parent;
+    private List<ConfigRef> modules;
 
-    /**
-     * for testing
-     */
-    ProjectConfig() {
-    }
+    private File confCache;
 
-    public ProjectConfig(Map<String, Object> configuration) throws IOException {
+
+    public ProjectConfig(Map<String, Object> configuration, File confCache) throws IOException {
         this.configuration = configuration;
+        this.confCache = confCache;
         archetype = loadArchetype(configuration);
         parent = loadParent(configuration);
         build = loadBuild(configuration, parent.configuration);
@@ -38,8 +37,8 @@ public final class ProjectConfig extends Base {
     }
 
     @SuppressWarnings("unchecked")
-    public ProjectConfig(File projectFile) throws IOException {
-        this((Map<String,Object>) new Yaml().load(new FileInputStream(projectFile)));
+    public ProjectConfig(File projectFile, File confCache) throws IOException {
+        this((Map<String,Object>) new Yaml().load(new FileInputStream(projectFile)),confCache);
         this.projectFile = projectFile;
         this.url = projectFile.toURI().toURL();
     }
@@ -83,7 +82,7 @@ public final class ProjectConfig extends Base {
         loadMod("persistence", mods, configuration);
         loadMod("modules", mods, configuration);
         loadMod("view", mods, configuration);
-        loadMod("test", mods, configuration);
+//        loadMod("test", mods, configuration);
 //        loadMod("logging", mods, configuration);
         return mods;
     }
@@ -91,7 +90,7 @@ public final class ProjectConfig extends Base {
     @SuppressWarnings("unchecked")
     private ConfigRef loadParent(Map<String, Object> configuration) throws IOException {
         Map<String,String> archetype = (Map<String,String>)configuration.get("archetype");
-        return new ConfigRef(makeUrl(archetype));
+        return new ConfigRef(makeUrl(archetype,confCache,null));
     }
 
     public List<ConfigRef> getModules() throws MalformedURLException {
@@ -108,10 +107,10 @@ public final class ProjectConfig extends Base {
                 final List<Map<String,String>> list = (List<Map<String,String>>) child;
 
                 for (Map<String,String> persistence : list)
-                    modules.add(new ConfigRef(makeUrl(persistence)));
+                    modules.add(new ConfigRef(makeUrl(persistence,confCache,null)));
             }
             else {
-                modules.add(new ConfigRef(makeUrl((Map<String,String>)child)));
+                modules.add(new ConfigRef(makeUrl((Map<String,String>)child,confCache,null)));
             }
         }
     }
