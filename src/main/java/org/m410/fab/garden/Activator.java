@@ -19,6 +19,10 @@ public class Activator implements BundleActivator {
         fabricateService.addCommandModifier(command -> {
             if(command.getName().equalsIgnoreCase("build")) {
                 command.getSteps().stream()
+                        .filter(m->m.getName().equals("generate-resources"))
+                        .findFirst()
+                        .ifPresent(m->m.append(new MakeConfigTask()));
+                command.getSteps().stream()
                         .filter(m->m.getName().equals("compile"))
                         .findFirst()
                         .ifPresent(m->m.append(new JavaCompileTask(JavaCompileTask.COMPILE_SRC)));
@@ -38,6 +42,10 @@ public class Activator implements BundleActivator {
                         .filter(m->m.getName().equals("package"))
                         .findFirst()
                         .ifPresent(m->m.append(new JarTask()));
+                command.getSteps().stream()
+                        .filter(m->m.getName().equals("package"))
+                        .findFirst()
+                        .ifPresent(m->m.append(new WarTask()));
             }
 
             if(command.getName().equalsIgnoreCase("dependencies")) {

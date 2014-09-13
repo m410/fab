@@ -40,16 +40,6 @@ public class ProxyServletContainerListener implements ServletContextListener {
         System.out.println("---- classLoader=" + classLoader);
     }
 
-    private List<File> toRunPath(String runPath) {
-        List<String> strs = Arrays.asList(runPath.split(";"));
-        List<File> files = new ArrayList<>();
-
-        for (String s : strs)
-            files.add(new File(s));
-
-        return files;
-    }
-
     @Override
     @SuppressWarnings("unchecked")
     public void contextInitialized(ServletContextEvent servletContextEvent) {
@@ -59,8 +49,8 @@ public class ProxyServletContainerListener implements ServletContextListener {
         try {
             Class appLoaderClass = classLoader.loadClass(loaderClassName);
             Object appLoader = appLoaderClass.newInstance();
-            Method loaderMethod = appLoaderClass.getMethod("load", null);
-            application = loaderMethod.invoke(appLoader, null);
+            Method loaderMethod = appLoaderClass.getMethod("load", String.class);
+            application = loaderMethod.invoke(appLoader, "dev");  // todo fix hardcoded env
         } catch (Exception e) {
             System.err.println("EXCEPTION: " + e.getMessage());
             e.printStackTrace();

@@ -62,7 +62,7 @@ public class Jetty9Task implements Task {
         return Arrays.asList(runtime.split(System.getProperty("path.separator")))
                 .stream().map(s -> {
                     try {
-                        return new URL("file:/" + s);
+                        return new URL("file://" + s);
                     }
                     catch (MalformedURLException e) {
                         throw new RuntimeException(e);

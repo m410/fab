@@ -14,6 +14,11 @@ import java.util.List;
  */
 public class LocalDevClassLoader extends URLClassLoader {
 
+    public LocalDevClassLoader(List<URL> runPath, File classesDir, ClassLoader parent) {
+        super(toURLs(runPath, classesDir), parent);
+        dumpThreadClasspath();
+    }
+
     static URL[] toURLs(List<URL> runPath, File classesDir) {
         List<URL> urls = new ArrayList<>();
 
@@ -35,24 +40,19 @@ public class LocalDevClassLoader extends URLClassLoader {
         return urls.toArray(new URL[urls.size()]);
     }
 
-    public LocalDevClassLoader(List<URL> runPath, File classesDir, ClassLoader parent) {
-        super(toURLs(runPath, classesDir), parent);
-//        dumpThreadClasspath();
+
+
+    void dumpThreadClasspath() {
+        ClassLoader classloader = this;
+
+        do {
+            URL[] urls = ((URLClassLoader)classloader).getURLs();
+
+            for(URL url: urls){
+                System.out.println("    " + url.getFile());
+            }
+            classloader = classloader.getParent();
+
+        } while(classloader != null);
     }
-
-
-//
-//    void dumpThreadClasspath() {
-//        ClassLoader classloader = this;
-//
-//        do {
-//            URL[] urls = ((URLClassLoader)classloader).getURLs();
-//
-//            for(URL url: urls){
-//                System.out.println("    " + url.getFile());
-//            }
-//            classloader = classloader.getParent();
-//
-//        } while(classloader != null);
-//    }
 }

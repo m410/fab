@@ -10,7 +10,7 @@ import java.util.zip.*;
 public final class JarTask implements Task {
 
     public String getDescription() {
-        return "Create a jar";
+        return "Create a jar artifact";
     }
 
     public String getName() {
@@ -22,6 +22,7 @@ public final class JarTask implements Task {
         // todo need to create META-INF/MANIFEST.MF
         // Manifest-Version: 1.0
         // Created-By: 1.7.0_06 (Oracle Corporation)
+
 
         try {
             File targetFile = new File(context.getBuild().getTargetDir());
