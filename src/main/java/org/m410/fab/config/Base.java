@@ -22,12 +22,14 @@ public abstract class Base {
     public URL makeUrl(Map<String, String> resource, File cacheDir, List<String> repositories)
             throws IOException {
 
+        // todo enable for many repositories
         URL url = resource.get("base_config") != null ?
                 new URL(resource.get("base_config")) :
-                new URL("http://repo.m410.org/content/repositories/snapshots/" +
+                new URL("http://repo.m410.org/content/repositories/releases/" +
                         resource.get("organization").replaceAll("\\.", "/") + "/" +
                         resource.get("name") + "/" +
-                        resource.get("version") + ".yml");
+                        resource.get("version") +"/"+
+                        resource.get("name") +"-"+resource.get("version")+".yml");
 
         final File file = cacheConfigFile(resource, cacheDir);
 
