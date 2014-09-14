@@ -68,7 +68,7 @@ public class ConfigBuilderTest {
         assertNotNull(config.getApplication());
         assertNotNull(config.getBuild());
         assertNotNull(config.getDependencies());
-        assertEquals(6, config.getDependencies().size());
+        assertEquals(7, config.getDependencies().size());
         assertNotNull(config.getModules());
         assertEquals(3, config.getModules().size());
 
