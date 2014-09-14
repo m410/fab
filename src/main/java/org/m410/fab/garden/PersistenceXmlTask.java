@@ -56,7 +56,12 @@ public final class PersistenceXmlTask implements Task {
                 .map(File::new)
                 .collect(Collectors.toList());
 
-        final Path outputPath = FileSystems.getDefault().getPath("target/classes/META-INF/persistence.xml");
+        final String sourceOut = context.getBuild().getSourceOutputDir();
+        final Path outputPath = FileSystems.getDefault().getPath(sourceOut,"META-INF/persistence.xml");
+        final File file = FileSystems.getDefault().getPath(sourceOut,"META-INF").toFile();
+
+        if(!file.exists() && !file.mkdirs())
+            throw new RuntimeException("Could not make META-INF directories");
 
         new ReflectConfigFileBuilder(builderName)
                 .withClasspath(mavenProject)

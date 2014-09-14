@@ -67,7 +67,6 @@ public final class WebXmlTask implements Task {
 
     @Override
     public void execute(BuildContext context) throws Exception {
-
         Collection<File> mavenProject = Arrays.asList(
                 context.getClasspath()
                         .get("compile")
@@ -77,20 +76,20 @@ public final class WebXmlTask implements Task {
                 .collect(Collectors.toList());
 
         context.cli().debug("artifacts =" + mavenProject    );
-        initWebXml(context.environment());
-        moveM410Config();
+        initWebXml(context.getBuild().getWebappDir(), context.environment());
+        moveM410Config(context.getBuild().getSourceOutputDir());
     }
 
-    private void moveM410Config() throws IOException {
-        Path source = Paths.get("configuration.m410.yml");
-        Path target = Paths.get("target/classes/configuration.m410.yml");
+    private void moveM410Config(String sourceOut) throws IOException {
+        Path source = Paths.get("garden.fab.yml");
+        Path target = Paths.get("target/classes/garden.fab.yml");
 
         if(!target.toFile().exists())
             Files.copy(source, target);
     }
 
-    private void initWebXml(String envName) throws IOException {
-        File outputDir = FileSystems.getDefault().getPath("src/main/webapp/WEB-INF").toFile();
+    private void initWebXml(String webappDir, String envName) throws IOException {
+        File outputDir = FileSystems.getDefault().getPath(webappDir, "WEB-INF").toFile();
 
         if(!outputDir.exists() && !outputDir.mkdirs())
             throw new RuntimeException("Could not create web-inf directory");

@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 public final class LogbackXmlTask implements Task{
 
     final String builderName = "org.m410.garden.configuration.LogbackXmlBuilder";
-    final Path outputPath = FileSystems.getDefault().getPath("target/classes/logback.xml");
 
 
     @Override
@@ -41,6 +40,9 @@ public final class LogbackXmlTask implements Task{
                 .stream()
                 .map(File::new)
                 .collect(Collectors.toList());
+
+        final String sourceDir = context.getBuild().getSourceOutputDir();
+        final Path outputPath = FileSystems.getDefault().getPath(sourceDir, "logback.xml");
 
         new ReflectConfigFileBuilder(builderName)
                 .withClasspath(mavenProject)

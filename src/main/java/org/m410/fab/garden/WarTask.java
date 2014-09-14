@@ -37,20 +37,19 @@ public class WarTask implements Task {
             File targetDir = new File(context.getBuild().getTargetDir());
             File webDir = FileSystems.getDefault().getPath(context.getBuild().getWebappDir()).toFile();
             String cp = context.getClasspath().get("compile");
-            File explodedDir = makeExploded(targetDir, fileSource,webDir, toFiles(cp));
+            File explodedDir = makeExploded(targetDir, fileSource, webDir, toFiles(cp));
 
-            if(!explodedDir.exists() && !explodedDir.mkdirs())
+            if (!explodedDir.exists() && !explodedDir.mkdirs())
                 System.out.println("could not make target dir");
 
-            String name = context.getApplication().getName() + "-"+ context.getApplication().getVersion() +".war";
+            String name = context.getApplication().getName() + "-" + context.getApplication().getVersion() + ".war";
             File zipFile = new File(targetDir, name);
             FileOutputStream fout = new FileOutputStream(zipFile);
 
             try (ZipOutputStream zout = new ZipOutputStream(fout)) {
                 addDirectory(zout, explodedDir);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -64,20 +63,20 @@ public class WarTask implements Task {
 
     private File makeExploded(File targetDir, File sourcesDir, File webDir, Collection<File> libs)
             throws IOException {
-        File exploded = new File(targetDir,"war-exploded");
+        File exploded = new File(targetDir, "war-exploded");
         Files.walkFileTree(webDir.toPath(), new CopyFileVisitor(exploded.toPath()));
 
         final File webInfDir = new File(exploded, "WEB-INF");
 
-        File classesDir = new File(webInfDir,"classes");
+        File classesDir = new File(webInfDir, "classes");
         classesDir.mkdirs();
         Files.walkFileTree(sourcesDir.toPath(), new CopyFileVisitor(classesDir.toPath()));
 
-        File libDir = new File(webInfDir,"lib");
+        File libDir = new File(webInfDir, "lib");
         libDir.mkdirs();
 
         for (File lib : libs)
-            Files.copy(lib.toPath(),new File(libDir, lib.getName()).toPath());
+            Files.copy(lib.toPath(), new File(libDir, lib.getName()).toPath());
 
         return exploded;
     }
@@ -138,8 +137,7 @@ public class WarTask implements Task {
                 throws IOException {
             if (sourcePath == null) {
                 sourcePath = dir;
-            }
-            else {
+            } else {
                 Files.createDirectories(targetPath.resolve(sourcePath
                         .relativize(dir)));
             }
@@ -149,7 +147,7 @@ public class WarTask implements Task {
         @Override
         public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs)
                 throws IOException {
-            Files.copy(file, targetPath.resolve(sourcePath.relativize(file)));
+            Files.copy(file, targetPath.resolve(sourcePath.relativize(file)), StandardCopyOption.REPLACE_EXISTING);
             return FileVisitResult.CONTINUE;
         }
     }

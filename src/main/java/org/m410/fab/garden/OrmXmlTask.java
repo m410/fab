@@ -21,6 +21,7 @@ import org.m410.fab.builder.Task;
 import java.io.File;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -50,17 +51,24 @@ public final class OrmXmlTask implements Task {
 
     @Override
     public void execute(BuildContext context) throws Exception {
-        Collection<File> mavenProject = Arrays.asList(
+        Collection<File> classpath = Arrays.asList(
                 context.getClasspath()
                         .get("compile")
                         .split(System.getProperty("path.separator")))
                 .stream()
                 .map(File::new)
                 .collect(Collectors.toList());
-        final Path outputPath = FileSystems.getDefault().getPath("target/classes/META-INF/orm.xml");
+        classpath.add(Paths.get(context.getBuild().getSourceOutputDir()).toFile());
+
+        final String sourceOut = context.getBuild().getSourceOutputDir();
+        final Path outputPath = FileSystems.getDefault().getPath(sourceOut,"META-INF/orm.xml");
+        final File file = FileSystems.getDefault().getPath(sourceOut,"META-INF").toFile();
+
+        if(!file.exists() && !file.mkdirs())
+            throw new RuntimeException("Could not make META-INF directories");
 
         new ReflectConfigFileBuilder(ormXmlClassName)
-                .withClasspath(mavenProject)
+                .withClasspath(classpath)
                 .withPath(outputPath)
                 .withEnv(context.environment())
                 .withAppCreated(true)

@@ -74,7 +74,7 @@ public final  class ReflectConfigFileBuilder {
         Method buildtimeMethod = confFactoryClazz.getMethod("buildtime", String.class);
         Object configurationInstance = buildtimeMethod.invoke(null,envName);
 
-        Object builderInstance = null;
+        Object builderInstance;
 
         if(appCreate)
             builderInstance = appCreate(loader, confClazz, configurationInstance);
@@ -98,7 +98,8 @@ public final  class ReflectConfigFileBuilder {
     }
 
     private String appClassName() throws IOException {
-        Path configurationFile = FileSystems.getDefault().getPath("configuration.m410.yml");
+        // todo fix hardcode
+        Path configurationFile = FileSystems.getDefault().getPath("garden.fab.yml");
         List<String> lines = Files.readAllLines(configurationFile, StandardCharsets.UTF_8);
         Optional<String> line = Optional.empty();
 
