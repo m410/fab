@@ -53,7 +53,7 @@ public class MakeConfigTask implements Task {
 
         FileSystems.getDefault().getPath(context.getBuild().getSourceOutputDir()).toFile().mkdirs();
 
-        final Path path = FileSystems.getDefault().getPath(context.getBuild().getSourceOutputDir(),"configuration.m410.yml");
+        final Path path = FileSystems.getDefault().getPath(context.getBuild().getSourceOutputDir(),"garden.fab.yml");
         Writer writer = new FileWriter(path.toFile());
         new Yaml().dump(map,writer);
         writer.close();

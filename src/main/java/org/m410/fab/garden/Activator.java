@@ -21,7 +21,13 @@ public class Activator implements BundleActivator {
                 command.getSteps().stream()
                         .filter(m->m.getName().equals("generate-resources"))
                         .findFirst()
-                        .ifPresent(m->m.append(new MakeConfigTask()));
+                        .ifPresent(m->{
+                            m.append(new MakeConfigTask());
+                            m.append(new LogbackXmlTask());
+                            m.append(new OrmXmlTask());
+                            m.append(new PersistenceXmlTask());
+                            m.append(new WebXmlTask());
+                        });
                 command.getSteps().stream()
                         .filter(m->m.getName().equals("compile"))
                         .findFirst()
