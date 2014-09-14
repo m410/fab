@@ -19,7 +19,7 @@ public class ModuleImpl implements Module {
 //        type = (String)data.get("type");
         name = (String)data.get("name");
         org = (String)data.get("org");
-        version = (String)data.get("version");
+        version = data.get("version") != null ? data.get("version").toString() : null;
         properties = data;
         properties.remove("name");
         properties.remove("org");

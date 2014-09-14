@@ -54,23 +54,24 @@ public final class ConfigBuilder  {
                     List baseListValues = (List)underValue;
                     List overListValues = (List)over.get(overKey);
 
-                    for (Object overObj : overListValues) {
-                        Map<String,Object> overMap = (Map<String,Object>)overObj;
-                        String mapName = (String)overMap.get("name");
-                        Map<String,Object> baseMap = null;
+                    if(overListValues != null)
+                        for (Object overObj : overListValues) {
+                            Map<String,Object> overMap = (Map<String,Object>)overObj;
+                            String mapName = (String)overMap.get("name");
+                            Map<String,Object> baseMap = null;
 
-                        for (Object row : baseListValues) {
-                            Map<String,Object> map = (Map<String,Object>)row;
+                            for (Object row : baseListValues) {
+                                Map<String,Object> map = (Map<String,Object>)row;
 
-                            if(mapName.equals(map.get("name")))
-                                baseMap = map;
+                                if(mapName.equals(map.get("name")))
+                                    baseMap = map;
+                            }
+
+                            if(baseMap != null)
+                                merge(baseMap, overMap);
+                            else
+                                baseListValues.add(overMap);
                         }
-
-                        if(baseMap != null)
-                            merge(baseMap, overMap);
-                        else
-                            baseListValues.add(overMap);
-                    }
                 }
                 else if(underValue instanceof Map) {
                     Map baseMapValues = (Map)underValue;
