@@ -16,7 +16,7 @@ public class LocalDevClassLoader extends URLClassLoader {
 
     public LocalDevClassLoader(List<URL> runPath, File classesDir, ClassLoader parent) {
         super(toURLs(runPath, classesDir), parent);
-        dumpThreadClasspath();
+//        dumpThreadClasspath();
     }
 
     static URL[] toURLs(List<URL> runPath, File classesDir) {
@@ -32,10 +32,9 @@ public class LocalDevClassLoader extends URLClassLoader {
         if(runPath != null)
             urls.addAll(runPath);
 
-        System.out.println("CLASSPATH: " + urls);
-        for (URL url : urls) {
+//        System.out.println("CLASSPATH: " + urls);
+        for (URL url : urls)
             System.out.println("    " + url);
-        }
 
         return urls.toArray(new URL[urls.size()]);
     }

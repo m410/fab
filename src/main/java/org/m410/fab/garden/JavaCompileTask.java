@@ -115,7 +115,7 @@ public final class JavaCompileTask implements Task {
         final File file = FileSystems.getDefault().getPath(sourceDir).toFile();
 
         if(!file.exists() && !file.mkdirs())
-            System.out.println("Could not make source dir");
+            throw new RuntimeException("Could not make source dir");
 
         ArrayList<String> list = new ArrayList<>(2);
         list.add("-sourcepath");
@@ -128,8 +128,9 @@ public final class JavaCompileTask implements Task {
                 ? context.getBuild().getTestOutputDir()
                 : context.getBuild().getSourceOutputDir();
         final File file = FileSystems.getDefault().getPath(outputDir).toFile();
+
         if(!file.exists() && !file.mkdirs())
-            System.out.println("Could not make classes dir");
+            throw new RuntimeException("Could not make classes dir");
 
         ArrayList<String> list = new ArrayList<>(2);
         list.add("-d");

@@ -30,10 +30,10 @@ public class Jetty9Task implements Task {
 
     @Override
     public void execute(BuildContext context) throws Exception {
-        System.out.println("context:"+context);
-        System.out.println("context.app:"+context.getApplication());
-        System.out.println("context.build:"+context.getBuild());
-        System.out.println("context.classpath:"+context.getClasspath());
+        context.cli().debug("context:"+context);
+        context.cli().debug("context.app:"+context.getApplication());
+        context.cli().debug("context.build:"+context.getBuild());
+        context.cli().debug("context.classpath:"+context.getClasspath());
         final String applicationClass = context.getApplication().getApplicationClass();
         final String appLoaderClass = applicationClass + "Loader";
         final File sourceDir = FileSystems.getDefault().getPath(context.getBuild().getSourceDir()).toFile();
@@ -43,7 +43,7 @@ public class Jetty9Task implements Task {
         final ProxyServletContainerListener listener = new ProxyServletContainerListener(
                 applicationClass, appLoaderClass, sourceDir, classesDir, classpath);
 
-        System.out.println("got new listeners:" + listener);
+        context.cli().debug("got new listener:" + listener);
 
         final Server server = new Server(8080);
         final WebAppContext webAppContext = new WebAppContext();

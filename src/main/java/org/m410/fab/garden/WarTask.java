@@ -40,7 +40,7 @@ public class WarTask implements Task {
             File explodedDir = makeExploded(targetDir, fileSource, webDir, toFiles(cp));
 
             if (!explodedDir.exists() && !explodedDir.mkdirs())
-                System.out.println("could not make target dir");
+                throw new RuntimeException("could not make target dir");
 
             String name = context.getApplication().getName() + "-" + context.getApplication().getVersion() + ".war";
             File zipFile = new File(targetDir, name);

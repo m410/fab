@@ -32,6 +32,7 @@ public class ProxyServletContainerListener implements ServletContextListener {
         final ClassLoader threadClassLoader = Thread.currentThread().getContextClassLoader();
         classLoader = new LocalDevClassLoader(runPath, classesDir, threadClassLoader);
 
+        // todo remove these later
         System.out.println("---- applicationClassName=" + applicationClassName);
         System.out.println("---- loaderClassName=" + loaderClassName);
         System.out.println("---- sourceDir=" + sourceDir);
