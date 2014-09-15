@@ -23,7 +23,7 @@ public final class JarTask implements Task {
             File targetFile = new File(context.getBuild().getTargetDir());
 
             if(!targetFile.exists() && !targetFile.mkdirs())
-                System.out.println("could not make target dir");
+                throw new RuntimeException("could not make target dir");
 
             String name = context.getApplication().getName() + "-"+ context.getApplication().getVersion() +".jar";
             File zipFile = new File(targetFile, name);
@@ -75,7 +75,8 @@ public final class JarTask implements Task {
                 bis.close();
 
             } catch (IOException ioe) {
-                System.out.println("IOException :" + ioe);
+                System.err.println("IOException :" + ioe);
+                throw new RuntimeException(ioe);
             }
         }
     }
