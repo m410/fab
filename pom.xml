@@ -43,14 +43,14 @@
             <!--<artifactId>tomcat-embed-core</artifactId>-->
             <!--<version>8.0.9</version>-->
         <!--</dependency>-->
-        <dependency>
-            <groupId>org.eclipse.jetty.aggregate</groupId>
-            <artifactId>jetty-all</artifactId>
-            <version>9.2.3.v20140905</version>
-            <scope>compile</scope>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.eclipse.jetty.aggregate</groupId>-->
+            <!--<artifactId>jetty-all</artifactId>-->
+            <!--<version>9.2.3.v20140905</version>-->
+            <!--<scope>compile</scope>-->
+        <!--</dependency>-->
 
-        <!-- jetty deps-->
+        <!-- jetty deps
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-client</artifactId>
@@ -141,6 +141,7 @@
             <version>9.2.3.v20140905</version>
             <scope>compile</scope>
         </dependency>
+        -->
         <!-- dependencies that jetty-all needs (some optional) -->
         <dependency>
             <groupId>javax.websocket</groupId>

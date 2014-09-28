@@ -12,23 +12,89 @@ import java.util.List;
 /**
  * @author m410
  */
-public class ProxyServletContainerListener implements ServletContextListener {
-    String applicationClassName;
-    String loaderClassName;
-    File sourceDir;
-    File classesDir;
-    List<URL> runPath;
-
-    ServletContextListener listener;
+public final class ProxyServletContainerListener implements ServletContextListener {
+    final String applicationClassName;
+    final String loaderClassName;
+    final File sourceDir;
+    final File classesDir;
+    final List<URL> runPath;
     ClassLoader classLoader;
 
+    public ProxyServletContainerListener() {
+        applicationClassName = null;
+        loaderClassName = null;
+        sourceDir = null;
+        classesDir = null;
+        runPath = null;
+    }
+
     public ProxyServletContainerListener(String applicationClassName, String loaderClassName,
-                                         File sourceDir, File classesDir, List<URL> classPathFiles) {
+            File sourceDir, File classesDir, List<URL> classPathFiles) {
         this.applicationClassName = applicationClassName;
         this.loaderClassName = loaderClassName;
         this.sourceDir = sourceDir;
         this.classesDir = classesDir;
         this.runPath = classPathFiles;
+    }
+
+
+    public ProxyServletContainerListener withApplicationClassName(String name) {
+        return new ProxyServletContainerListener(
+                name,
+                loaderClassName,
+                sourceDir,
+                classesDir,
+                runPath
+        );
+    }
+
+    public ProxyServletContainerListener withLoaderClassName(String name) {
+        return new ProxyServletContainerListener(
+                applicationClassName,
+                name,
+                sourceDir,
+                classesDir,
+                runPath
+        );
+    }
+
+    public ProxyServletContainerListener withSourceDir(File dir) {
+        return new ProxyServletContainerListener(
+                applicationClassName,
+                loaderClassName,
+                dir,
+                classesDir,
+                runPath
+        );
+    }
+
+    public ProxyServletContainerListener withClassesDir(File dir) {
+        return new ProxyServletContainerListener(
+                applicationClassName,
+                loaderClassName,
+                sourceDir,
+                dir,
+                runPath
+        );
+    }
+
+    public ProxyServletContainerListener withRunPath(List<URL> r) {
+        return new ProxyServletContainerListener(
+                applicationClassName,
+                loaderClassName,
+                sourceDir,
+                classesDir,
+                r
+        );
+    }
+
+    public ProxyServletContainerListener init() {
+        assert  applicationClassName != null;
+        assert  loaderClassName != null;
+        assert  sourceDir != null;
+        assert  classesDir != null;
+        assert  runPath != null;
+
         final ClassLoader threadClassLoader = Thread.currentThread().getContextClassLoader();
         classLoader = new LocalDevClassLoader(runPath, classesDir, threadClassLoader);
 
@@ -39,7 +105,10 @@ public class ProxyServletContainerListener implements ServletContextListener {
         System.out.println("---- classesDir=" + classesDir);
         System.out.println("---- runPath=" + runPath);
         System.out.println("---- classLoader=" + classLoader);
+
+        return this;
     }
+
 
     @Override
     @SuppressWarnings("unchecked")

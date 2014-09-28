@@ -64,6 +64,10 @@ public class WarTask implements Task {
     private File makeExploded(File targetDir, File sourcesDir, File webDir, Collection<File> libs)
             throws IOException {
         File exploded = new File(targetDir, "war-exploded");
+
+        if(!exploded.exists() && !exploded.mkdirs())
+            throw new RuntimeException("Could not make war-exploded directory");
+
         Files.walkFileTree(webDir.toPath(), new CopyFileVisitor(exploded.toPath()));
 
         final File webInfDir = new File(exploded, "WEB-INF");
