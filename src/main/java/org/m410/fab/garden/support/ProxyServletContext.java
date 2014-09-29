@@ -15,6 +15,7 @@ import java.util.Set;
  *
  * @author Michael Fortin
  */
+@Deprecated
 public class ProxyServletContext implements ServletContext {
     ServletContext servletContext;
     ClassLoader classLoader;
@@ -171,7 +172,7 @@ public class ProxyServletContext implements ServletContext {
 
     @Override
     public ServletRegistration.Dynamic addServlet(String s, String s2) {
-        return servletContext.addServlet(s, new ProxyServlet(s2));
+        return servletContext.addServlet(s, new ProxyServlet());
     }
 
     @Override
@@ -201,7 +202,7 @@ public class ProxyServletContext implements ServletContext {
 
     @Override
     public FilterRegistration.Dynamic addFilter(String s, String s2) {
-        return servletContext.addFilter(s,new ProxyFilter(s2));
+        return servletContext.addFilter(s,new ProxyFilter());
     }
 
     @Override
@@ -251,8 +252,7 @@ public class ProxyServletContext implements ServletContext {
 
     @Override
     public void addListener(String s) {
-        // TODO need to set the right type somehow
-        servletContext.addListener(new ProxyListener(s));
+        servletContext.addListener(new ProxyListener());
     }
 
     @Override

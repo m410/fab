@@ -50,7 +50,7 @@ public class Jetty9Task implements Task {
         classesDir = FileSystems.getDefault().getPath(context.getBuild().getSourceOutputDir()).toFile();
         classpath = toPath(context.getClasspath().get("compile")); // was runtime
 
-        // works, but needs to be loaded dynamically somehow
+        // works, but needs to be loaded dynamically from another group of dependencies
         List<URL> jettyClasspath = new ArrayList<>();
         jettyClasspath.add(new File("/Users/m410/.m2/repository/org/eclipse/jetty/aggregate/jetty-all/9.2.3.v20140905/jetty-all-9.2.3.v20140905.jar").toURI().toURL());
         jettyClasspath.add(new File("/Users/m410/.m2/repository/javax/websocket/javax.websocket-api/1.1/javax.websocket-api-1.1.jar").toURI().toURL());

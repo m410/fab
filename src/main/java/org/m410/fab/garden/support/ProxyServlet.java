@@ -28,8 +28,8 @@ public class ProxyServlet extends HttpServlet {
 
     private String servletClassName;
 
-    public ProxyServlet(String servletClassName) {
-        this.servletClassName = servletClassName;
+    public void setServletClass(Class servletClass) {
+        this.servletClass = servletClass;
     }
 
     @Override

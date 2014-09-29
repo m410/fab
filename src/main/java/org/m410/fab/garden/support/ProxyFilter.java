@@ -25,7 +25,7 @@ public class ProxyFilter implements Filter {
     private ClassLoader classLoader;
     private String filterClassName;
 
-    public ProxyFilter(String filterClassName) {
+    public void setFilterClassName(String filterClassName) {
         this.filterClassName = filterClassName;
     }
 
@@ -40,6 +40,7 @@ public class ProxyFilter implements Filter {
 
         if (filterInstance == null || classLoader == null || loader != classLoader) {
             classLoader = loader;
+
             try {
                 filterClass = classLoader.loadClass(filterClassName);
                 filterInstance = filterClass.newInstance();

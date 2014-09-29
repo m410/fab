@@ -1,5 +1,6 @@
 package org.m410.fab.garden.support;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.io.File;
@@ -113,32 +114,56 @@ public final class ProxyServletContainerListener implements ServletContextListen
     @Override
     @SuppressWarnings("unchecked")
     public void contextInitialized(ServletContextEvent servletContextEvent) {
-        servletContextEvent.getServletContext().setAttribute("classLoader", classLoader);
+        final ServletContext servletContext = servletContextEvent.getServletContext();
+        servletContext.setAttribute("classLoader", classLoader);
         Object application = null;
 
         try {
             Class appLoaderClass = classLoader.loadClass(loaderClassName);
+            Class appClass = classLoader.loadClass(applicationClassName);
             Object appLoader = appLoaderClass.newInstance();
             Method loaderMethod = appLoaderClass.getMethod("load", String.class);
             application = loaderMethod.invoke(appLoader, "dev");  // todo fix hardcoded env
-        } catch (Exception e) {
+
+            // todo create and inject code change listener to all proxies
+
+            servletContext.setAttribute("application", application);
+
+            List listServletDef = (List)appClass.getMethod("getServlets").invoke(application);
+            Class servletDefClass = classLoader.loadClass("org.m410.garden.servlet.ServletDefinition");
+            Class servletClass = classLoader.loadClass("javax.servlet.Servlet");
+            Class servletContextClass = classLoader.loadClass("javax.servlet.ServletContext");
+
+            for (Object servletDef : listServletDef)
+                    servletDefClass.getMethod("configure",servletContextClass,servletClass)
+                            .invoke(servletDef,servletContext, new ProxyServlet());
+
+            List listFilterDef = (List)appClass.getMethod("getServlets").invoke(application);
+            Class filterClass = classLoader.loadClass("javax.servlet.Filter");
+            Class filterDefClass = classLoader.loadClass("org.m410.garden.servlet.FilterDefinition");
+
+            for (Object filterDef : listFilterDef)
+                filterDefClass.getMethod("configure",servletContextClass,filterClass)
+                        .invoke(filterDef,servletContext, new ProxyFilter());
+
+            List listListerDef = (List)appClass.getMethod("getListeners").invoke(application);
+            Class listenerClass = classLoader.loadClass("java.util.EventListener");
+            Class listenerDefClass = classLoader.loadClass("org.m410.garden.servlet.ListenerDefinition");
+
+            for (Object filterDef : listListerDef)
+                listenerDefClass.getMethod("configure",servletContextClass,listenerClass)
+                        .invoke(filterDef,servletContext, new ProxyListener());
+
+        }
+        catch (Exception e) {
             System.err.println("EXCEPTION: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         }
-
-        // todo, in child loader, might need to be a proxy???
-        servletContextEvent.getServletContext().setAttribute("application", application);
-
-        // todo need to add proxies for each of these
-//        servletContextEvent.getServletContext().addFilter("","").addMappingForUrlPatterns();
-//        servletContextEvent.getServletContext().addServlet("","").addMapping("");
-//        servletContextEvent.getServletContext().addListener();
-
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
-        new ProxyServletContextEvent(servletContextEvent, classLoader);
+        // todo graceful context shutdown...
     }
 }
