@@ -32,6 +32,10 @@ public class ProxyServlet extends HttpServlet {
         this.servletClass = servletClass;
     }
 
+    public void setDelegateName(String name) {
+        this.servletClassName = name;
+    }
+
     @Override
     public void init(ServletConfig config) {
         servletConfig = config;
