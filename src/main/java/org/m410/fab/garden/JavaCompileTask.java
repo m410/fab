@@ -93,12 +93,10 @@ public final class JavaCompileTask implements Task {
         JavaCompiler.CompilationTask compilerTask = compiler.getTask(null, stdFileManager, diagnostics, options, null, sources);
         boolean status = compilerTask.call();
 
-        if (!status) {
-            for (Diagnostic diagnostic : diagnostics.getDiagnostics()) {
+        if (!status)
+            for (Diagnostic diagnostic : diagnostics.getDiagnostics())
                 System.out.format("Error on line %d in %s\n", diagnostic.getLineNumber(), diagnostic);
-            }
-        }
-
+            
         try {
             stdFileManager.close();
         }
