@@ -17,8 +17,8 @@ import java.lang.reflect.InvocationTargetException;
 public class ProxyServlet extends HttpServlet {
 //    private final Logger log = LoggerFactory.getLogger(getClass());
 
-    private final Class<HttpServletRequest> ReqCls = HttpServletRequest.class;
-    private final Class<HttpServletRequest> resCls = HttpServletRequest.class;
+    private final Class<HttpServletRequest> reqCls = HttpServletRequest.class;
+    private final Class<HttpServletResponse> resCls = HttpServletResponse.class;
     private final Class<ServletConfig> configCls = ServletConfig.class;
 
     private ServletConfig servletConfig;
@@ -63,7 +63,7 @@ public class ProxyServlet extends HttpServlet {
         }
 
         try {
-            servletClass.getMethod("service", ReqCls, resCls).invoke(servletInstance, req, res);
+            servletClass.getMethod("service", reqCls, resCls).invoke(servletInstance, req, res);
         }
         catch (IllegalAccessException|InvocationTargetException|NoSuchMethodException e) {
             throw new ClassLoaderRuntimeException(e);

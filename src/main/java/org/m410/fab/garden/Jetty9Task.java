@@ -105,8 +105,6 @@ public class Jetty9Task implements Task {
                 serverClass.getMethod("setHandler",handlerClass).invoke(server,webAppContext);
                 serverClass.getMethod("start").invoke(server);
                 serverClass.getMethod("join").invoke(server);
-
-                System.out.println("#### yeah started!!!!");
             }
             catch (Exception e) {
                 throw new RuntimeException(e);
