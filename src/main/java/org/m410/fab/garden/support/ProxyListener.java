@@ -15,7 +15,7 @@ import java.util.EventListener;
 public class ProxyListener implements EventListener {
     String className;
 
-    public void setClassName(String className) {
+    public void setDelegateName(String className) {
         this.className = className;
     }
 

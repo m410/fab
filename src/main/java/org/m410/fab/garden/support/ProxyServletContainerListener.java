@@ -138,7 +138,7 @@ public final class ProxyServletContainerListener implements ServletContextListen
                     servletDefClass.getMethod("configure",servletContextClass,servletClass)
                             .invoke(servletDef,servletContext, new ProxyServlet());
 
-            List listFilterDef = (List)appClass.getMethod("getServlets").invoke(application);
+            List listFilterDef = (List)appClass.getMethod("getFilters").invoke(application);
             Class filterClass = classLoader.loadClass("javax.servlet.Filter");
             Class filterDefClass = classLoader.loadClass("org.m410.garden.servlet.FilterDefinition");
 
@@ -150,9 +150,9 @@ public final class ProxyServletContainerListener implements ServletContextListen
             Class listenerClass = classLoader.loadClass("java.util.EventListener");
             Class listenerDefClass = classLoader.loadClass("org.m410.garden.servlet.ListenerDefinition");
 
-            for (Object filterDef : listListerDef)
+            for (Object listenerDef : listListerDef)
                 listenerDefClass.getMethod("configure",servletContextClass,listenerClass)
-                        .invoke(filterDef,servletContext, new ProxyListener());
+                        .invoke(listenerDef,servletContext, new ProxyListener());
 
         }
         catch (Exception e) {

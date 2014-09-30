@@ -25,7 +25,7 @@ public class ProxyFilter implements Filter {
     private ClassLoader classLoader;
     private String filterClassName;
 
-    public void setFilterClassName(String filterClassName) {
+    public void setDelegateName(String filterClassName) {
         this.filterClassName = filterClassName;
     }
 
