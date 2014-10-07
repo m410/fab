@@ -1,12 +1,11 @@
 package org.m410.fab.garden.support;
 
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
-
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 /**
@@ -14,8 +13,7 @@ import java.lang.reflect.InvocationTargetException;
  *
  * @author Michael Fortin
  */
-public class ProxyServlet extends HttpServlet {
-//    private final Logger log = LoggerFactory.getLogger(getClass());
+public final class ProxyServlet extends HttpServlet implements SourceMonitor.Event {
 
     private final Class<HttpServletRequest> reqCls = HttpServletRequest.class;
     private final Class<HttpServletResponse> resCls = HttpServletResponse.class;
@@ -27,6 +25,18 @@ public class ProxyServlet extends HttpServlet {
     private ClassLoader classLoader;
 
     private String servletClassName;
+
+    private SourceMonitor sourceMonitor;
+
+    public ProxyServlet(SourceMonitor sourceMonitor) {
+        this.sourceMonitor = sourceMonitor;
+        sourceMonitor.addChangeListener(this);
+    }
+
+    @Override
+    public void changed() {
+        this.servletInstance = null;
+    }
 
     public void setServletClass(Class servletClass) {
         this.servletClass = servletClass;
@@ -43,8 +53,7 @@ public class ProxyServlet extends HttpServlet {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void service(HttpServletRequest req, HttpServletResponse res) {
-//        log.debug("servlet proxy {}",servletClassName);
+    public void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException{
         ClassLoader loader = (ClassLoader)req.getServletContext().getAttribute("classLoader");
         Thread.currentThread().setContextClassLoader(loader);
 
@@ -62,12 +71,17 @@ public class ProxyServlet extends HttpServlet {
             }
         }
 
-        try {
-            servletClass.getMethod("service", reqCls, resCls).invoke(servletInstance, req, res);
+        if(sourceMonitor.getStatus()== SourceMonitor.Status.Ok) {
+            try {
+                servletClass.getMethod("service", reqCls, resCls).invoke(servletInstance, req, res);
+            }
+            catch (IllegalAccessException|InvocationTargetException|NoSuchMethodException e) {
+                throw new ClassLoaderRuntimeException(e);
+            }
         }
-        catch (IllegalAccessException|InvocationTargetException|NoSuchMethodException e) {
-            throw new ClassLoaderRuntimeException(e);
+        else {
+            servletInstance = null;
+            sourceMonitor.renderStatusPage(req,res);
         }
-
     }
 }

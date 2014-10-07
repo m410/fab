@@ -12,8 +12,19 @@ import java.util.EventListener;
  */
 // todo need several types of listeners, not just the eventListener
 // todo need proxy factory
-public class ProxyListener implements EventListener {
+public final class ProxyListener implements EventListener, SourceMonitor.Event {
     String className;
+    private SourceMonitor sourceMonitor;
+
+    public ProxyListener(SourceMonitor sourceMonitor) {
+        this.sourceMonitor = sourceMonitor;
+        sourceMonitor.addChangeListener(this);
+    }
+
+    @Override
+    public void changed() {
+
+    }
 
     public void setDelegateName(String className) {
         this.className = className;

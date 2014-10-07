@@ -172,7 +172,7 @@ public class ProxyServletContext implements ServletContext {
 
     @Override
     public ServletRegistration.Dynamic addServlet(String s, String s2) {
-        return servletContext.addServlet(s, new ProxyServlet());
+        return servletContext.addServlet(s, new ProxyServlet(null));
     }
 
     @Override
@@ -202,7 +202,7 @@ public class ProxyServletContext implements ServletContext {
 
     @Override
     public FilterRegistration.Dynamic addFilter(String s, String s2) {
-        return servletContext.addFilter(s,new ProxyFilter());
+        return servletContext.addFilter(s,new ProxyFilter(null));
     }
 
     @Override
@@ -252,7 +252,7 @@ public class ProxyServletContext implements ServletContext {
 
     @Override
     public void addListener(String s) {
-        servletContext.addListener(new ProxyListener());
+        servletContext.addListener(new ProxyListener(null));
     }
 
     @Override

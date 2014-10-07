@@ -1,19 +1,84 @@
 package org.m410.fab.garden.support;
 
+import org.m410.fab.garden.ContextJavaCompiler;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
+import java.util.EventListener;
+import java.util.List;
+
+import static java.nio.file.StandardWatchEventKinds.*;
 
 /**
  * @author <a href="mailto:mifortin@deloitte.com">Michael Fortin</a>
  */
 public final class SourceMonitor {
-    File sourceBaseDir;
+    private final Object statusLock = new Object();
+    private final Object compilerLock = new Object();
+    private Status status = Status.Ok;
+    private List<Event> listeners = new ArrayList<>();
 
-    public SourceMonitor(File sourceBaseDir) {
 
+    public SourceMonitor(File sourceBaseDir, ContextJavaCompiler contextJavaCompiler) throws IOException, InterruptedException {
+        final Path sourcePath = sourceBaseDir.toPath();
+
+        final SourceCompiler sourceCompiler = new SourceCompiler(compilerLock, sourceBaseDir, contextJavaCompiler);
+        new Thread(sourceCompiler, "sourceCompiler").start();
+
+        final SourceWatcher fileWatcher = new SourceWatcher(sourcePath);
+        new Thread(fileWatcher, "SourceWatcher").start();
     }
 
     public Status getStatus() {
-        return Status.Ok;
+        synchronized (statusLock) {
+
+            if(status == Status.Compiling || status == Status.Ok || status == Status.Failed)
+                return status;
+
+            synchronized (compilerLock) {
+                compilerLock.notify();
+            }
+            this.status = Status.Compiling;
+            return status;
+        }
+    }
+
+    public void addChangeListener(Event e) {
+        listeners.add(e);
+    }
+
+    void setStatus(final Status s) {
+        synchronized (statusLock) {
+            this.status = s;
+        }
+    }
+
+
+
+    public void renderStatusPage(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        final String page = "<!DOCTYPE html>\n" +
+                "<html lang=\"en\">\n" +
+                "<head>\n" +
+                "<meta charset=\"utf-8\">\n" +
+                "<meta http-equiv=\"refresh\" content=\"4\">\n" +
+                "<title>Brzy Recompiling</title>\n" +
+                "<style>\n" +
+                "body {margin:0 auto;text-align:center;padding:4em 2em;\n" +
+                " font-family:\"Helvetica Neue\", Arial, Helvetica, sans-serif;color:#333}\n" +
+                "</style>\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "<h1>Recompiling Source</h1>\n" +
+                "</body>\n" +
+                "</html>\n" +
+                "\n";
+
+        res.getOutputStream().write(page.getBytes("UTF-8"));
     }
 
     public enum Status {
@@ -22,4 +87,104 @@ public final class SourceMonitor {
         Compiling,
         Failed
     }
+
+    class SourceCompiler implements Runnable {
+        final File sourceBaseDir;
+        final Object lock;
+        final ContextJavaCompiler compiler;
+
+        public SourceCompiler(Object lock, File sourceBaseDir, ContextJavaCompiler compiler) {
+            this.lock = lock;
+            this.sourceBaseDir = sourceBaseDir;
+            this.compiler = compiler;
+        }
+
+        @Override
+        public void run() {
+            while(true) {
+                try {
+                    synchronized (lock) {
+                        lock.wait();
+                        listeners.stream().forEach(Event::changed);
+                        setStatus(Status.Compiling);
+                        ContextJavaCompiler.Status s = compiler.compile();
+
+                        if(s.isOk())
+                            setStatus(Status.Ok);
+                        else
+                            setStatus(Status.Failed);
+                    }
+                }
+                catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                setStatus(Status.Ok);
+            }
+        }
+    }
+
+    public interface Event extends EventListener {
+        public void changed();
+    }
+    class SourceWatcher implements Runnable {
+        final Path path;
+        final WatchService watchService;
+
+        public SourceWatcher(Path path) throws IOException {
+            this.path = path;
+            watchService = FileSystems.getDefault().newWatchService();
+            Files.walkFileTree(path, new Visitor(watchService));
+        }
+
+        @Override
+        public void run() {
+            try {
+                WatchKey key = watchService.take();
+
+                for (WatchEvent event : key.pollEvents()) {
+                    System.out.printf("##### Received %s event for file: %s\n", event.kind(), event.context());
+
+                    setStatus(Status.Modified);
+                    key.reset();
+                    key = watchService.take();
+                }
+
+            }
+            catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println("Stopping thread");
+        }
+    }
+
+    class Visitor implements  FileVisitor<Path> {
+        final WatchService watchService;
+
+        Visitor(WatchService watchService) {
+            this.watchService = watchService;
+        }
+
+        @Override
+        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+            dir.register(watchService, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY, OVERFLOW);
+            return FileVisitResult.CONTINUE;
+        }
+
+        @Override
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+            return FileVisitResult.CONTINUE;
+        }
+
+        @Override
+        public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+            return FileVisitResult.CONTINUE;
+        }
+
+        @Override
+        public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+            return FileVisitResult.CONTINUE;
+        }
+    }
+
 }

@@ -1,25 +1,32 @@
 package org.m410.fab.garden.support;
 
+import org.m410.fab.builder.BuildContext;
+import org.m410.fab.garden.ContextJavaCompiler;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author m410
  */
 public final class ProxyServletContainerListener implements ServletContextListener {
-    final String applicationClassName;
-    final String loaderClassName;
-    final File sourceDir;
-    final File classesDir;
-    final List<URL> runPath;
-    ClassLoader classLoader;
+    private final String applicationClassName;
+    private final String loaderClassName;
+    private final File sourceDir;
+    private final File classesDir;
+    private final List<URL> runPath;
+    private final String compilePath;
+    private final String envName;
+    private SourceMonitor sourceMonitor;
 
     public ProxyServletContainerListener() {
         applicationClassName = null;
@@ -27,15 +34,19 @@ public final class ProxyServletContainerListener implements ServletContextListen
         sourceDir = null;
         classesDir = null;
         runPath = null;
+        compilePath = null;
+        envName = null;
     }
 
     public ProxyServletContainerListener(String applicationClassName, String loaderClassName,
-            File sourceDir, File classesDir, List<URL> classPathFiles) {
+            File sourceDir, File classesDir, List<URL> runPath, String compilePath, String name) {
         this.applicationClassName = applicationClassName;
         this.loaderClassName = loaderClassName;
         this.sourceDir = sourceDir;
         this.classesDir = classesDir;
-        this.runPath = classPathFiles;
+        this.runPath = runPath;
+        this.compilePath = compilePath;
+        this.envName = name;
     }
 
 
@@ -45,7 +56,9 @@ public final class ProxyServletContainerListener implements ServletContextListen
                 loaderClassName,
                 sourceDir,
                 classesDir,
-                runPath
+                runPath,
+                compilePath,
+                envName
         );
     }
 
@@ -55,7 +68,21 @@ public final class ProxyServletContainerListener implements ServletContextListen
                 name,
                 sourceDir,
                 classesDir,
-                runPath
+                runPath,
+                compilePath,
+                envName
+        );
+    }
+
+    public ProxyServletContainerListener withEnv(String name) {
+        return new ProxyServletContainerListener(
+                applicationClassName,
+                loaderClassName,
+                sourceDir,
+                classesDir,
+                runPath,
+                compilePath,
+                name
         );
     }
 
@@ -65,7 +92,9 @@ public final class ProxyServletContainerListener implements ServletContextListen
                 loaderClassName,
                 dir,
                 classesDir,
-                runPath
+                runPath,
+                compilePath,
+                envName
         );
     }
 
@@ -75,7 +104,9 @@ public final class ProxyServletContainerListener implements ServletContextListen
                 loaderClassName,
                 sourceDir,
                 dir,
-                runPath
+                runPath,
+                compilePath,
+                envName
         );
     }
 
@@ -85,27 +116,36 @@ public final class ProxyServletContainerListener implements ServletContextListen
                 loaderClassName,
                 sourceDir,
                 classesDir,
-                r
+                r,
+                compilePath,
+                envName
         );
     }
 
-    public ProxyServletContainerListener init() {
+    public ProxyServletContainerListener withCompilePath(String r) {
+        return new ProxyServletContainerListener(
+                applicationClassName,
+                loaderClassName,
+                sourceDir,
+                classesDir,
+                runPath,
+                r,
+                envName
+        );
+    }
+
+    public ProxyServletContainerListener init() throws IOException, InterruptedException {
         assert  applicationClassName != null;
         assert  loaderClassName != null;
         assert  sourceDir != null;
         assert  classesDir != null;
         assert  runPath != null;
+        assert  compilePath != null;
+        assert  envName != null;
 
-        final ClassLoader threadClassLoader = Thread.currentThread().getContextClassLoader();
-        classLoader = new LocalDevClassLoader(runPath, classesDir, threadClassLoader);
 
-        // todo remove these later
-        System.out.println("---- applicationClassName=" + applicationClassName);
-        System.out.println("---- loaderClassName=" + loaderClassName);
-        System.out.println("---- sourceDir=" + sourceDir);
-        System.out.println("---- classesDir=" + classesDir);
-        System.out.println("---- runPath=" + runPath);
-        System.out.println("---- classLoader=" + classLoader);
+        ContextJavaCompiler contextJavaCompiler = new ContextJavaCompiler(sourceDir,classesDir,compilePath);
+        this.sourceMonitor = new SourceMonitor(sourceDir,contextJavaCompiler);
 
         return this;
     }
@@ -115,7 +155,12 @@ public final class ProxyServletContainerListener implements ServletContextListen
     @SuppressWarnings("unchecked")
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         final ServletContext servletContext = servletContextEvent.getServletContext();
+        final ClassLoader threadClassLoader = Thread.currentThread().getContextClassLoader();// url classloader
+        ClassLoader classLoader = new LocalDevClassLoader(runPath, classesDir, threadClassLoader);
+
+        // todo drop and re-create
         servletContext.setAttribute("classLoader", classLoader);
+
         Object application = null;
 
         try {
@@ -123,10 +168,9 @@ public final class ProxyServletContainerListener implements ServletContextListen
             Class appClass = classLoader.loadClass(applicationClassName);
             Object appLoader = appLoaderClass.newInstance();
             Method loaderMethod = appLoaderClass.getMethod("load", String.class);
-            application = loaderMethod.invoke(appLoader, "dev");  // todo fix hardcoded env
+            application = loaderMethod.invoke(appLoader, envName);
 
-            // todo create and inject code change listener to all proxies
-
+            // todo drop and re-create
             servletContext.setAttribute("application", application);
 
             List listServletDef = (List)appClass.getMethod("getServlets").invoke(application);
@@ -136,7 +180,7 @@ public final class ProxyServletContainerListener implements ServletContextListen
 
             for (Object servletDef : listServletDef)
                     servletDefClass.getMethod("configure",servletContextClass,servletClass)
-                            .invoke(servletDef,servletContext, new ProxyServlet());
+                            .invoke(servletDef,servletContext, new ProxyServlet(sourceMonitor));
 
             List listFilterDef = (List)appClass.getMethod("getFilters").invoke(application);
             Class filterClass = classLoader.loadClass("javax.servlet.Filter");
@@ -144,7 +188,7 @@ public final class ProxyServletContainerListener implements ServletContextListen
 
             for (Object filterDef : listFilterDef)
                 filterDefClass.getMethod("configure",servletContextClass,filterClass)
-                        .invoke(filterDef,servletContext, new ProxyFilter());
+                        .invoke(filterDef, servletContext, new ProxyFilter(sourceMonitor));
 
             List listListerDef = (List)appClass.getMethod("getListeners").invoke(application);
             Class listenerClass = classLoader.loadClass("java.util.EventListener");
@@ -152,7 +196,7 @@ public final class ProxyServletContainerListener implements ServletContextListen
 
             for (Object listenerDef : listListerDef)
                 listenerDefClass.getMethod("configure",servletContextClass,listenerClass)
-                        .invoke(listenerDef,servletContext, new ProxyListener());
+                        .invoke(listenerDef,servletContext, new ProxyListener(sourceMonitor));
 
         }
         catch (Exception e) {
@@ -165,5 +209,19 @@ public final class ProxyServletContainerListener implements ServletContextListen
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
         // todo graceful context shutdown...
+    }
+
+    private List<URL> toPath(String runtime) {
+        return Arrays.asList(runtime.split(System.getProperty("path.separator")))
+                .stream().map(s -> {
+                    try {
+                        return new URL("file://" + s);
+                    }
+                    catch (MalformedURLException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .collect(Collectors.toList());
+
     }
 }

@@ -1,7 +1,5 @@
 package org.m410.fab.garden.support;
 
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
 
 import javax.servlet.*;
 import java.lang.reflect.InvocationTargetException;
@@ -11,9 +9,8 @@ import java.lang.reflect.InvocationTargetException;
  *
  * @author Michael Fortin
  */
-public class ProxyFilter implements Filter {
+public final class ProxyFilter implements Filter, SourceMonitor.Event {
 
-//    private final Logger log = LoggerFactory.getLogger(getClass());
     private final Class<ServletRequest> ReqCls = ServletRequest.class;
     private final Class<ServletResponse> resCls = ServletResponse.class;
     private final Class<FilterConfig> configCls = FilterConfig.class;
@@ -25,6 +22,19 @@ public class ProxyFilter implements Filter {
     private ClassLoader classLoader;
     private String filterClassName;
 
+    private SourceMonitor sourceMonitor;
+
+
+    public ProxyFilter(SourceMonitor sourceMonitor) {
+        this.sourceMonitor = sourceMonitor;
+        sourceMonitor.addChangeListener(this);
+    }
+
+    @Override
+    public void changed() {
+        this.filterInstance = null;
+    }
+
     public void setDelegateName(String filterClassName) {
         this.filterClassName = filterClassName;
     }
@@ -34,7 +44,6 @@ public class ProxyFilter implements Filter {
     }
 
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) {
-//        log.debug("filter proxy {}",filterClassName);
         ClassLoader loader = (ClassLoader)req.getServletContext().getAttribute("classLoader");
         Thread.currentThread().setContextClassLoader(loader);
 
