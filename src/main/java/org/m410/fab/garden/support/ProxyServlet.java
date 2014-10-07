@@ -13,7 +13,7 @@ import java.lang.reflect.InvocationTargetException;
  *
  * @author Michael Fortin
  */
-public final class ProxyServlet extends HttpServlet implements SourceMonitor.Event {
+public final class ProxyServlet extends HttpServlet implements ReloadingEventListener {
 
     private final Class<HttpServletRequest> reqCls = HttpServletRequest.class;
     private final Class<HttpServletResponse> resCls = HttpServletResponse.class;
@@ -25,17 +25,23 @@ public final class ProxyServlet extends HttpServlet implements SourceMonitor.Eve
     private ClassLoader classLoader;
 
     private String servletClassName;
-
+    private Object application;
     private SourceMonitor sourceMonitor;
 
     public ProxyServlet(SourceMonitor sourceMonitor) {
         this.sourceMonitor = sourceMonitor;
-        sourceMonitor.addChangeListener(this);
+        sourceMonitor.addReloadingListener(this);
     }
 
     @Override
-    public void changed() {
-        this.servletInstance = null;
+    public void onChange(ReloadingEvent reloadingEvent) {
+        if(reloadingEvent.isRelease()) {
+            this.servletInstance = null;
+        }
+        else {
+            this.classLoader = reloadingEvent.getClassLoader();
+            this.application = reloadingEvent.getApplication();
+        }
     }
 
     public void setServletClass(Class servletClass) {
@@ -54,11 +60,10 @@ public final class ProxyServlet extends HttpServlet implements SourceMonitor.Eve
     @Override
     @SuppressWarnings("unchecked")
     public void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException{
-        ClassLoader loader = (ClassLoader)req.getServletContext().getAttribute("classLoader");
-        Thread.currentThread().setContextClassLoader(loader);
+        Thread.currentThread().setContextClassLoader(classLoader);
 
-        if (servletInstance == null || classLoader == null || loader != classLoader) {
-            classLoader = loader;
+        if (servletInstance == null ) {
+            req.getServletContext().setAttribute("application",application);
 
             try {
                 servletClass = classLoader.loadClass(servletClassName);

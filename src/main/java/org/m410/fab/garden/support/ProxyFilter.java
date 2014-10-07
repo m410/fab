@@ -2,6 +2,7 @@ package org.m410.fab.garden.support;
 
 
 import javax.servlet.*;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 /**
@@ -9,7 +10,7 @@ import java.lang.reflect.InvocationTargetException;
  *
  * @author Michael Fortin
  */
-public final class ProxyFilter implements Filter, SourceMonitor.Event {
+public final class ProxyFilter implements Filter, ReloadingEventListener {
 
     private final Class<ServletRequest> ReqCls = ServletRequest.class;
     private final Class<ServletResponse> resCls = ServletResponse.class;
@@ -21,18 +22,24 @@ public final class ProxyFilter implements Filter, SourceMonitor.Event {
     private Object filterInstance;
     private ClassLoader classLoader;
     private String filterClassName;
-
+    private Object application;
     private SourceMonitor sourceMonitor;
 
 
     public ProxyFilter(SourceMonitor sourceMonitor) {
         this.sourceMonitor = sourceMonitor;
-        sourceMonitor.addChangeListener(this);
+        sourceMonitor.addReloadingListener(this);
     }
 
     @Override
-    public void changed() {
-        this.filterInstance = null;
+    public void onChange(ReloadingEvent reloadingEvent) {
+        if(reloadingEvent.isRelease()) {
+            this.filterInstance = null;
+        }
+        else {
+            this.classLoader = reloadingEvent.getClassLoader();
+            this.application = reloadingEvent.getApplication();
+        }
     }
 
     public void setDelegateName(String filterClassName) {
@@ -43,12 +50,11 @@ public final class ProxyFilter implements Filter, SourceMonitor.Event {
         filterConfig = config;
     }
 
-    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) {
-        ClassLoader loader = (ClassLoader)req.getServletContext().getAttribute("classLoader");
-        Thread.currentThread().setContextClassLoader(loader);
+    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
+        Thread.currentThread().setContextClassLoader(classLoader);
 
-        if (filterInstance == null || classLoader == null || loader != classLoader) {
-            classLoader = loader;
+        if (filterInstance == null ) {
+            req.getServletContext().setAttribute("application",application);
 
             try {
                 filterClass = classLoader.loadClass(filterClassName);
@@ -61,12 +67,18 @@ public final class ProxyFilter implements Filter, SourceMonitor.Event {
             }
         }
 
-        try {
-            filterClass.getMethod("doFilter", ReqCls, resCls, filterChainCls)
-                    .invoke(filterInstance, req, res, chain);
+        if(sourceMonitor.getStatus() == SourceMonitor.Status.Ok) {
+            try {
+                filterClass.getMethod("doFilter", ReqCls, resCls, filterChainCls)
+                        .invoke(filterInstance, req, res, chain);
+            }
+            catch (IllegalAccessException|InvocationTargetException|NoSuchMethodException e) {
+                throw new ClassLoaderRuntimeException(e);
+            }
         }
-        catch (IllegalAccessException|InvocationTargetException|NoSuchMethodException e) {
-            throw new ClassLoaderRuntimeException(e);
+        else {
+            filterInstance = null;
+            chain.doFilter(req,res);
         }
     }
 

@@ -6,10 +6,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
-import java.util.EventListener;
 import java.util.List;
 
 import static java.nio.file.StandardWatchEventKinds.*;
@@ -21,17 +21,23 @@ public final class SourceMonitor {
     private final Object statusLock = new Object();
     private final Object compilerLock = new Object();
     private Status status = Status.Ok;
-    private List<Event> listeners = new ArrayList<>();
+    private List<ReloadingEventListener> listeners = new ArrayList<>();
+    private AppFactory appFactory;
 
-
-    public SourceMonitor(File sourceBaseDir, ContextJavaCompiler contextJavaCompiler) throws IOException, InterruptedException {
+    public SourceMonitor(File sourceBaseDir, ContextJavaCompiler contextJavaCompiler,AppFactory appFactory)
+            throws IOException, InterruptedException {
         final Path sourcePath = sourceBaseDir.toPath();
+        this.appFactory = appFactory;
 
         final SourceCompiler sourceCompiler = new SourceCompiler(compilerLock, sourceBaseDir, contextJavaCompiler);
         new Thread(sourceCompiler, "sourceCompiler").start();
 
         final SourceWatcher fileWatcher = new SourceWatcher(sourcePath);
         new Thread(fileWatcher, "SourceWatcher").start();
+    }
+
+    public AppFactory getAppFactory() {
+        return appFactory;
     }
 
     public Status getStatus() {
@@ -48,7 +54,7 @@ public final class SourceMonitor {
         }
     }
 
-    public void addChangeListener(Event e) {
+    public void addReloadingListener(ReloadingEventListener e) {
         listeners.add(e);
     }
 
@@ -81,6 +87,10 @@ public final class SourceMonitor {
         res.getOutputStream().write(page.getBytes("UTF-8"));
     }
 
+    public void fireEvent(ReloadingEvent reloadingEvent) {
+        listeners.stream().forEach(e->e.onChange(reloadingEvent));
+    }
+
     public enum Status {
         Ok,
         Modified,
@@ -105,14 +115,26 @@ public final class SourceMonitor {
                 try {
                     synchronized (lock) {
                         lock.wait();
-                        listeners.stream().forEach(Event::changed);
+                        fireEvent(new ReloadingEvent(true));
                         setStatus(Status.Compiling);
                         ContextJavaCompiler.Status s = compiler.compile();
 
-                        if(s.isOk())
-                            setStatus(Status.Ok);
-                        else
+                        if(s.isOk()){
+
+                            try {
+                                final AppRef appRef = appFactory.make();
+                                fireEvent(new ReloadingEvent(appRef.getClassLoader(),appRef.getApplication()));
+                                setStatus(Status.Ok);
+                            }
+                            catch (Exception e) {
+                                e.printStackTrace();
+                                setStatus(Status.Failed);
+                            }
+                        }
+                        else {
+                            // fire failed event
                             setStatus(Status.Failed);
+                        }
                     }
                 }
                 catch (InterruptedException e) {
@@ -124,9 +146,6 @@ public final class SourceMonitor {
         }
     }
 
-    public interface Event extends EventListener {
-        public void changed();
-    }
     class SourceWatcher implements Runnable {
         final Path path;
         final WatchService watchService;

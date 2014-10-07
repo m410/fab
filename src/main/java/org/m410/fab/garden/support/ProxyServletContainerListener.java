@@ -1,6 +1,5 @@
 package org.m410.fab.garden.support;
 
-import org.m410.fab.builder.BuildContext;
 import org.m410.fab.garden.ContextJavaCompiler;
 
 import javax.servlet.ServletContext;
@@ -8,7 +7,6 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
@@ -145,7 +143,8 @@ public final class ProxyServletContainerListener implements ServletContextListen
 
 
         ContextJavaCompiler contextJavaCompiler = new ContextJavaCompiler(sourceDir,classesDir,compilePath);
-        this.sourceMonitor = new SourceMonitor(sourceDir,contextJavaCompiler);
+        AppFactory factory = new AppFactory(runPath,classesDir,applicationClassName, loaderClassName,envName);
+        this.sourceMonitor = new SourceMonitor(sourceDir,contextJavaCompiler, factory);
 
         return this;
     }
@@ -155,22 +154,13 @@ public final class ProxyServletContainerListener implements ServletContextListen
     @SuppressWarnings("unchecked")
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         final ServletContext servletContext = servletContextEvent.getServletContext();
-        final ClassLoader threadClassLoader = Thread.currentThread().getContextClassLoader();// url classloader
-        ClassLoader classLoader = new LocalDevClassLoader(runPath, classesDir, threadClassLoader);
-
-        // todo drop and re-create
-        servletContext.setAttribute("classLoader", classLoader);
-
-        Object application = null;
 
         try {
-            Class appLoaderClass = classLoader.loadClass(loaderClassName);
-            Class appClass = classLoader.loadClass(applicationClassName);
-            Object appLoader = appLoaderClass.newInstance();
-            Method loaderMethod = appLoaderClass.getMethod("load", String.class);
-            application = loaderMethod.invoke(appLoader, envName);
+            AppRef app = sourceMonitor.getAppFactory().make();
+            Object application = app.getApplication();
+            Class appClass = app.getAppClass();
+            ClassLoader classLoader = app.getClassLoader();
 
-            // todo drop and re-create
             servletContext.setAttribute("application", application);
 
             List listServletDef = (List)appClass.getMethod("getServlets").invoke(application);
@@ -197,6 +187,8 @@ public final class ProxyServletContainerListener implements ServletContextListen
             for (Object listenerDef : listListerDef)
                 listenerDefClass.getMethod("configure",servletContextClass,listenerClass)
                         .invoke(listenerDef,servletContext, new ProxyListener(sourceMonitor));
+
+            sourceMonitor.fireEvent(new ReloadingEvent(classLoader, application));
 
         }
         catch (Exception e) {
