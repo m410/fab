@@ -96,7 +96,7 @@ public class Jetty9Task implements Task {
                 listener = proxyClass.getMethod("withClassesDir",File.class).invoke(listener,classesDir);
                 listener = proxyClass.getMethod("withRunPath",List.class).invoke(listener,classpath);
                 listener = proxyClass.getMethod("withCompilePath",List.class).invoke(listener,classpath);
-                listener = proxyClass.getMethod("withEnv",List.class).invoke(listener,env);
+                listener = proxyClass.getMethod("withEnv",String.class).invoke(listener,env);
                 listener = proxyClass.getMethod("init").invoke(listener);
 
 

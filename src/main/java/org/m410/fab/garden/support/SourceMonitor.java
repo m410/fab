@@ -2,6 +2,8 @@ package org.m410.fab.garden.support;
 
 import org.m410.fab.garden.ContextJavaCompiler;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -66,7 +68,7 @@ public final class SourceMonitor {
 
 
 
-    public void renderStatusPage(HttpServletRequest req, HttpServletResponse res) throws IOException {
+    public void renderStatusPage(ServletRequest req, ServletResponse res) throws IOException {
         final String page = "<!DOCTYPE html>\n" +
                 "<html lang=\"en\">\n" +
                 "<head>\n" +

@@ -53,21 +53,21 @@ public final class ProxyFilter implements Filter, ReloadingEventListener {
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
         Thread.currentThread().setContextClassLoader(classLoader);
 
-        if (filterInstance == null ) {
-            req.getServletContext().setAttribute("application",application);
-
-            try {
-                filterClass = classLoader.loadClass(filterClassName);
-                filterInstance = filterClass.newInstance();
-                filterClass.getMethod("init", configCls).invoke(filterInstance, filterConfig);
-            }
-            catch (ClassNotFoundException|InstantiationException|
-                    IllegalAccessException|InvocationTargetException|NoSuchMethodException e) {
-                throw new ClassLoaderRuntimeException(e);
-            }
-        }
-
         if(sourceMonitor.getStatus() == SourceMonitor.Status.Ok) {
+            if (filterInstance == null ) {
+                req.getServletContext().setAttribute("application",application);
+
+                try {
+                    filterClass = classLoader.loadClass(filterClassName);
+                    filterInstance = filterClass.newInstance();
+                    filterClass.getMethod("init", configCls).invoke(filterInstance, filterConfig);
+                }
+                catch (ClassNotFoundException|InstantiationException|
+                        IllegalAccessException|InvocationTargetException|NoSuchMethodException e) {
+                    throw new ClassLoaderRuntimeException(e);
+                }
+            }
+
             try {
                 filterClass.getMethod("doFilter", ReqCls, resCls, filterChainCls)
                         .invoke(filterInstance, req, res, chain);
@@ -77,8 +77,9 @@ public final class ProxyFilter implements Filter, ReloadingEventListener {
             }
         }
         else {
+            // should let anything through except action paths,
             filterInstance = null;
-            chain.doFilter(req,res);
+            sourceMonitor.renderStatusPage(req,res);
         }
     }
 

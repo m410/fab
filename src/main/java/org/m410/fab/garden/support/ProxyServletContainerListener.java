@@ -7,8 +7,10 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,7 +18,7 @@ import java.util.stream.Collectors;
 /**
  * @author m410
  */
-public final class ProxyServletContainerListener implements ServletContextListener {
+public final class ProxyServletContainerListener implements ServletContextListener, ReloadingEventListener {
     private final String applicationClassName;
     private final String loaderClassName;
     private final File sourceDir;
@@ -25,6 +27,8 @@ public final class ProxyServletContainerListener implements ServletContextListen
     private final String compilePath;
     private final String envName;
     private SourceMonitor sourceMonitor;
+
+    private Object application;
 
     public ProxyServletContainerListener() {
         applicationClassName = null;
@@ -120,14 +124,21 @@ public final class ProxyServletContainerListener implements ServletContextListen
         );
     }
 
-    public ProxyServletContainerListener withCompilePath(String r) {
+    public ProxyServletContainerListener withCompilePath(List<URL> r) {
+        final String pathSep = System.getProperty("path.separator");
         return new ProxyServletContainerListener(
                 applicationClassName,
                 loaderClassName,
                 sourceDir,
                 classesDir,
                 runPath,
-                r,
+                r.stream().map(a-> {
+                    try{
+                        return Paths.get(a.toURI()).toFile().getAbsolutePath();
+                    }catch(Exception e){
+                        throw new RuntimeException(e);
+                    }
+                }).reduce("",(a,b)->a + b + pathSep ),
                 envName
         );
     }
@@ -157,7 +168,7 @@ public final class ProxyServletContainerListener implements ServletContextListen
 
         try {
             AppRef app = sourceMonitor.getAppFactory().make();
-            Object application = app.getApplication();
+            application = app.getApplication();
             Class appClass = app.getAppClass();
             ClassLoader classLoader = app.getClassLoader();
 
@@ -188,6 +199,7 @@ public final class ProxyServletContainerListener implements ServletContextListen
                 listenerDefClass.getMethod("configure",servletContextClass,listenerClass)
                         .invoke(listenerDef,servletContext, new ProxyListener(sourceMonitor));
 
+            sourceMonitor.addReloadingListener(this);
             sourceMonitor.fireEvent(new ReloadingEvent(classLoader, application));
 
         }
@@ -215,5 +227,21 @@ public final class ProxyServletContainerListener implements ServletContextListen
                 })
                 .collect(Collectors.toList());
 
+    }
+
+    @Override
+    public void onChange(ReloadingEvent reloadingEvent) {
+        if(reloadingEvent.isRelease()) {
+            try {
+                this.application.getClass().getMethod("destroy").invoke(this.application);
+            }
+            catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+            this.application = null;
+        }
+        else {
+            this.application = reloadingEvent.getApplication();
+        }
     }
 }

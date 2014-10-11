@@ -80,7 +80,7 @@ public class WarTask implements Task {
         libDir.mkdirs();
 
         for (File lib : libs)
-            Files.copy(lib.toPath(), new File(libDir, lib.getName()).toPath());
+            Files.copy(lib.toPath(), new File(libDir, lib.getName()).toPath(), StandardCopyOption.REPLACE_EXISTING);
 
         return exploded;
     }

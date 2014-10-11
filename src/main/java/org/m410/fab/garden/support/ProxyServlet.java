@@ -62,21 +62,21 @@ public final class ProxyServlet extends HttpServlet implements ReloadingEventLis
     public void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException{
         Thread.currentThread().setContextClassLoader(classLoader);
 
-        if (servletInstance == null ) {
-            req.getServletContext().setAttribute("application",application);
-
-            try {
-                servletClass = classLoader.loadClass(servletClassName);
-                servletInstance = servletClass.newInstance();
-                servletClass.getMethod("init", configCls).invoke(servletInstance, servletConfig);
-            }
-            catch (ClassNotFoundException| InstantiationException| IllegalAccessException|
-                    InvocationTargetException| NoSuchMethodException e) {
-                throw new ClassLoaderRuntimeException(e);
-            }
-        }
-
         if(sourceMonitor.getStatus()== SourceMonitor.Status.Ok) {
+            if (servletInstance == null ) {
+                req.getServletContext().setAttribute("application",application);
+
+                try {
+                    servletClass = classLoader.loadClass(servletClassName);
+                    servletInstance = servletClass.newInstance();
+                    servletClass.getMethod("init", configCls).invoke(servletInstance, servletConfig);
+                }
+                catch (ClassNotFoundException| InstantiationException| IllegalAccessException|
+                        InvocationTargetException| NoSuchMethodException e) {
+                    throw new ClassLoaderRuntimeException(e);
+                }
+            }
+
             try {
                 servletClass.getMethod("service", reqCls, resCls).invoke(servletInstance, req, res);
             }
