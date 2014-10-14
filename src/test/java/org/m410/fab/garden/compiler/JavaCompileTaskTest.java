@@ -1,4 +1,4 @@
-package org.m410.fab.garden;
+package org.m410.fab.garden.compiler;
 
 import org.junit.Test;
 import org.m410.fab.builder.BuildContextImpl;
@@ -6,6 +6,7 @@ import org.m410.fab.builder.Cli;
 import org.m410.fab.config.Build;
 import org.m410.fab.config.BuildImpl;
 import org.m410.fab.config.Dependency;
+import org.m410.fab.garden.JavaCompileTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,4 +1,4 @@
-package org.m410.fab.garden.support;
+package org.m410.fab.garden.compiler;
 
 import javax.tools.SimpleJavaFileObject;
 import java.io.IOException;

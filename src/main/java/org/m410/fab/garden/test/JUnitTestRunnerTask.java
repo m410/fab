@@ -1,4 +1,4 @@
-package org.m410.fab.garden;
+package org.m410.fab.garden.test;
 
 import org.m410.fab.builder.BuildContext;
 import org.m410.fab.builder.Task;

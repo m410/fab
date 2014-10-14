@@ -1,13 +1,11 @@
-package org.m410.fab.garden;
+package org.m410.fab.garden.compiler;
 
 import org.m410.fab.builder.BuildContext;
-import org.m410.fab.garden.support.JavaFileObj;
 
 import javax.tools.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;

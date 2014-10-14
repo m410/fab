@@ -2,6 +2,9 @@ package org.m410.fab.garden;
 
 import org.m410.fab.builder.Command;
 import org.m410.fab.builder.Step;
+import org.m410.fab.garden.jetty.Jetty9Task;
+import org.m410.fab.garden.orm.OrmXmlTask;
+import org.m410.fab.garden.test.JUnitTestRunnerTask;
 import org.m410.fab.service.FabricateService;
 import org.osgi.framework.*;
 

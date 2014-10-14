@@ -22,6 +22,7 @@ public class ReflectTest {
         }
     }
 
+    @SuppressWarnings("unchecked")
     static class Factory {
         public static <T> T wrap(T object) {
             try {

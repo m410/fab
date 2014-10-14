@@ -1,6 +1,6 @@
-package org.m410.fab.garden.support;
+package org.m410.fab.garden.jetty;
 
-import org.m410.fab.garden.ContextJavaCompiler;
+import org.m410.fab.garden.compiler.ContextJavaCompiler;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;

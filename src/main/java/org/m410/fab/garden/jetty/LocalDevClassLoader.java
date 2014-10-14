@@ -1,4 +1,4 @@
-package org.m410.fab.garden.support;
+package org.m410.fab.garden.jetty;
 
 import java.io.File;
 import java.net.MalformedURLException;

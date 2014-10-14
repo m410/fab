@@ -1,10 +1,9 @@
-package org.m410.fab.garden;
+package org.m410.fab.garden.jetty;
 
 //import org.eclipse.jetty.server.Server;
 //import org.eclipse.jetty.webapp.WebAppContext;
 import org.m410.fab.builder.BuildContext;
 import org.m410.fab.builder.Task;
-import org.m410.fab.garden.support.ProxyServletContainerListener;
 
 import java.io.File;
 import java.net.MalformedURLException;

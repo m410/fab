@@ -1,4 +1,4 @@
-package org.m410.fab.garden.support;
+package org.m410.fab.garden.jetty;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -24,6 +24,7 @@ public final class AppFactory {
         this.envName = envName;
     }
 
+    @SuppressWarnings("unchecked")
     public AppRef make() throws IllegalAccessException, InstantiationException, NoSuchMethodException,
             ClassNotFoundException, InvocationTargetException {
         final ClassLoader threadClassLoader = Thread.currentThread().getContextClassLoader();// url classloader
