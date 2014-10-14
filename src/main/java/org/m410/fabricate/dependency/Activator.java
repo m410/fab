@@ -1,6 +1,5 @@
-package org.m410.fab.loader;
+package org.m410.fabricate.dependency;
 
-import org.m410.fab.loader.ivy.DependencyScope;
 import org.m410.fab.service.FabricateService;
 import org.osgi.framework.*;
 
@@ -17,11 +16,8 @@ public class Activator implements BundleActivator {
         fabricateService.addCommandModifier(modifier -> {
                     modifier.getSteps().stream()
                             .filter(step -> step.getName().equalsIgnoreCase("resolve-compile-dependencies"))
-                            .forEach(step -> step.append(new IvyDependencyTask(DependencyScope.Compile)));
+                            .forEach(step -> step.append(new IvyDependencyTask()));
 
-                    modifier.getSteps().stream()
-                            .filter(step -> step.getName().equalsIgnoreCase("resolve-test-dependencies"))
-                            .forEach(step -> step.append(new IvyDependencyTask(DependencyScope.Test)));
                 }
         );
     }
