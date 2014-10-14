@@ -1,6 +1,5 @@
 package org.m410.fabricate.junit;
 
-import org.m410.fab.loader.ivy.DependencyScope;
 import org.m410.fab.service.FabricateService;
 import org.osgi.framework.*;
 
@@ -16,8 +15,8 @@ public class Activator implements BundleActivator {
 
         fabricateService.addCommandModifier(modifier -> {
                     modifier.getSteps().stream()
-                            .filter(step -> step.getName().equalsIgnoreCase("resolve-compile-dependencies"))
-                            .forEach(step -> step.append(new IvyDependencyTask(DependencyScope.Compile)));
+                            .filter(step -> step.getName().equalsIgnoreCase("test"))
+                            .forEach(step -> step.append(new JUnitTestRunnerTask()));
                 }
         );
     }
