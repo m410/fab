@@ -1,6 +1,5 @@
 package org.m410.fab.garden.jetty;
 
-import org.m410.fab.garden.compiler.ContextJavaCompiler;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;

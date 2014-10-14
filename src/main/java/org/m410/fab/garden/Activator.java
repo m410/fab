@@ -4,7 +4,6 @@ import org.m410.fab.builder.Command;
 import org.m410.fab.builder.Step;
 import org.m410.fab.garden.jetty.Jetty9Task;
 import org.m410.fab.garden.orm.OrmXmlTask;
-import org.m410.fab.garden.test.JUnitTestRunnerTask;
 import org.m410.fab.service.FabricateService;
 import org.osgi.framework.*;
 
@@ -34,37 +33,6 @@ public class Activator implements BundleActivator {
                         .filter(m->m.getName().equals("process-classes"))
                         .findFirst()
                         .ifPresent(m->m.append(new OrmXmlTask()));
-                command.getSteps().stream()
-                        .filter(m->m.getName().equals("compile"))
-                        .findFirst()
-                        .ifPresent(m->m.append(new JavaCompileTask(JavaCompileTask.COMPILE_SRC)));
-                command.getSteps().stream()
-                        .filter(m -> m.getName().equals("test-compile"))
-                        .findFirst()
-                        .ifPresent(m -> m.append(new JavaCompileTask(JavaCompileTask.COMPILE_TEST)));
-                command.getSteps().stream()
-                        .filter(m->m.getName().equals("test"))
-                        .findFirst()
-                        .ifPresent(m->m.append(new JUnitTestRunnerTask()));
-                command.getSteps().stream()
-                        .filter(m->m.getName().equals("initialize"))
-                        .findFirst()
-                        .ifPresent(m-> m.append(new IvyDependencyTask()));
-                command.getSteps().stream()
-                        .filter(m->m.getName().equals("package"))
-                        .findFirst()
-                        .ifPresent(m->m.append(new JarTask()));
-                command.getSteps().stream()
-                        .filter(m->m.getName().equals("package"))
-                        .findFirst()
-                        .ifPresent(m->m.append(new WarTask()));
-            }
-
-            if(command.getName().equalsIgnoreCase("dependencies")) {
-                command.getSteps().stream()
-                        .filter(m->m.getName().equals("initialize"))
-                        .findFirst()
-                        .ifPresent(m->m.append(new IvyDependencyTask()));
             }
         });
 
