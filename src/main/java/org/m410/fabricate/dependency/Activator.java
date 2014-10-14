@@ -18,7 +18,15 @@ public class Activator implements BundleActivator {
                             .filter(step -> step.getName().equalsIgnoreCase("resolve-compile-dependencies"))
                             .forEach(step -> step.append(new IvyDependencyTask()));
 
+                    if(modifier.getName().equalsIgnoreCase("dependencies")) {
+                        modifier.getSteps().stream()
+                                .filter(m->m.getName().equals("initialize"))
+                                .findFirst()
+                                .ifPresent(m->m.append(new IvyDependencyTask()));
+                    }
                 }
+
+
         );
     }
 
