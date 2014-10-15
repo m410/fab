@@ -1,6 +1,6 @@
 package org.m410.fabricate.compiler;
 
-import org.m410.fab.builder.BuildContext;
+import org.m410.fabricate.builder.BuildContext;
 
 import javax.tools.*;
 import java.io.File;
