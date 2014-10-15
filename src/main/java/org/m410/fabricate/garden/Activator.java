@@ -1,10 +1,8 @@
-package org.m410.fab.garden;
+package org.m410.fabricate.garden;
 
-import org.m410.fab.builder.Command;
-import org.m410.fab.builder.Step;
-import org.m410.fab.garden.jetty.Jetty9Task;
-import org.m410.fab.garden.orm.OrmXmlTask;
-import org.m410.fab.service.FabricateService;
+import org.m410.fabricate.builder.Command;
+import org.m410.fabricate.builder.Step;
+import org.m410.fabricate.service.FabricateService;
 import org.osgi.framework.*;
 
 
@@ -25,19 +23,11 @@ public class Activator implements BundleActivator {
                         .findFirst()
                         .ifPresent(m->{
                             m.append(new MakeConfigTask());
-                            m.append(new LogbackXmlTask());
-                            m.append(new PersistenceXmlTask());
                             m.append(new WebXmlTask());
                         });
-                command.getSteps().stream()
-                        .filter(m->m.getName().equals("process-classes"))
-                        .findFirst()
-                        .ifPresent(m->m.append(new OrmXmlTask()));
+
             }
         });
-
-        fabricateService.addCommand(new Command("jetty9","Run jetty",false)
-                .withStep(new Step("default").append(new Jetty9Task())));
     }
 
     public void stop(BundleContext context) throws Exception {

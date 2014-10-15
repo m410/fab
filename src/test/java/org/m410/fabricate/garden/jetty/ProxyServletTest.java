@@ -1,11 +1,11 @@
-package org.m410.fab.garden.jetty;
+package org.m410.fabricate.garden.jetty;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.m410.fab.builder.BuildContext;
-import org.m410.fab.builder.BuildContextImpl;
-import org.m410.fab.builder.Cli;
-import org.m410.fab.config.*;
+import org.m410.fabricate.builder.BuildContext;
+import org.m410.fabricate.builder.BuildContextImpl;
+import org.m410.fabricate.builder.Cli;
+import org.m410.fabricate.config.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

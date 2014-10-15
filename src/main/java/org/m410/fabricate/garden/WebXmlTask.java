@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.m410.fab.garden;
+package org.m410.fabricate.garden;
 
-import org.m410.fab.builder.BuildContext;
-import org.m410.fab.builder.Task;
+import org.m410.fabricate.builder.BuildContext;
+import org.m410.fabricate.builder.Task;
 
 import java.io.File;
 import java.io.FileWriter;
