@@ -9,13 +9,13 @@ repositories:
     url: "http://repo.brzy.org/content/repositories/snapshots"
 
 archetypes:
-  - name: fab-java-garden-project
-    org: org.m410.fab.garden
+  - name: garden
+    org: org.m410.fabricate
     rev: "0.1-SNAPSHOT"
     description: A java web mvc framework that produces a war
     home: http://m410.org
-  - org: org.m410.fab.javalib
-    name: fab-java-lib-project
+  - name: java-lib
+    org: org.m410.fabricate
     rev: "0.1-SNAPSHOT"
     description: A basic project that produces a jar
     home: http://m410.org
