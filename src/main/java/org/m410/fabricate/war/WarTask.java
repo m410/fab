@@ -1,7 +1,7 @@
 package org.m410.fabricate.war;
 
-import org.m410.fab.builder.BuildContext;
-import org.m410.fab.builder.Task;
+import org.m410.fabricate.builder.BuildContext;
+import org.m410.fabricate.builder.Task;
 
 import java.io.*;
 import java.nio.file.*;
