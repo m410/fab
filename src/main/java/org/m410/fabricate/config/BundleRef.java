@@ -1,4 +1,4 @@
-package org.m410.fab.config;
+package org.m410.fabricate.config;
 
 import java.net.MalformedURLException;
 import java.net.URL;

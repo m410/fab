@@ -1,4 +1,4 @@
-package org.m410.fab.project;
+package org.m410.fabricate.config;
 
 /**
  * used to load and execute bundles.

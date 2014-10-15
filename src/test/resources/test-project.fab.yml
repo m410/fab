@@ -2,7 +2,7 @@ archetype:
   name: test-project
   version: 0.1-SNAPSHOT
   organization: org.m410.fabricate.garden
-  base_config: file:/Users/m410/Projects/fabricate/fab-cli/src/test/resources/test-project.default.fab.yml
+  base_config: file:/Users/m410/Projects/m410.org/fabricate/fab-cli/src/test/resources/test-project.default.fab.yml
 
 application:
   name: &name demo2
@@ -22,7 +22,7 @@ persistence:
   - name: m410-jpa
     organization: "org.m410.mod.persistence"
     version: "0.1"
-    base_config: file:/Users/m410/Projects/fabricate/fab-cli/src/test/resources/persistence.fab.yml
+    base_config: file:/Users/m410/Projects/m410.org/fabricate/fab-cli/src/test/resources/persistence.fab.yml
     properties:
       hibernate.dialect: org.hibernate.dialect.H2Dialect
       hibernate.connection.driver_class: org.h2.Driver
@@ -31,7 +31,7 @@ persistence:
       hibernate.connection.url: "jdbc:h2:db/demo"
       hibernate.hbm2ddl.auto: update
 modules:
-  - base_config: file:/Users/m410/Projects/fabricate/fab-cli/src/test/resources/module.fab.yml
+  - base_config: file:/Users/m410/Projects/m410.org/fabricate/fab-cli/src/test/resources/module.fab.yml
     organization: org.m410.mod
     version: 0.2.0
     name: any-module

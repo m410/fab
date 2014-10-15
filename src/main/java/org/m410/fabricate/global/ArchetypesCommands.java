@@ -1,4 +1,4 @@
-package org.m410.fab.global;
+package org.m410.fabricate.global;
 
 /**
  * @author m410

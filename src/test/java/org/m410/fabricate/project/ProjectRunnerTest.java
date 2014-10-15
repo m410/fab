@@ -1,7 +1,7 @@
-package org.m410.fab.project;
+package org.m410.fabricate.project;
 
 import org.junit.Test;
-import org.m410.fab.config.ProjectConfig;
+import org.m410.fabricate.config.ProjectConfig;
 
 import java.io.File;
 import java.nio.file.FileSystems;
@@ -15,7 +15,7 @@ public class ProjectRunnerTest {
 
     @Test
     public void testLoadConfig() throws Exception {
-        final String path = "/Users/m410/Projects/fabricate/fab-cli/src/test/resources/test-project.fab.yml";
+        final String path = "src/test/resources/test-project.fab.yml";
         File file = FileSystems.getDefault().getPath(path).toFile();
         assertTrue("sample config not found",file.exists());
 

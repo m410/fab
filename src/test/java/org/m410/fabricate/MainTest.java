@@ -1,4 +1,4 @@
-package org.m410.fab;
+package org.m410.fabricate;
 
 import org.junit.Test;
 

@@ -1,6 +1,6 @@
-package org.m410.fab.global;
+package org.m410.fabricate.global;
 
-import org.m410.fab.config.ProjectConfig;
+import org.m410.fabricate.config.ProjectConfig;
 
 /**
  * @author m410

@@ -1,4 +1,4 @@
-package org.m410.fab.config;
+package org.m410.fabricate.config;
 
 import org.yaml.snakeyaml.Yaml;
 
@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

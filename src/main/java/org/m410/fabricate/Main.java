@@ -1,13 +1,11 @@
-package org.m410.fab;
+package org.m410.fabricate;
 
 import org.apache.commons.cli.*;
-import org.m410.fab.global.GlobalRunner;
-import org.m410.fab.project.ProjectRunner;
+import org.m410.fabricate.global.GlobalRunner;
+import org.m410.fabricate.project.ProjectRunner;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 
 /**

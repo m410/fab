@@ -1,7 +1,7 @@
-package org.m410.fab.global;
+package org.m410.fabricate.global;
 
-import org.m410.fab.config.ConfigUtil;
-import org.m410.fab.config.ProjectConfig;
+import org.m410.fabricate.config.ConfigUtil;
+import org.m410.fabricate.config.ProjectConfig;
 
 import java.io.File;
 import java.util.Arrays;

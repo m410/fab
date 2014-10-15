@@ -1,11 +1,11 @@
-package org.m410.fab.project;
+package org.m410.fabricate.project;
 
 import org.apache.felix.framework.util.Util;
 import org.apache.felix.main.AutoProcessor;
 import org.apache.felix.main.Main;
-import org.m410.fab.config.BundleRef;
-import org.m410.fab.config.ConfigUtil;
-import org.m410.fab.config.ProjectConfig;
+import org.m410.fabricate.config.BundleRef;
+import org.m410.fabricate.config.ConfigUtil;
+import org.m410.fabricate.config.ProjectConfig;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
