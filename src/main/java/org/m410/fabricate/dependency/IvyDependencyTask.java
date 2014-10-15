@@ -4,8 +4,8 @@ import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.plugins.report.XmlReportParser;
-import org.m410.fab.builder.BuildContext;
-import org.m410.fab.builder.Task;
+import org.m410.fabricate.builder.BuildContext;
+import org.m410.fabricate.builder.Task;
 
 import java.io.File;
 import java.nio.file.FileSystems;
@@ -22,7 +22,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.m410.fab.config.Dependency;
+import org.m410.fabricate.config.Dependency;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

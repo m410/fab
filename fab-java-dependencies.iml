@@ -2,12 +2,11 @@
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="Osmorc" name="OSGi">
-      <configuration manifestGenerationMode="OsmorcControlled" manifestLocation="" jarfileLocation="fab-java-dependencies-0.1-SNAPSHOT.jar" outputPathType="CompilerOutputPath" bndFileLocation="" bundlorFileLocation="" bundleActivator="org.m410.fabricate.dependency.Activator" bundleSymbolicName="org.m410.fabricate.fab-java-dependencies" bundleVersion="0.1-SNAPSHOT" ignoreFilePattern="" useProjectDefaultManifestFileLocation="true" alwaysRebuildBundleJAR="false" doNotSynchronizeWithMaven="false">
+      <configuration manifestGenerationMode="OsmorcControlled" manifestLocation="" jarfileLocation="fab-java-dependencies-0.1-SNAPSHOT.jar" outputPathType="CompilerOutputPath" bndFileLocation="" bundlorFileLocation="" bundleActivator="org.m410.fabricate.javalib.Activator" bundleSymbolicName="org.m410.fabricate.fab-java-dependencies" bundleVersion="0.1-SNAPSHOT" ignoreFilePattern="" useProjectDefaultManifestFileLocation="true" alwaysRebuildBundleJAR="false" doNotSynchronizeWithMaven="false">
         <additionalProperties>
           <property key="Bundle-Name" value="fab-java-dependencies" />
-          <property key="Private-Package" value="org.m410.fab" />
-          <property key="Import-Package" value="org.osgi.framework, org.m410.fab.service, *;resolution:=optional" />
-          <property key="Export-Package" value="org.m410.fab.loader" />
+          <property key="Private-Package" value="org.m410.fabricate.internal" />
+          <property key="Import-Package" value="org.osgi.framework, org.m410.fabricate.service, *;resolution:=optional" />
           <property key="Include-Resource" value="configuration.yml=$MODULE_DIR$/src/main/resources/configuration.yml" />
         </additionalProperties>
         <additionalJARContents />
