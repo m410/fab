@@ -1,6 +1,6 @@
 package org.m410.fabricate.junit;
 
-import org.m410.fab.service.FabricateService;
+import org.m410.fabricate.service.FabricateService;
 import org.osgi.framework.*;
 
 /**
