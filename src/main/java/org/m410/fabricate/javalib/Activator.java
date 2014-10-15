@@ -1,8 +1,6 @@
-package org.m410.fab.javalib;
+package org.m410.fabricate.javalib;
 
-import org.m410.fab.builder.Command;
-import org.m410.fab.builder.Step;
-import org.m410.fab.service.FabricateService;
+import org.m410.fabricate.service.FabricateService;
 import org.osgi.framework.*;
 
 /**
