@@ -2,13 +2,13 @@
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="Osmorc" name="OSGi">
-      <configuration manifestGenerationMode="OsmorcControlled" manifestLocation="" jarfileLocation="fab-share-0.1-SNAPSHOT.jar" outputPathType="CompilerOutputPath" bndFileLocation="" bundlorFileLocation="" bundleActivator="org.m410.fab.service.Activator" bundleSymbolicName="org.m410.fabricate.fab-share" bundleVersion="0.1-SNAPSHOT" ignoreFilePattern="" useProjectDefaultManifestFileLocation="true" alwaysRebuildBundleJAR="false" doNotSynchronizeWithMaven="false">
+      <configuration manifestGenerationMode="OsmorcControlled" manifestLocation="" jarfileLocation="fab-share-0.1-SNAPSHOT.jar" outputPathType="CompilerOutputPath" bndFileLocation="" bundlorFileLocation="" bundleActivator="org.m410.fabricate.service.Activator" bundleSymbolicName="org.m410.fabricate.fab-share" bundleVersion="0.1-SNAPSHOT" ignoreFilePattern="" useProjectDefaultManifestFileLocation="true" alwaysRebuildBundleJAR="false" doNotSynchronizeWithMaven="false">
         <additionalProperties>
           <property key="Embed-Dependency" value="*;scope=compile|runtime;inline=true" />
           <property key="Bundle-Name" value="fab-share" />
-          <property key="Private-Package" value="org.m410.fab.service.internal" />
+          <property key="Private-Package" value="org.m410.fabricate.service.internal" />
           <property key="Import-Package" value="org.osgi.framework,*;resolution:=optional" />
-          <property key="Export-Package" value="org.m410.fab.service*,org.m410.fab.builder*,org.m410.fab.config*" />
+          <property key="Export-Package" value="org.m410.fabricate.service*,org.m410.fabricate.builder*,org.m410.fabricate.config*,org.m410.fabricate.util*" />
           <property key="Include-Resource" value="@$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.main/4.4.0/org.apache.felix.main-4.4.0.jar,@$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.framework/4.4.0/org.apache.felix.framework-4.4.0.jar,@$MAVEN_REPOSITORY$/org/yaml/snakeyaml/1.13/snakeyaml-1.13.jar" />
         </additionalProperties>
         <additionalJARContents />

@@ -113,16 +113,17 @@
                         <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Bundle-Version>${project.version}</Bundle-Version>
-                        <Private-Package>org.m410.fab.service.internal</Private-Package>
-                        <Bundle-Activator>org.m410.fab.service.Activator</Bundle-Activator>
+                        <Private-Package>org.m410.fabricate.service.internal</Private-Package>
+                        <Bundle-Activator>org.m410.fabricate.service.Activator</Bundle-Activator>
                         <Import-Package>
                             org.osgi.framework,
                             *;resolution:=optional
                         </Import-Package>
                         <Export-Package>
-                            org.m410.fab.service*,
-                            org.m410.fab.builder*,
-                            org.m410.fab.config*
+                            org.m410.fabricate.service*,
+                            org.m410.fabricate.builder*,
+                            org.m410.fabricate.config*,
+                            org.m410.fabricate.util*
                         </Export-Package>
                         <Include-Resource>
                             {maven-dependencies}
