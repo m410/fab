@@ -15,6 +15,10 @@ public abstract class Base {
     protected URL url;
     protected Map<String, Object> configuration;
 
+    static final String ORGANIZATION = "organization";
+    static final String NAME = "name";
+    static final String VERSION = "version";
+
     List<BundleRef> getBundles() throws MalformedURLException {
         return null;
     }
@@ -23,13 +27,14 @@ public abstract class Base {
             throws IOException {
 
         // todo enable for many repositories
+
         URL url = resource.get("base_config") != null ?
                 new URL(resource.get("base_config")) :
                 new URL("http://repo.m410.org/content/repositories/releases/" +
-                        resource.get("organization").replaceAll("\\.", "/") + "/" +
-                        resource.get("name") + "/" +
-                        resource.get("version") +"/"+
-                        resource.get("name") +"-"+resource.get("version")+".yml");
+                        getOrThrow(resource, ORGANIZATION).replaceAll("\\.", "/") + "/" +
+                        getOrThrow(resource, NAME) + "/" +
+                        getOrThrow(resource, VERSION) +"/"+
+                        getOrThrow(resource, NAME) +"-"+getOrThrow(resource, VERSION)+".yml");
 
         final File file = cacheConfigFile(resource, cacheDir);
 
@@ -44,6 +49,15 @@ public abstract class Base {
         return file.toURI().toURL();
     }
 
+    private static final String getOrThrow(Map<String, String> resource, String key) {
+        String result = resource.get(key);
+
+        if(result == null)
+            throw new InvalidConfigurationException("Missing module property: " + key + " in " + resource);
+
+        return result;
+    }
+
     public static void copyStream(InputStream input, OutputStream output) throws IOException {
         byte[] buffer = new byte[1024]; // Adjust if you want
         int bytesRead;
@@ -55,18 +69,18 @@ public abstract class Base {
     File cacheConfigFile(Map<String, String> resource, File cacheDir) {
         Path path = FileSystems.getDefault().getPath(
                 cacheDir.getAbsolutePath(),
-                resource.get("organization").replaceAll("\\.", "/"),
-                resource.get("name"),
-                resource.get("version")
+                getOrThrow(resource, ORGANIZATION).replaceAll("\\.", "/"),
+                getOrThrow(resource, NAME),
+                getOrThrow(resource, VERSION)
         );
 
         path.toFile().mkdirs();
 
         path = FileSystems.getDefault().getPath(
                 cacheDir.getAbsolutePath(),
-                resource.get("organization").replaceAll("\\.", "/"),
-                resource.get("name"),
-                resource.get("version"),
+                getOrThrow(resource, ORGANIZATION).replaceAll("\\.", "/"),
+                getOrThrow(resource, NAME),
+                getOrThrow(resource, VERSION),
                 "configuration.yml"
         );
 

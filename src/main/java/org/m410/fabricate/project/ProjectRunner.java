@@ -55,10 +55,15 @@ public final class ProjectRunner {
             final File configCacheDir = ConfigUtil.projectConfCache(System.getProperty("user.dir"));
             ProjectConfig config = new ProjectConfig(configFile, configCacheDir);
 
-            config.getBundles().stream().forEach(s -> addBundle(ctx, s));
+            config.getBundles().stream()
+                    .sorted((a, b) -> a.getName().equals("fab-share") ? 0 : 1)
+                    .forEach(s -> {
+                        System.out.println(" #### adding bundle: " + s);
+                        addBundle(ctx, s);
+                    });
             Arrays.asList(ctx.getBundles()).stream().forEach(this::startBundle);
 
-            Object buildService = ctx.getService(ctx.getServiceReference("org.m410.fab.service.FabricateService"));
+            Object buildService = ctx.getService(ctx.getServiceReference("org.m410.fabricate.service.FabricateService"));
 
             try {
                 // load each full configuration
@@ -90,8 +95,8 @@ public final class ProjectRunner {
     }
 
     private static void addBundle(BundleContext ctx, BundleRef s) {
+        // todo check project file sys cache, if not there put it there
         try {
-            // todo check project file sys cache, if not there put it there
             final String bundlePath = s.makeUrl().toString();
             final boolean present = Arrays.asList(ctx.getBundles()).stream()
                     .filter(b -> b.getSymbolicName().equals(s.getSymbolicName()))
@@ -101,8 +106,9 @@ public final class ProjectRunner {
             if (!present) {
                 ctx.installBundle(bundlePath);
             }
-        } catch (BundleException e) {
-            throw new RuntimeException(e);
+        }
+        catch (Exception e) {
+            throw new InvalidBundleRefException(e,s);
         }
     }
 

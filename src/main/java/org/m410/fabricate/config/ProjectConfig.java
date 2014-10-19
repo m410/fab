@@ -144,4 +144,16 @@ public final class ProjectConfig extends Base {
     public ConfigRef getParent() {
         return parent;
     }
+
+    @Override
+    public String toString() {
+        return "ProjectConfig{" +
+                "projectFile=" + projectFile +
+                ", archetype=" + archetype +
+                ", build=" + build +
+                ", parent=" + parent +
+                ", modules=" + modules +
+                ", confCache=" + confCache +
+                '}';
+    }
 }
