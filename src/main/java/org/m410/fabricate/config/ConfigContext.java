@@ -25,7 +25,7 @@ public class ConfigContext {
             modules.addAll(((List<Map<String,Object>>)m).stream().map(ModuleImpl::new).collect(Collectors.toList()));
         });
 
-        modules.add(new ModuleImpl(((Map<String, Object>) base.getOrDefault("logging", new HashMap<>()))));
+        modules.add(new ModuleImpl(((Map<String, Object>) base.getOrDefault("logging", new ArrayList<>()))));
 
         Optional.ofNullable(base.getOrDefault("persistence", new ArrayList<>())).ifPresent(m -> {
             modules.addAll(((List<Map<String, Object>>) m).stream().map(ModuleImpl::new).collect(Collectors.toList()));
