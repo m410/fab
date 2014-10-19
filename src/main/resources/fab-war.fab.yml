@@ -1,0 +1,6 @@
+modules:
+  name: fab-war
+  organization: org.m410.fabricate
+  version: "1.0-SNAPSHOT"
+bundles:
+  - { name: fab-war, org: org.m410.fabricate, rev: "0.1"}

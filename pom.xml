@@ -99,10 +99,10 @@
                         <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Bundle-Version>${project.version}</Bundle-Version>
-                        <Private-Package>org.m410.fabricate.war.internal</Private-Package>
+                        <Private-Package>org.m410.fabricate.war</Private-Package>
                         <Bundle-Activator>org.m410.fabricate.war.Activator</Bundle-Activator>
                         <Import-Package>org.osgi.framework, org.m410.fabricate.service, *;resolution:=optional</Import-Package>
-                        <!--<Export-Package>org.m410.fabricate.loader</Export-Package>-->
+                        <Export-Package>org.m410.fabricate.war</Export-Package>
                     </instructions>
                 </configuration>
             </plugin>
