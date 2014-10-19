@@ -1,7 +1,5 @@
 package org.m410.fabricate.garden;
 
-import org.m410.fabricate.builder.Command;
-import org.m410.fabricate.builder.Step;
 import org.m410.fabricate.service.FabricateService;
 import org.osgi.framework.*;
 

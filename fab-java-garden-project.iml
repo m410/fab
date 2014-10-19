@@ -6,8 +6,9 @@
         <additionalProperties>
           <property key="Embed-Dependency" value="*;scope=compile|runtime;inline=true" />
           <property key="Bundle-Name" value="garden" />
-          <property key="Private-Package" value="org.m410.fabricate.garden.support" />
+          <property key="Private-Package" value="org.m410.fabricate.garden" />
           <property key="Import-Package" value="org.osgi.framework,org.m410.fabricate.service,org.m410.fabricate.builder,*;resolution:=optional" />
+          <property key="Export-Package" value="org.m410.fabricate.garden" />
           <property key="Include-Resource" value="@$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.main/4.4.0/org.apache.felix.main-4.4.0.jar,@$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.framework/4.4.0/org.apache.felix.framework-4.4.0.jar,@$MAVEN_REPOSITORY$/org/yaml/snakeyaml/1.13/snakeyaml-1.13.jar,@$MAVEN_REPOSITORY$/javax/websocket/javax.websocket-api/1.1/javax.websocket-api-1.1.jar,@$MAVEN_REPOSITORY$/javax/servlet/javax.servlet-api/3.1.0/javax.servlet-api-3.1.0.jar" />
         </additionalProperties>
         <additionalJARContents />
