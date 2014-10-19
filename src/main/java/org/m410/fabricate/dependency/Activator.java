@@ -7,7 +7,6 @@ import org.osgi.framework.*;
  * @author Michael Fortin
  */
 public class Activator implements BundleActivator {
-    ServiceRegistration fabricateServiceRegistration;
 
     public void start(BundleContext context) throws Exception {
         ServiceReference fabricateServiceReference = context.getServiceReference(FabricateService.class.getName());
@@ -31,7 +30,6 @@ public class Activator implements BundleActivator {
     }
 
     public void stop(BundleContext context) throws Exception {
-        fabricateServiceRegistration.unregister();
     }
 
 }
