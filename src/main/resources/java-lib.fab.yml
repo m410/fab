@@ -7,27 +7,27 @@ bundles:
   - name: fab-share
     org: org.m410.fabricate
     version: 0.1-SNAPSHOT
-    url: file:/Users/m410/Projects/fabricate/fab-share/target/fab-share-0.1-SNAPSHOT.jar
+    url: file:/Users/m410/Projects/m410.org/fabricate/fab-share/target/fab-share-0.1-SNAPSHOT.jar
   - name: java-lib
     org: org.m410.fabricate.garden
     version: 0.1-SNAPSHOT
-    url: file:/Users/m410/Projects/fabricate/fab-java-lib-project/target/fab-java-lib-project-0.1-SNAPSHOT.jar
+    url: file:/Users/m410/Projects/m410.org/fabricate/fab-java-lib-project/target/fab-java-lib-project-0.1-SNAPSHOT.jar
   - name: fab-jar
     org: org.m410.fabricate
     version: 0.1-SNAPSHOT
-    url: file:/Users/m410/Projects/fabricate/fab-jar/target/fab-jar-0.1-SNAPSHOT.jar
+    url: file:/Users/m410/Projects/m410.org/fabricate/fab-jar/target/fab-jar-0.1-SNAPSHOT.jar
   - name: fab-junit
     org: org.m410.fabricate
     version: 0.1-SNAPSHOT
-    url: file:/Users/m410/Projects/fabricate/fab-junit/target/fab-junit-0.1-SNAPSHOT.jar
+    url: file:/Users/m410/Projects/m410.org/fabricate/fab-junit/target/fab-junit-0.1-SNAPSHOT.jar
   - name: fab-java-compiler
     org: org.m410.fabricate
     version: 0.1-SNAPSHOT
-    url: file:/Users/m410/Projects/fabricate/fab-java-compiler/target/fab-java-compiler-0.1-SNAPSHOT.jar
+    url: file:/Users/m410/Projects/m410.org/fabricate/fab-java-compiler/target/fab-java-compiler-0.1-SNAPSHOT.jar
   - name: fab-dependencies
     org: org.m410.fabricate
     version: 0.1-SNAPSHOT
-    url: file:/Users/m410/Projects/fabricate/fab-dependencies/target/fab-dependencies-0.1-SNAPSHOT.jar
+    url: file:/Users/m410/Projects/m410.org/fabricate/fab-dependencies/target/fab-dependencies-0.1-SNAPSHOT.jar
 
 build:
   cacheDir: .fab
