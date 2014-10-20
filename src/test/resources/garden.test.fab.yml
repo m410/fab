@@ -43,20 +43,20 @@ modules:
     organization: org.m410.mod
 
 logging:
-  module: [org.m410.fabricate,slf4j,0.1.0]
-  name: slf4j
-  org: org.m410.fab.logging
-  appenders:
-    - name: STDOUT
-      appender_class: ch.qos.logback.core.ConsoleAppender
-      layout: ch.qos.logback.classic.encoder.PatternLayoutEncoder
-      pattern: "%-4relative [%thread] %-5level %class - %msg%n"
-  logger:
-    - name: org.m410
-      level: TRACE
-  root:
-    level: DEBUG
-    ref: [STDOUT]
+  - name: garden-logback
+    org: org.m410.fab.logging
+    version: 0.1.0
+    appenders:
+      - name: STDOUT
+        appender_class: ch.qos.logback.core.ConsoleAppender
+        layout: ch.qos.logback.classic.encoder.PatternLayoutEncoder
+        pattern: "%-4relative [%thread] %-5level %class - %msg%n"
+    logger:
+      - name: org.m410
+        level: TRACE
+    root:
+      level: DEBUG
+      ref: [STDOUT]
 
 web_xml:
   description: *desc

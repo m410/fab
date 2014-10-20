@@ -3,10 +3,14 @@ package org.m410.fabricate.config;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
+
+
+
 /**
  * @author m410
  */
-public class ConfigContext {
+public final class ConfigContext {
     private Application application;
     private Build build;
     private List<Dependency> dependencies;
@@ -16,8 +20,10 @@ public class ConfigContext {
     public ConfigContext(Map<String,Object> base) {
         application = new ApplicationImpl((Map<String,Object>)base.get("application"));
         build = new BuildImpl((Map<String,Object>)base.get("build"));
-        dependencies = ((List<Map<String,Object>>)base.getOrDefault("dependencies", new ArrayList<>()))
-                .stream().map(Dependency::new).collect(Collectors.toList());
+        dependencies = ((List<Map<String,Object>>)base
+                .getOrDefault("dependencies", new ArrayList<>()))
+                .stream().map(Dependency::new)
+                .collect(Collectors.toList());
 
         modules = new ArrayList<>();
 
@@ -25,7 +31,14 @@ public class ConfigContext {
             modules.addAll(((List<Map<String,Object>>)m).stream().map(ModuleImpl::new).collect(Collectors.toList()));
         });
 
-        modules.add(new ModuleImpl(((Map<String, Object>) base.getOrDefault("logging", new ArrayList<>()))));
+        Optional.ofNullable(base.getOrDefault("logging", new ArrayList<>())).ifPresent(m ->{
+            if(m instanceof List)
+                modules.addAll(((List<Map<String,Object>>)m).stream().map(ModuleImpl::new).collect(Collectors.toList()));
+        });
+
+        Optional.ofNullable(base.getOrDefault("test", new ArrayList<>())).ifPresent(m ->{
+            modules.addAll(((List<Map<String,Object>>)m).stream().map(ModuleImpl::new).collect(Collectors.toList()));
+        });
 
         Optional.ofNullable(base.getOrDefault("persistence", new ArrayList<>())).ifPresent(m -> {
             modules.addAll(((List<Map<String, Object>>) m).stream().map(ModuleImpl::new).collect(Collectors.toList()));
