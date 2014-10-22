@@ -104,16 +104,17 @@ public class IvyDependencyTask implements Task {
     }
 
     private ArtifactDownloadReport[] makeReport(String conf, String resolveId, ResolutionCacheManager manager) {
-        ArtifactDownloadReport[] reports;
         File reportCompile = manager.getConfigurationResolveReportInCache(resolveId, conf);
         XmlReportParser parser = new XmlReportParser();
+
         try {
             parser.parse(reportCompile);
-        } catch (ParseException e) {
+        }
+        catch (ParseException e) {
             throw new RuntimeException(e);
         }
-        reports = parser.getArtifactReports();
-        return reports;
+
+        return parser.getArtifactReports();
     }
 
     File makeIvyXml(final BuildContext context) throws Exception {
@@ -168,6 +169,23 @@ public class IvyDependencyTask implements Task {
         confElement5.setAttribute("name","sources");
         confElement5.setAttribute("visibility","public");
         configurationElement.appendChild(confElement5);
+
+        // todo add non standard configs like jetty9
+        context.getDependencies().stream()
+                .filter(d->!d.getScope().equals("runtime"))
+                .filter(d->!d.getScope().equals("compile"))
+                .filter(d->!d.getScope().equals("provided"))
+                .filter(d->!d.getScope().equals("sources"))
+                .filter(d->!d.getScope().equals("javadoc"))
+                .filter(d->!d.getScope().equals("test"))
+                .map(Dependency::getScope)
+                .sorted()
+                .forEach(scope -> {
+                    final Element e = doc.createElement("conf");
+                    e.setAttribute("name", scope);
+                    e.setAttribute("visibility", "public");
+                    configurationElement.appendChild(e);
+                });
 
         rootElement.appendChild(configurationElement);
 

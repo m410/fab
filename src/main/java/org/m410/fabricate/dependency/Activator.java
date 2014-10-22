@@ -14,15 +14,8 @@ public class Activator implements BundleActivator {
 
         fabricateService.addCommandModifier(modifier -> {
                     modifier.getSteps().stream()
-                            .filter(step -> step.getName().equalsIgnoreCase("resolve-compile-dependencies"))
+                            .filter(step -> step.getName().equalsIgnoreCase("initialize"))
                             .forEach(step -> step.append(new IvyDependencyTask()));
-
-                    if(modifier.getName().equalsIgnoreCase("dependencies")) {
-                        modifier.getSteps().stream()
-                                .filter(m->m.getName().equals("initialize"))
-                                .findFirst()
-                                .ifPresent(m->m.append(new IvyDependencyTask()));
-                    }
                 }
 
 
