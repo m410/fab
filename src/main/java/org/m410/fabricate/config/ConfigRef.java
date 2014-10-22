@@ -9,11 +9,16 @@ import java.util.Map;
 /**
  * @author m410
  */
-public final class ConfigRef extends Base{
+public final class ConfigRef extends Base {
 
     @SuppressWarnings("unchecked")
-    public ConfigRef(URL url) throws IOException {
+    public ConfigRef(URL url) {
         this.url = url;
-        this.configuration = (Map<String,Object>)new Yaml().load(url.openStream());
+        try {
+            this.configuration = (Map<String,Object>)new Yaml().load(url.openStream());
+        }
+        catch (IOException e) {
+            throw new InvalidConfigurationException(url.toString(),e);
+        }
     }
 }

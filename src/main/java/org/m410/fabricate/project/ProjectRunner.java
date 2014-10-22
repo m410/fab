@@ -57,10 +57,7 @@ public final class ProjectRunner {
 
             config.getBundles().stream()
                     .sorted((a, b) -> a.getName().equals("fab-share") ? 0 : 1)
-                    .forEach(s -> {
-                        System.out.println(" #### adding bundle: " + s);
-                        addBundle(ctx, s);
-                    });
+                    .forEach(s -> addBundle(ctx, s));
             Arrays.asList(ctx.getBundles()).stream().forEach(this::startBundle);
 
             Object buildService = ctx.getService(ctx.getServiceReference("org.m410.fabricate.service.FabricateService"));
