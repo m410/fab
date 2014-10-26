@@ -31,29 +31,39 @@ public class WarTask implements Task {
 
     @Override
     public void execute(BuildContext context) throws Exception {
+        final File baseDir = FileSystems.getDefault().getPath(context.getBuild().getSourceOutputDir()).toFile();
+        final File targetDir = new File(context.getBuild().getTargetDir());
+        final File webDir = FileSystems.getDefault().getPath(context.getBuild().getWebappDir()).toFile();
 
+        String cp = context.getClasspath().get("compile");
+        File explodedDir = makeExploded(targetDir, baseDir, webDir, toFiles(cp));
+        makeManifest(explodedDir);
 
-        try {
-            File fileSource = FileSystems.getDefault().getPath(context.getBuild().getSourceOutputDir()).toFile();
-            File targetDir = new File(context.getBuild().getTargetDir());
-            File webDir = FileSystems.getDefault().getPath(context.getBuild().getWebappDir()).toFile();
-            String cp = context.getClasspath().get("compile");
-            File explodedDir = makeExploded(targetDir, fileSource, webDir, toFiles(cp));
+        if (!explodedDir.exists() && !explodedDir.mkdirs())
+            throw new RuntimeException("could not make target dir");
 
-            if (!explodedDir.exists() && !explodedDir.mkdirs())
-                throw new RuntimeException("could not make target dir");
+        String name = context.getApplication().getName() + "-" + context.getApplication().getVersion() + ".war";
+        File zipFile = new File(targetDir, name);
+        FileOutputStream fout = new FileOutputStream(zipFile);
 
-            String name = context.getApplication().getName() + "-" + context.getApplication().getVersion() + ".war";
-            File zipFile = new File(targetDir, name);
-            FileOutputStream fout = new FileOutputStream(zipFile);
-
-            try (ZipOutputStream zout = new ZipOutputStream(fout)) {
-                addDirectory(explodedDir.toURI(), zout, explodedDir);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        try (ZipOutputStream zout = new ZipOutputStream(fout)) {
+            addDirectory(explodedDir.toURI(), zout, explodedDir);
         }
     }
+
+    private void makeManifest(File classseDir) throws IOException {
+        File metaInf = new File(classseDir,"META-INF");
+        metaInf.mkdir();
+        File manifestMf = new File(metaInf,"MANIFEST.MF");
+
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter(manifestMf))){
+            writer.write("Manifest-Version: 1.0");
+            writer.write("\n");
+            writer.write("Created-By: fab(ricate) http://m410.org/fabricate");
+            writer.write("\n");
+        }
+    }
+
 
     private Collection<File> toFiles(String cp) {
         return Arrays.asList(cp.split(System.getProperty("path.separator")))
