@@ -4,6 +4,7 @@ import org.m410.fabricate.builder.BuildContext;
 import org.m410.fabricate.builder.Task;
 
 import java.io.*;
+import java.net.URI;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
@@ -47,7 +48,7 @@ public class WarTask implements Task {
             FileOutputStream fout = new FileOutputStream(zipFile);
 
             try (ZipOutputStream zout = new ZipOutputStream(fout)) {
-                addDirectory(zout, explodedDir);
+                addDirectory(explodedDir.toURI(), zout, explodedDir);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -69,10 +70,8 @@ public class WarTask implements Task {
             throw new RuntimeException("Could not make war-exploded directory");
 
         Files.walkFileTree(webDir.toPath(), new CopyFileVisitor(exploded.toPath()));
-
         final File webInfDir = new File(exploded, "WEB-INF");
-
-        File classesDir = new File(webInfDir, "classes");
+        final File classesDir = new File(webInfDir, "classes");
         classesDir.mkdirs();
         Files.walkFileTree(sourcesDir.toPath(), new CopyFileVisitor(classesDir.toPath()));
 
@@ -85,7 +84,8 @@ public class WarTask implements Task {
         return exploded;
     }
 
-    private static void addDirectory(ZipOutputStream zout, File sourceFile) {
+    private static void addDirectory(final URI baseUri, final ZipOutputStream zout, final File sourceFile)
+            throws IOException {
         assert sourceFile != null;
         byte[] buffer = new byte[1024];
         CRC32 crc = new CRC32();
@@ -94,37 +94,33 @@ public class WarTask implements Task {
         for (File file : sourceFile.listFiles()) {
 
             if (file.isDirectory()) {
-                addDirectory(zout, file);
+                addDirectory(baseUri, zout, file);
                 continue;
             }
 
-            try {
-                BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
-                crc.reset();
+            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+            crc.reset();
 
-                while ((bytesRead = bis.read(buffer)) != -1) {
-                    crc.update(buffer, 0, bytesRead);
-                }
-
-                bis.close();
-                // Reset to beginning of input stream
-                bis = new BufferedInputStream(new FileInputStream(file));
-                ZipEntry entry = new ZipEntry(file.getName());
-                entry.setMethod(ZipEntry.STORED);
-                entry.setCompressedSize(file.length());
-                entry.setSize(file.length());
-                entry.setCrc(crc.getValue());
-                zout.putNextEntry(entry);
-
-                while ((bytesRead = bis.read(buffer)) != -1) {
-                    zout.write(buffer, 0, bytesRead);
-                }
-
-                bis.close();
-
-            } catch (IOException ioe) {
-                System.err.println("IOException :" + ioe);
+            while ((bytesRead = bis.read(buffer)) != -1) {
+                crc.update(buffer, 0, bytesRead);
             }
+
+            bis.close();
+            // Reset to beginning of input stream
+            bis = new BufferedInputStream(new FileInputStream(file));
+            String pathName = baseUri.relativize(file.toURI()).toString();
+            ZipEntry entry = new ZipEntry(pathName);
+            entry.setMethod(ZipEntry.STORED);
+            entry.setCompressedSize(file.length());
+            entry.setSize(file.length());
+            entry.setCrc(crc.getValue());
+            zout.putNextEntry(entry);
+
+            while ((bytesRead = bis.read(buffer)) != -1) {
+                zout.write(buffer, 0, bytesRead);
+            }
+
+            bis.close();
         }
     }
 
