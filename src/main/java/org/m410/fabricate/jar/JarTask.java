@@ -19,27 +19,32 @@ public final class JarTask implements Task {
     }
 
     public void execute(BuildContext context) throws Exception {
+        final File classseDir = FileSystems.getDefault().getPath(context.getBuild().getSourceOutputDir()).toFile();
+        final File targetFile = new File(context.getBuild().getTargetDir());
 
-        // todo need to create META-INF/MANIFEST.MF
-        // Manifest-Version: 1.0
-        // Created-By: 1.7.0_06 (Oracle Corporation)
+        makeManifest(classseDir);
 
+        if(!targetFile.exists() && !targetFile.mkdirs())
+            throw new RuntimeException("could not make target dir");
 
-        try {
-            File targetFile = new File(context.getBuild().getTargetDir());
+        String name = context.getApplication().getName() + "-"+ context.getApplication().getVersion() +".jar";
+        File zipFile = new File(targetFile, name);
+        FileOutputStream fout = new FileOutputStream(zipFile);
+        ZipOutputStream zout = new ZipOutputStream(fout);
+        addDirectory(classseDir.toURI(), zout, classseDir);
+        zout.close();
+    }
 
-            if(!targetFile.exists() && !targetFile.mkdirs())
-                throw new RuntimeException("could not make target dir");
+    private void makeManifest(File classseDir) throws IOException {
+        File metaInf = new File(classseDir,"META-INF");
+        metaInf.mkdir();
+        File manifestMf = new File(metaInf,"MANIFEST.MF");
 
-            String name = context.getApplication().getName() + "-"+ context.getApplication().getVersion() +".jar";
-            File zipFile = new File(targetFile, name);
-            FileOutputStream fout = new FileOutputStream(zipFile);
-            ZipOutputStream zout = new ZipOutputStream(fout);
-            File fileSource = FileSystems.getDefault().getPath(context.getBuild().getSourceOutputDir()).toFile();
-            addDirectory(fileSource.toURI(), zout, fileSource);
-            zout.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter(manifestMf))){
+            writer.write("Manifest-Version: 1.0");
+            writer.write("\n");
+            writer.write("Created-By: fab(ricate) http://m410.org");
+            writer.write("\n");
         }
     }
 
