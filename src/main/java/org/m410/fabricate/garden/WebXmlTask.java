@@ -76,7 +76,7 @@ public final class WebXmlTask implements Task {
                 .collect(Collectors.toList());
 
         context.cli().debug("artifacts =" + mavenProject    );
-        initWebXml(context.getBuild().getWebappDir(), context.environment());
+        initWebXml(context.getBuild().getTargetDir(), context.environment());
         moveM410Config(context.getBuild().getSourceOutputDir());
     }
 
@@ -89,7 +89,7 @@ public final class WebXmlTask implements Task {
     }
 
     private void initWebXml(String webappDir, String envName) throws IOException {
-        File outputDir = FileSystems.getDefault().getPath(webappDir, "WEB-INF").toFile();
+        File outputDir = FileSystems.getDefault().getPath(webappDir, "war-exploded/WEB-INF").toFile();
 
         if(!outputDir.exists() && !outputDir.mkdirs())
             throw new RuntimeException("Could not create web-inf directory");
