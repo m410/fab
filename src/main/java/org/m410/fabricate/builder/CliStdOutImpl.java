@@ -35,7 +35,7 @@ public class CliStdOutImpl implements Cli {
     @Override
     public void warn(String in) {
         if(level <= 2 )
-            System.out.println("  WARN|" + in);
+            System.out.println("  WARN |" + in);
     }
 
     @Override
