@@ -9,9 +9,9 @@ bundles:
     version: 0.1-SNAPSHOT
     url: file:/Users/m410/Projects/m410.org/fabricate/fab-share/target/fab-share-0.1-SNAPSHOT.jar
   - name: java-lib
-    org: org.m410.fabricate.garden
+    org: org.m410.fabricate
     version: 0.1-SNAPSHOT
-    url: file:/Users/m410/Projects/m410.org/fabricate/fab-java-lib-project/target/fab-java-lib-project-0.1-SNAPSHOT.jar
+    url: file:/Users/m410/Projects/m410.org/fabricate/fab-java-lib-project/target/java-lib-0.1-SNAPSHOT.jar
   - name: fab-jar
     org: org.m410.fabricate
     version: 0.1-SNAPSHOT
@@ -27,7 +27,7 @@ bundles:
   - name: fab-dependencies
     org: org.m410.fabricate
     version: 0.1-SNAPSHOT
-    url: file:/Users/m410/Projects/m410.org/fabricate/fab-dependencies/target/fab-dependencies-0.1-SNAPSHOT.jar
+    url: file:/Users/m410/Projects/m410.org/fabricate/fab-java-dependencies/target/fab-java-dependencies-0.1-SNAPSHOT.jar
 
 build:
   cacheDir: .fab
