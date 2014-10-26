@@ -4,6 +4,7 @@ import org.m410.fabricate.builder.BuildContext;
 import org.m410.fabricate.builder.Task;
 
 import java.io.*;
+import java.net.URI;
 import java.nio.file.*;
 import java.util.zip.*;
 
@@ -35,15 +36,15 @@ public final class JarTask implements Task {
             FileOutputStream fout = new FileOutputStream(zipFile);
             ZipOutputStream zout = new ZipOutputStream(fout);
             File fileSource = FileSystems.getDefault().getPath(context.getBuild().getSourceOutputDir()).toFile();
-            addDirectory(zout, fileSource);
+            addDirectory(fileSource.toURI(), zout, fileSource);
             zout.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private static void addDirectory(ZipOutputStream zout, File sourceFile) {
-        assert sourceFile != null;
+    private static void addDirectory(final URI base, final ZipOutputStream zout, final File sourceFile)
+            throws IOException {
         byte[] buffer = new byte[1024];
         CRC32 crc = new CRC32();
         int bytesRead;
@@ -51,37 +52,33 @@ public final class JarTask implements Task {
         for (File file : sourceFile.listFiles()) {
 
             if (file.isDirectory()) {
-                addDirectory(zout, file);
+                addDirectory(base, zout, file);
                 continue;
             }
 
-            try {
-                BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
-                crc.reset();
+            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+            crc.reset();
 
-                while ((bytesRead = bis.read(buffer)) != -1) {
-                    crc.update(buffer, 0, bytesRead);
-                }
-
-                bis.close();
-                // Reset to beginning of input stream
-                bis = new BufferedInputStream(new FileInputStream(file));
-                ZipEntry entry = new ZipEntry(file.getName());
-                entry.setMethod(ZipEntry.STORED);
-                entry.setCompressedSize(file.length());
-                entry.setSize(file.length());
-                entry.setCrc(crc.getValue());
-                zout.putNextEntry(entry);
-
-                while ((bytesRead = bis.read(buffer)) != -1) {
-                    zout.write(buffer, 0, bytesRead);
-                }
-
-                bis.close();
-
-            } catch (IOException ioe) {
-                System.err.println("IOException :" + ioe);
+            while ((bytesRead = bis.read(buffer)) != -1) {
+                crc.update(buffer, 0, bytesRead);
             }
+
+            bis.close();
+            // Reset to beginning of input stream
+            bis = new BufferedInputStream(new FileInputStream(file));
+            String pathName = base.relativize(file.toURI()).toString();
+            ZipEntry entry = new ZipEntry(pathName);
+            entry.setMethod(ZipEntry.STORED);
+            entry.setCompressedSize(file.length());
+            entry.setSize(file.length());
+            entry.setCrc(crc.getValue());
+            zout.putNextEntry(entry);
+
+            while ((bytesRead = bis.read(buffer)) != -1) {
+                zout.write(buffer, 0, bytesRead);
+            }
+
+            bis.close();
         }
     }
 }
