@@ -85,8 +85,11 @@ public class IvyDependencyTaskTest {
         File ivySettingFile = task.makeIvySettingsXml(context);
         task.resolveDependencies(context,ivySettingFile, ivyFile);
         assertNotNull(context.getClasspath());
-        assertEquals(5, context.getClasspath().size());
+        assertEquals(4, context.getClasspath().size());
         assertNotNull(context.getClasspath().get("compile"));
+        assertNotNull(context.getClasspath().get("test"));
+        assertNotNull(context.getClasspath().get("javadoc"));
+        assertNotNull(context.getClasspath().get("sources"));
         assertTrue(context.getClasspath().get("compile").length() > 10);
         assertTrue(context.getClasspath().get("test").length() > 10);
 //        assertTrue(context.getClasspath().get("javadoc").length() > 10);

@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -59,7 +60,7 @@ public class IvyDependencyTask implements Task {
                 return new MessageLoggerEngine(){
                     @Override public void warn(String msg) { context.cli().warn(msg); }
                     @Override public void error(String msg) { context.cli().error(msg); }
-                    @Override public void info(String msg) { context.cli().info(msg); }
+                    @Override public void info(String msg) { context.cli().debug(msg); }
                     @Override public void debug(String msg) { context.cli().debug(msg); }
                     @Override public void verbose(String msg) { context.cli().debug(msg); }
                     @Override public void log(String msg, int level) { context.cli().debug(msg); }
@@ -67,7 +68,12 @@ public class IvyDependencyTask implements Task {
             }
         };
 
-        final Object result = ivy.execute((ivy1, ivyContext) -> {
+        final List<String> scopes = context.getDependencies().stream()
+                .map(Dependency::getScope).sorted().collect(Collectors.toList());
+        scopes.add("sources");
+        scopes.add("javadoc");
+
+        ivy.execute((ivy1, ivyContext) -> {
             Map<String,List<ArtifactDownloadReport>> reports = new HashMap<String, List<ArtifactDownloadReport>>();
 
             try {
@@ -76,11 +82,7 @@ public class IvyDependencyTask implements Task {
                 String resolveId = resolveReport.getResolveId();
                 ResolutionCacheManager manager = ivy1.getResolutionCacheManager();
 
-                reports.put("test", Arrays.asList(makeReport("test", resolveId, manager)));
-                reports.put("compile", Arrays.asList(makeReport("compile", resolveId, manager)));
-                reports.put("provided", Arrays.asList(makeReport("provided", resolveId, manager)));
-                reports.put("sources", Arrays.asList(makeReport("sources", resolveId, manager)));
-                reports.put("javadoc", Arrays.asList(makeReport("javadoc", resolveId, manager)));
+                scopes.stream().forEach(s-> reports.put(s, Arrays.asList(makeReport(s, resolveId, manager))));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -124,8 +126,6 @@ public class IvyDependencyTask implements Task {
 
         Element rootElement = doc.createElement("ivy-module");
         rootElement.setAttribute("version", "2.0");
-        rootElement.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "xsi:schemaLocation",
-                "http://ant.apache.org/ivy/schemas/ivy.xsd");
 
         doc.appendChild(rootElement);
 
