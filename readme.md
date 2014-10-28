@@ -1,4 +1,4 @@
-Fab(ricate) task runner
-======================================
+Ivy dependency tasks for fab(ricate)
+=================================
 
-An OSGI bundle that's part of the fab build tool.
+This is an osgi bundle that handles dependency resolution to a project.
