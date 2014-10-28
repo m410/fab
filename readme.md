@@ -1,27 +1,30 @@
 Fab(ricate) Java compiler task for fab project build tool
 ======================================
 
-An OSGI bundle that's part of the fab build tool.
+An OSGI bundle that's part of the fab build tool. It builds and runs [Garden MVC](https://github.com/m410/garden)
+structured projects.  For more information about the web framework [go here](https://github.com/m410/garden).
 
 
 Modules
+----
 
- -  core       org.m410.garden.mvc        garden       
- -  Logback    org.m410.garden.logback    garden-logback   
- -  JPA        org.m410.garden.jpa        garden-jpa       
- -  ORM        org.m410.garden.orm        garden-orm       
- -  Jetty9     org.m410.garden.jetty9     garden-jetty9    
+ -  [core](https://github.com/m410/garden)        
+ -  [Logback](https://github.com/m410/garden-logback)   
+ -  [JPA](https://github.com/m410/garden-jpa)      
+ -  [ORM](https://github.com/m410/garden-orm)       
+ -  [Jetty9](https://github.com/m410/garden-jetty9)    
  
 Internal modules
+----
 
- -  dependency org.m410.fabricate.dependency  fab-dependency
- -  compiler   org.m410.fabricate.compiler    fab-java-compiler
- -  war        org.m410.fabricate.war         fab-war
- -  war        org.m410.fabricate.jar         fab-jar
- -  junit      org.m410.fabricate.junit       fab-junit
+ -  [dependency](https://github.com/m410/fab-dependency)
+ -  [compiler](https://github.com/m410/fab-java-compiler)
+ -  [war](https://github.com/m410/fab-war)
+ -  [junit](https://github.com/m410/fab-junit)
  
 
 Later
+----
 
  -  JMS        org.m410.garden.jms        garden-jms       
  -  Mail       org.m410.garden.mail       garden-mail      

@@ -45,6 +45,7 @@ public final class WebXmlTask implements Task {
             "         xsi:schemaLocation=\"http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd\"\n" +
             "         version=\"3.1\"\n" +
             "         metadata-complete=\"true\">\n" +
+            "  <display-name>{{disName}}</display-name>\n" +
             "  <context-param>\n" +
             "    <param-name>m410-env</param-name>\n" +
             "    <param-value>{{env}}</param-value>\n" +
@@ -76,7 +77,7 @@ public final class WebXmlTask implements Task {
                 .collect(Collectors.toList());
 
         context.cli().debug("artifacts =" + mavenProject    );
-        initWebXml(context.getBuild().getTargetDir(), context.environment());
+        initWebXml(context.getBuild().getTargetDir(), context.environment(), context.getApplication().getName());
         moveM410Config(context.getBuild().getSourceOutputDir());
     }
 
@@ -88,14 +89,14 @@ public final class WebXmlTask implements Task {
             Files.copy(source, target);
     }
 
-    private void initWebXml(String webappDir, String envName) throws IOException {
+    private void initWebXml(String webappDir, String envName, String appName) throws IOException {
         File outputDir = FileSystems.getDefault().getPath(webappDir, "war-exploded/WEB-INF").toFile();
 
         if(!outputDir.exists() && !outputDir.mkdirs())
             throw new RuntimeException("Could not create web-inf directory");
 
         final File webxml = new File(outputDir, "web.xml");
-        final String xmlOut = xml.replace("{{env}}", envName);
+        final String xmlOut = xml.replace("{{env}}", envName).replace("{{disName}}", appName);
 
         try(FileWriter writer = new FileWriter(webxml)) {
             writer.write(xmlOut);
