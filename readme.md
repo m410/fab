@@ -1,4 +1,4 @@
-Fab(ricate) Java compiler task for fab project build tool
+Java Library project for Fab(ricate)
 ======================================
 
-An OSGI bundle that's part of the fab build tool.
+This is a java library project configuration.
