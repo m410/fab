@@ -1,7 +1,7 @@
-Fab(ricate) task runner
+Fab(ricate) CLI
 ======================================
 
-An OSGI bundle that's part of the fab build tool.
+This is a java 8 OSGI bundle that's part of the fab build tool. This is the command line interface.
 
 
  1. Look for project configuration file.
@@ -30,5 +30,7 @@ Each step can be comprise of zero or more tasks.
 a task has an execute method which takes a build context.  The build context
 is mutable, and contains all the configuration information needed to operate 
 on the project.
+
+See [fabricate share](https://github.com/m410/fab-share) for more information about commands, steps and tasks.
 
  
