@@ -29,10 +29,9 @@ Test it with:
 you should see something like this:
 
     [me@computer /Users/me]% fab -version
-    Brzy Fab(ricate) Version: 0.14
-    Brzy Home: /opt/local/fab
+    Fab(ricate) Version: 0.1
+    Home: /opt/local/fab
     Java: Java HotSpot(TM) 64-Bit Server VM ( build 1.6.0_45-b06-451-11M4406)
-    Scala: version 2.10.0
 
 ## Projects
 
