@@ -31,11 +31,11 @@ public final class ConfigContext {
             modules.addAll(((List<Map<String,Object>>)m).stream().map(ModuleImpl::new).collect(Collectors.toList()));
         });
 
-        Optional.ofNullable(base.getOrDefault("logging", new ArrayList<>())).ifPresent(m ->{
-            modules.addAll(((List<Map<String,Object>>)m).stream().map(ModuleImpl::new).collect(Collectors.toList()));
+        Optional.ofNullable(base.getOrDefault("logging", new ArrayList<>())).ifPresent(m -> {
+            modules.addAll(((List<Map<String, Object>>) m).stream().map(ModuleImpl::new).collect(Collectors.toList()));
         });
 
-        Optional.ofNullable(base.getOrDefault("test", new ArrayList<>())).ifPresent(m ->{
+        Optional.ofNullable(base.getOrDefault("testing", new ArrayList<>())).ifPresent(m ->{
             modules.addAll(((List<Map<String,Object>>)m).stream().map(ModuleImpl::new).collect(Collectors.toList()));
         });
 
@@ -43,8 +43,9 @@ public final class ConfigContext {
             modules.addAll(((List<Map<String, Object>>) m).stream().map(ModuleImpl::new).collect(Collectors.toList()));
         });
 
-        modules.addAll(((List<Map<String, Object>>) base.getOrDefault("view", new ArrayList<>()))
-                .stream().map(ModuleImpl::new).collect(Collectors.toList()));
+        Optional.ofNullable(base.getOrDefault("views", new ArrayList<>())).ifPresent(m -> {
+            modules.addAll(((List<Map<String, Object>>) m).stream().map(ModuleImpl::new).collect(Collectors.toList()));
+        });
     }
 
     public ConfigContext(Application application, Build build, List<Dependency> dependencies, List<Module> modules) {

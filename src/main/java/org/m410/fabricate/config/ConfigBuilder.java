@@ -22,11 +22,6 @@ public final class ConfigBuilder  {
         return this;
     }
 
-//    public ConfigBuilder applyUnder(List<Map<String,Object>> parentConfigurations) {
-//        parentConfigurations.stream().forEach(p -> merge(p,projectConfiguration));
-//        return this;
-//    }
-
     public ConfigBuilder applyOver(Map<String,Object> base) {
         HashMap<String, Object> outMap = new HashMap<>();
         merge(outMap,base);
