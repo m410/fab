@@ -35,9 +35,9 @@ public class ProjectRunnerTest {
         assertEquals("0.1-SNAPSHOT", config.getArchetype().getVersion());
 
         assertNotNull("no bundles", config.getBundles());
-        assertEquals(3, config.getBundles().size());
+        assertEquals(4, config.getBundles().size());
 
         assertNotNull("no modules", config.getModules());
-        assertEquals(2, config.getModules().size());
+        assertEquals(3, config.getModules().size());
     }
 }

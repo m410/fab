@@ -20,9 +20,9 @@ public class ProjectConfigTest {
         assertNotNull(configCacheDir);
         ProjectConfig config = new ProjectConfig(file, configCacheDir);
         assertNotNull(config);
-        assertEquals(3, config.getBundles().size());
-        assertEquals(2, config.getModules().size());
-        assertEquals(4, config.getConfigurations().size());
+        assertEquals(4, config.getBundles().size());
+        assertEquals(3, config.getModules().size());
+        assertEquals(5, config.getConfigurations().size());
         assertNotNull(config.getParent());
     }
 

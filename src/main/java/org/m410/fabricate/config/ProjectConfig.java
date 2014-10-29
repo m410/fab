@@ -80,9 +80,9 @@ public final class ProjectConfig extends Base {
         List<ConfigRef> mods = new ArrayList<>();
         loadMod("persistence", mods, configuration);
         loadMod("modules", mods, configuration);
-        loadMod("view", mods, configuration);
-//        loadMod("test", mods, configuration);
-//        loadMod("logging", mods, configuration);
+        loadMod("views", mods, configuration);
+        loadMod("testing", mods, configuration);
+        loadMod("logging", mods, configuration);
         return mods;
     }
 
@@ -97,8 +97,7 @@ public final class ProjectConfig extends Base {
     }
 
     @SuppressWarnings("unchecked")
-    private void loadMod(String nodeName, List<ConfigRef> modules, Map<String, Object> config)
-            throws IOException {
+    private void loadMod(String nodeName, List<ConfigRef> modules, Map<String, Object> config) throws IOException {
         if(config.containsKey(nodeName)) {
             final Object child = config.get(nodeName);
 

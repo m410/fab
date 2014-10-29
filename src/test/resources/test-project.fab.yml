@@ -36,17 +36,21 @@ modules:
     version: 0.2.0
     name: any-module
 logging:
-  appenders:
-    - name: STDOUT
-      appender class: ch.qos.logback.core.ConsoleAppender
-      layout: ch.qos.logback.classic.encoder.PatternLayoutEncoder
-      pattern: "%-4relative [%thread] %-5level %class - %msg%n"
-  logger:
-    - name: org.m410
-      level: TRACE
-  root:
-    level: DEBUG
-    ref: [STDOUT]
+  - name: m410-logback
+    organization: "org.m410.mod.persistence"
+    version: "0.1"
+    base_config: file:/Users/m410/Projects/m410.org/fabricate/fab-cli/src/test/resources/module.fab.yml
+    appenders:
+      - name: STDOUT
+        appender class: ch.qos.logback.core.ConsoleAppender
+        layout: ch.qos.logback.classic.encoder.PatternLayoutEncoder
+        pattern: "%-4relative [%thread] %-5level %class - %msg%n"
+    logger:
+      - name: org.m410
+        level: TRACE
+    root:
+      level: DEBUG
+      ref: [STDOUT]
 web_xml:
   - description: *desc
   - display-name: *name

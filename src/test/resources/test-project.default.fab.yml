@@ -5,7 +5,7 @@ archetype:
 
 bundles:
   - name: garden
-    org: org.m410.fabricate.garden
+    organization: org.m410.fabricate.garden
     version: 0.1-SNAPSHOT
     url: file:/Users/m410/Projects/fabricate/fab-java-garden-project/target/fab-java-garden-project-0.1-SNAPSHOT.jar
 
