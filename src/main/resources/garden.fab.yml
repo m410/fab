@@ -34,8 +34,6 @@ dependencies:
   - { scope: compile, org: com.google.code.gson, name: gson, rev: 2.2.4 }
   - { scope: compile, org: org.slf4j, name: slf4j-api, rev: 1.7.7 }
   - { scope: compile, org: org.yaml, name: snakeyaml, rev: "1.13"}
-#  - { scope: compile, org: commons-beanutils, name: commons-beanutils, rev: 1.9.0 }
-#  - { scope: compile, org: org.apache.commons, name: commons-lang3, rev: 3.2.1 }
   - { scope: compile, org: com.google.guava, name: guava, rev: "18.0"}
   - { scope: compile, org: com.fasterxml, name: classmate, rev: 1.1.0 }
   - { scope: provided, org: org.glassfish.web, name: javax.el, rev: 2.2.6 }
