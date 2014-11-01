@@ -62,22 +62,20 @@ public final class ProjectRunner {
 
             Object buildService = ctx.getService(ctx.getServiceReference("org.m410.fabricate.service.FabricateService"));
 
-            try {
-                // load each full configuration
-                // todo might want to add each type of configuration, so the service can sort as needed
-                for (Map<String, Object> conf : config.getConfigurations())
-                    buildService.getClass().getMethod("addConfig", Map.class).invoke(buildService, conf);
+            // load each full configuration
+            // todo might want to add each type of configuration, so the service can sort as needed
+            for (Map<String, Object> conf : config.getConfigurations())
+                buildService.getClass().getMethod("addConfig", Map.class).invoke(buildService, conf);
 
-                buildService.getClass().getMethod("postStartupWiring").invoke(buildService);
-                final String[] objects = args.toArray(new String[args.size()]);
-                buildService.getClass().getMethod("execute", String[].class).invoke(buildService, new Object[]{objects});
-
-            }
-            catch (InvocationTargetException e) {
-                // just throw the root cause
-                throw e.getTargetException();
-            }
-        } finally {
+            buildService.getClass().getMethod("postStartupWiring").invoke(buildService);
+            final String[] objects = args.toArray(new String[args.size()]);
+            buildService.getClass().getMethod("execute", String[].class).invoke(buildService, new Object[]{objects});
+        }
+        catch (InvocationTargetException e) {
+            // just throw the root cause
+            throw e.getTargetException();
+        }
+        finally {
             framework.stop();
         }
     }
