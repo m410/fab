@@ -87,16 +87,20 @@ public class FabricateServiceImpl implements FabricateService {
 
         BuildContext buildContext = configureInitialBuildContext(env, logLevel);
 
-        // check each task to see if it takes args
-        // only the last command can take args
+        // todo check each task to see if it takes args
         for (String arg : Arrays.asList(args)) {
-            for (Command command : commands) {
-                if (command.getName().equals(arg)) {
-                    for (CommandListener commandListener : commandListeners) {
-                        commandListener.notify(new CommandEvent(command));
-                    }
-                    command.execute(taskListeners, buildContext);
-                }
+            Optional<Command> cmd = commands.stream().filter(c -> c.getName().equals(arg)).findFirst();
+
+            if(cmd.isPresent()) {
+                Command command = cmd.get();
+
+                for (CommandListener commandListener : commandListeners)
+                    commandListener.notify(new CommandEvent(command));
+
+                command.execute(taskListeners, buildContext);
+            }
+            else {
+                System.out.println("ERROR: Unknown command '"+arg+"'");
             }
         }
 

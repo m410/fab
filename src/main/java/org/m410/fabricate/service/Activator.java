@@ -108,6 +108,9 @@ public class Activator implements BundleActivator {
                         new Command("help", "Display Help", false)
                                 .withStep(new Step("default").append(new HelpTask())))
                 .addCommand(
+                        new Command("clean", "Remove project Artifacts", false)
+                                .withStep(new Step("default").append(new CleanTask())))
+                .addCommand(
                         new Command("bundles", "Display build bundles", false)
                                 .withStep(new Step("default").append(new BundleTask())));
     }

@@ -54,17 +54,13 @@ public final class Command implements Serializable{
         return name;
     }
 
-    public void execute(List<TaskListener> taskListeners, BuildContext buildContext) {
+    public void execute(List<TaskListener> taskListeners, BuildContext buildContext) throws Exception {
         for (Step step : steps) {
             for (Task task : step.getTasks()) {
                 for (TaskListener taskListener : taskListeners) {
                     taskListener.notify(new TaskEvent(task));
                 }
-                try {
-                    task.execute(buildContext);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                task.execute(buildContext);
             }
         }
     }
