@@ -33,12 +33,15 @@ public class InfoDumpTask implements Task {
         representer.addClassTag(Dependency.class, Tag.MAP);
 
         final Yaml yaml = new Yaml(representer,options);
+        final HashMap<String, Object> config = new HashMap<>();
+
         final HashMap<String, Object> map = new HashMap<>();
         map.put("env" , context.environment());
         map.put("application" , context.getApplication());
         map.put("build" , context.getBuild());
         map.put("modules" , context.getModules());
 
-        context.cli().println(yaml.dump(map));
+        config.put("configuration",map);
+        context.cli().println(yaml.dumpAsMap(config));
     }
 }
