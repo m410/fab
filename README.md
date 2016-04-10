@@ -2,6 +2,20 @@
 
 Builds the distributable zip file, that is the fabricate command line utilities.
 
+## Install on widows using Scoop
+
+Install scoop from the url: http://scoop.sh and run the command:
+    
+    > scoop install https://raw.githubusercontent.com/m410/fab/master/fab.json
+
+## Install on mac using homebrew
+
+Install homebrew from the url: http://brew.sh and run the command:
+    
+    > brew install https://raw.githubusercontent.com/m410/fab/master/fab.rb
+
+## Install from scratch
+
 Make sure java is installed:
 
     > java -version
