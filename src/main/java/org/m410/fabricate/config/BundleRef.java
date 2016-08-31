@@ -1,61 +1,36 @@
 package org.m410.fabricate.config;
 
+import org.apache.commons.configuration2.BaseHierarchicalConfiguration;
+import org.apache.commons.configuration2.HierarchicalConfiguration;
+import org.apache.commons.configuration2.tree.ImmutableNode;
+
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Map;
 
 /**
+ * A reference to an OSGI bundle that is loaded at build run.  Typically only in the base
+ * references to modules or archetypes.
+ *
  * @author m410
  */
-public final class BundleRef {
-    private String name;
-    private String org;
-    private String version;
-    private URL url;
-    private String symbolicName;
+public final class BundleRef extends ReferenceBase {
+    private final String symbolicName;
+    private URL localUrl;
 
-    public BundleRef(Map<String,String> map) throws MalformedURLException {
-        this.name = map.get("name");
-        this.org = map.get("org");
-        this.version= map.get("version");
-        this.url = map.containsKey("url") ? new URL(map.get("url")) : null;
-        this.symbolicName = map.get("symbolicName");
+    public BundleRef(HierarchicalConfiguration<ImmutableNode> c, Type type, Level l, String env) {
+        this.configuration = (BaseHierarchicalConfiguration) c;
+        this.name = c.getString("name");
+        this.org = c.getString("organization");
+        this.version = c.getString("version");
+        this.environment = env;
+        this.type = type;
+        this.level = l;
+        this.localUrl = null;
+        this.symbolicName = c.getString("symbolicName");
     }
 
-    public URL makeUrl() {
-        return url;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getOrg() {
-        return org;
-    }
-
-    public void setOrg(String org) {
-        this.org = org;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    public URL getUrl() {
-        return url;
-    }
-
-    public void setUrl(URL url) {
-        this.url = url;
+    public URL getLocalUrl() {
+        return localUrl;
     }
 
     public String getSymbolicName() {
@@ -65,17 +40,13 @@ public final class BundleRef {
             return name;
     }
 
-    public void setSymbolicName(String symbolicName) {
-        this.symbolicName = symbolicName;
-    }
-
     @Override
     public String toString() {
         return "BundleRef(" +
                 "name='" + name + '\'' +
                 ", org='" + org + '\'' +
                 ", version='" + version + '\'' +
-                ", url=" + url +
+                ", url=" + remoteReference +
                 ')';
     }
 

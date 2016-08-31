@@ -40,14 +40,5 @@ build:
   packageClassifier:
 #  packageName: {application.name}-{application.version}.jar
 
-deploy:
-
-publish:
-
-persistence:
-
-modules:
-
-logging:
 
 

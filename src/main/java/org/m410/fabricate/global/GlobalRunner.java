@@ -1,13 +1,15 @@
 package org.m410.fabricate.global;
 
-import org.m410.fabricate.config.ConfigUtil;
-import org.m410.fabricate.config.ProjectConfig;
+import org.m410.fabricate.config.ConfigFileUtil;
+import org.m410.fabricate.config.Project;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
 /**
+ * Fabricate commands that can be run from outside a project directory.
+ *
  * @author m410
  */
 public final class GlobalRunner {
@@ -31,9 +33,9 @@ public final class GlobalRunner {
     public void run() throws Exception {
         switch(args.get(0)) {
             case cmd0:
-                final File configFile = ConfigUtil.projectConfigFile(System.getProperty("user.dir"));
-                final File configCacheDir = ConfigUtil.projectConfCache(System.getProperty("user.dir"));
-                new ProjectCommands().resources(new ProjectConfig(configFile, configCacheDir));
+                final File configFile = ConfigFileUtil.projectConfigFile(System.getProperty("user.dir"));
+                final File configCacheDir = ConfigFileUtil.projectConfCache(System.getProperty("user.dir"));
+                new ProjectCommands().resources(new Project(configFile, configCacheDir, "default"));
                 break;
             case cmd1:
                 new ProjectCommands().create();

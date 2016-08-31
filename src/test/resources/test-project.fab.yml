@@ -18,43 +18,32 @@ deploy:
   method: scp {}
 publish:
   url: http://some-maven-repo.com/
-persistence:
-  - name: m410-jpa
-    organization: "org.m410.mod.persistence"
-    version: "0.1"
-    base_config: file:/Users/m410/Projects/m410.org/fabricate/fab-cli/src/test/resources/persistence.fab.yml
-    properties:
-      hibernate.dialect: org.hibernate.dialect.H2Dialect
-      hibernate.connection.driver_class: org.h2.Driver
-      hibernate.connection.username: sa
-      hibernate.connection.password: ""
-      hibernate.connection.url: "jdbc:h2:db/demo"
-      hibernate.hbm2ddl.auto: update
-modules:
-  - base_config: file:/Users/m410/Projects/m410.org/fabricate/fab-cli/src/test/resources/module.fab.yml
-    organization: org.m410.mod
-    version: 0.2.0
-    name: any-module
-logging:
-  - name: m410-logback
-    organization: "org.m410.mod.persistence"
-    version: "0.1"
-    base_config: file:/Users/m410/Projects/m410.org/fabricate/fab-cli/src/test/resources/module.fab.yml
-    appenders:
-      - name: STDOUT
-        appender class: ch.qos.logback.core.ConsoleAppender
-        layout: ch.qos.logback.classic.encoder.PatternLayoutEncoder
-        pattern: "%-4relative [%thread] %-5level %class - %msg%n"
-    logger:
-      - name: org.m410
-        level: TRACE
-    root:
-      level: DEBUG
-      ref: [STDOUT]
+persistence(org.m410.mod.persistence:m410-jpa:0.1):
+  base_config: file:/Users/m410/Projects/m410.org/fabricate/fab-cli/src/test/resources/persistence.fab.yml
+  properties:
+    hibernate.dialect: org.hibernate.dialect.H2Dialect
+    hibernate.connection.driver_class: org.h2.Driver
+    hibernate.connection.username: sa
+    hibernate.connection.password: ""
+    hibernate.connection.url: "jdbc:h2:db/demo"
+    hibernate.hbm2ddl.auto: update
+
+modules(org.m410.mod:any-module:0.2.0):
+  base_config: file:/Users/m410/Projects/m410.org/fabricate/fab-cli/src/test/resources/module.fab.yml
+
+logging(org.m410.mod.persistence:m410-logback:0.1):
+  base_config: file:/Users/m410/Projects/m410.org/fabricate/fab-cli/src/test/resources/module.fab.yml
+  appenders:
+    - name: STDOUT
+      appender class: ch.qos.logback.core.ConsoleAppender
+      layout: ch.qos.logback.classic.encoder.PatternLayoutEncoder
+      pattern: "%-4relative [%thread] %-5level %class - %msg%n"
+  logger:
+    - name: org.m410
+      level: TRACE
+  root:
+    level: DEBUG
+    ref: [STDOUT]
 web_xml:
   - description: *desc
   - display-name: *name
-environment overrides:
-  - environment: developement
-  - environment: test
-  - environment: production

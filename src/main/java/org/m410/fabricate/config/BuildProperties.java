@@ -1,8 +1,12 @@
 package org.m410.fabricate.config;
 
+import org.apache.commons.configuration2.ImmutableHierarchicalConfiguration;
+
 import java.util.Map;
 
 /**
+ * Build properties for a build run.
+ *
  * @author m410
  */
 public class BuildProperties {
@@ -25,12 +29,8 @@ public class BuildProperties {
     private String packageClassifier;
     private String packageName;
 
-    public BuildProperties(Map<String, Object> base) {
-
-    }
-
-    public BuildProperties with(Map<String, Object> base) {
-        return null;
+    public BuildProperties(ImmutableHierarchicalConfiguration base, ImmutableHierarchicalConfiguration app) {
+        // todo implement me..
     }
 
     public String getDefaultEnvironment() {

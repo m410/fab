@@ -8,9 +8,11 @@ import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 
 /**
+ * Utility methods to load configuration files.
+ *
  * @author m410
  */
-public class ConfigUtil {
+public class ConfigFileUtil {
     public static File projectConfigFile(final String userDir) throws IOException {
         PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**.fab.yml");
         Path path = FileSystems.getDefault().getPath(userDir);

@@ -19,7 +19,9 @@ public final class Main {
         options.addOption("debug", false, "Debug output");
         options.addOption("help", false, "Display help information");
         options.addOption("version", false, "Display version information");
-        CommandLineParser parser = new GnuParser();
+        options.addOption("e","env", true, "Set the environment name");
+
+        CommandLineParser parser = new DefaultParser();
         CommandLine cmd = parser.parse( options, args);
 
         if(cmd.hasOption("version")) {
@@ -29,19 +31,19 @@ public final class Main {
             new HelpFormatter().printHelp("fab", options, true);
             new GlobalRunner(cmd.getArgList()).outputCommands();
         }
-        else if(cmd.getArgList().size() > 0 && isGlobal(cmd.getArgList().get(0).toString())) {
+        else if(cmd.getArgList().size() > 0 && isGlobal(cmd.getArgList().get(0))) {
             runGlobalCmd(cmd.getArgList());
         }
         else if(isProjectDir(System.getProperty("user.dir"))) {
-            runProjectCmd(cmd.getArgList(),cmd.hasOption("debug"));
+            runProjectCmd(cmd.getArgList(), cmd.getOptionValue("e","defaut"), cmd.hasOption("debug"));
         }
         else {
             System.out.println("The current directory is not a project directory or unknown command.  Try 'fab -help'");
         }
     }
 
-    protected static void runProjectCmd(List<String> argList, boolean debug) throws Throwable {
-        new ProjectRunner(argList, debug).run();
+    protected static void runProjectCmd(List<String> argList, String envName, boolean debug) throws Throwable {
+        new ProjectRunner(argList, envName, debug).run();
     }
 
     protected static void runGlobalCmd(List<String> argList) throws Exception {

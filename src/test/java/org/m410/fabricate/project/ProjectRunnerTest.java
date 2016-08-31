@@ -1,7 +1,7 @@
 package org.m410.fabricate.project;
 
 import org.junit.Test;
-import org.m410.fabricate.config.ProjectConfig;
+import org.m410.fabricate.config.Project;
 
 import java.io.File;
 import java.nio.file.FileSystems;
@@ -24,20 +24,20 @@ public class ProjectRunnerTest {
         if(!configCacheDir.exists() && !configCacheDir.mkdirs())
             fail("could not make test output directories");
 
-        ProjectConfig config = new ProjectConfig(file,configCacheDir);
+        Project config = new Project(file,configCacheDir, "default");
         assertNotNull("no config created", config);
 
         assertNotNull("no archetype", config.getArchetype());
-        assertNotNull("no org", config.getArchetype().getOrganization());
-        assertEquals("org.m410.fabricate.garden", config.getArchetype().getOrganization());
+        assertNotNull("no org", config.getArchetype().getOrg());
+        assertEquals("org.m410.fabricate.garden", config.getArchetype().getOrg());
 
         assertNotNull("no version", config.getArchetype().getVersion());
         assertEquals("0.1-SNAPSHOT", config.getArchetype().getVersion());
 
+        assertNotNull("no modules", config.getModuleBaseReferences());
+        assertEquals(3, config.getModuleBaseReferences().size());
+
         assertNotNull("no bundles", config.getBundles());
         assertEquals(4, config.getBundles().size());
-
-        assertNotNull("no modules", config.getModules());
-        assertEquals(3, config.getModules().size());
     }
 }

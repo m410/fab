@@ -1,11 +1,10 @@
 package org.m410.fabricate.project;
 
+import org.apache.commons.configuration2.Configuration;
 import org.apache.felix.framework.util.Util;
 import org.apache.felix.main.AutoProcessor;
 import org.apache.felix.main.Main;
-import org.m410.fabricate.config.BundleRef;
-import org.m410.fabricate.config.ConfigUtil;
-import org.m410.fabricate.config.ProjectConfig;
+import org.m410.fabricate.config.*;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -28,45 +27,49 @@ public final class ProjectRunner {
     static final String cacheDir = ".fab/cache";
     private final List<String> args;
     private final boolean debug;
+    private final String envName;
 
-    public ProjectRunner(List<String> args, boolean debug) {
+    public ProjectRunner(List<String> args, String envName, boolean debug) {
         this.args = args;
         this.debug = debug;
+        this.envName = envName;
     }
 
     public void run() throws Throwable {
         checkAndSetupProjectDir();
         Main.loadSystemProperties();
-        Map<String, String> configProps = loadConfigProperties();
-        Main.copySystemProperties(configProps);
-        configProps.put(AutoProcessor.AUTO_DEPLOY_DIR_PROPERY, bundleDir);
-        configProps.put(Constants.FRAMEWORK_STORAGE, cacheDir);
+        Map<String, String> osgiRuntimeProps = loadConfigProperties();
+        Main.copySystemProperties(osgiRuntimeProps);
+        osgiRuntimeProps.put(AutoProcessor.AUTO_DEPLOY_DIR_PROPERY, bundleDir);
+        osgiRuntimeProps.put(Constants.FRAMEWORK_STORAGE, cacheDir);
 
         FrameworkFactory factory = getFrameworkFactory();
-        Framework framework = factory.newFramework(configProps);
+        Framework framework = factory.newFramework(osgiRuntimeProps);
 
         try {
             framework.init();
-            AutoProcessor.process(configProps, framework.getBundleContext());
+            AutoProcessor.process(osgiRuntimeProps, framework.getBundleContext());
             framework.start();
             BundleContext ctx = framework.getBundleContext();
 
-            final File configFile = ConfigUtil.projectConfigFile(System.getProperty("user.dir"));
-            final File configCacheDir = ConfigUtil.projectConfCache(System.getProperty("user.dir"));
-            ProjectConfig config = new ProjectConfig(configFile, configCacheDir);
+            final File configFile = ConfigFileUtil.projectConfigFile(System.getProperty("user.dir"));
+            final File configCacheDir = ConfigFileUtil.projectConfCache(System.getProperty("user.dir"));
+            Project config = new Project(configFile, configCacheDir, envName);
 
             config.getBundles().stream()
-                    .sorted((a, b) -> a.getName().equals("fab-share") ? 0 : 1)
-                    .forEach(s -> addBundle(ctx, s));
-            Arrays.asList(ctx.getBundles()).stream().forEach(this::startBundle);
+                    .filter(bundle -> !bundle.getName().equals("fab-share")) // prevents loading twice
+                    .forEach(bundle -> addBundle(ctx, bundle));
+            Arrays.stream(ctx.getBundles()).forEach(this::startBundle);
 
             Object buildService = ctx.getService(ctx.getServiceReference("org.m410.fabricate.service.FabricateService"));
 
-            // load each full configuration
-            // todo might want to add each type of configuration, so the service can sort as needed
-            for (Map<String, Object> conf : config.getConfigurations())
-                buildService.getClass().getMethod("addConfig", Map.class).invoke(buildService, conf);
+            // need provider type, env
+            for (Reference conf : config.getReferences())
+                buildService.getClass()
+                        .getMethod("addConfig", Configuration.class, String.class, String.class)
+                        .invoke(buildService, conf.getConfiguration(), conf.getEnv(), conf.getType().toString());
 
+            buildService.getClass().getMethod("setEnv").invoke(buildService, envName);
             buildService.getClass().getMethod("postStartupWiring").invoke(buildService);
             final String[] objects = args.toArray(new String[args.size()]);
             buildService.getClass().getMethod("execute", String[].class).invoke(buildService, new Object[]{objects});
@@ -89,12 +92,12 @@ public final class ProjectRunner {
         }
     }
 
-    private static void addBundle(BundleContext ctx, BundleRef s) {
+    private static void addBundle(final BundleContext ctx, final BundleRef bundleRef) {
         // todo check project file sys cache, if not there put it there
         try {
-            final String bundlePath = s.makeUrl().toString();
-            final boolean present = Arrays.asList(ctx.getBundles()).stream()
-                    .filter(b -> b.getSymbolicName().equals(s.getSymbolicName()))
+            final String bundlePath = bundleRef.getUrl().toString();
+            final boolean present = Arrays.stream(ctx.getBundles())
+                    .filter(b -> b.getSymbolicName().equals(bundleRef.getSymbolicName()))
                     .findFirst()
                     .isPresent();
 
@@ -103,7 +106,7 @@ public final class ProjectRunner {
             }
         }
         catch (Exception e) {
-            throw new InvalidBundleRefException(e,s);
+            throw new InvalidBundleRefException(e,bundleRef);
         }
     }
 
