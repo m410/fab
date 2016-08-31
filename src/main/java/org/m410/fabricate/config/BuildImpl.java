@@ -31,6 +31,9 @@ public class BuildImpl implements Build {
     public BuildImpl() {
     }
 
+    // todo add BuildImpl(ImmutableHierarchicalConfiguration config) {}
+
+    @Deprecated
     public BuildImpl(Map<String, Object> data) {
 
         if(data == null)

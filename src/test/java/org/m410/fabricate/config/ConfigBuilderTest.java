@@ -1,5 +1,7 @@
 package org.m410.fabricate.config;
 
+import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.configuration2.ImmutableHierarchicalConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,19 +40,39 @@ public class ConfigBuilderTest {
         configProviders.add(new ConfigProvider() {
 
             @Override
-            public Map<String, Object> config() {
-                HashMap<String,Object> map = new HashMap<>();
-                final HashMap<String, Object> hashMap = new HashMap<>();
-                hashMap.put("package_docs", true);
-                map.put("build", hashMap);
-                return map;
+            public Configuration configuration() {
+//                HashMap<String,Object> map = new HashMap<>();
+//                final HashMap<String, Object> hashMap = new HashMap<>();
+//                hashMap.put("package_docs", true);
+//                map.put("build", hashMap);
+//                return map;
+                return null;
             }
 
             @Override
-            public Set<String> validate(Map<String, Object> fullConfig) {
+            public Set<String> validate(ImmutableHierarchicalConfiguration fullConfig) {
+                return null;
+            }
+
+            @Override
+            public Type getType() {
+                return null;
+            }
+
+            @Override
+            public String getEnvName() {
                 return null;
             }
         });
+    }
+
+    void testLoadYaml() {
+        // outside config
+        // env
+        // app
+        // module (module defaults)
+        // archetype (defaults last)
+
     }
 
     @Test

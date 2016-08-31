@@ -1,5 +1,7 @@
 package org.m410.fabricate.config;
 
+import org.apache.commons.configuration2.ImmutableHierarchicalConfiguration;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -11,13 +13,27 @@ import java.util.stream.Collectors;
  * @author m410
  */
 public final class ConfigContext {
-    private Application application;
-    private Build build;
-    private List<Dependency> dependencies;
-    private List<Module> modules;
+    private final Application application;
+    private final Build build;
+    private final List<Dependency> dependencies;
+    private final List<Module> modules;
+    private final ImmutableHierarchicalConfiguration configuration;
+
+    public ConfigContext(ImmutableHierarchicalConfiguration configuration) {
+        this.configuration = configuration;
+        // todo create others
+        this.application = null;
+        this.build = null;
+        this.dependencies = null;
+        this.modules = null;
+
+        // todo replace with new module syntax 'module(group:name:version)'
+    }
 
     @SuppressWarnings("unchecked")
+    @Deprecated
     public ConfigContext(Map<String,Object> base) {
+        this.configuration = null;
         application = new ApplicationImpl((Map<String,Object>)base.get("application"));
         build = new BuildImpl((Map<String,Object>)base.get("build"));
         dependencies = ((List<Map<String,Object>>)base
@@ -49,6 +65,7 @@ public final class ConfigContext {
     }
 
     public ConfigContext(Application application, Build build, List<Dependency> dependencies, List<Module> modules) {
+        this.configuration = null;
         this.application = application;
         this.build = build;
         this.dependencies = dependencies;
@@ -69,5 +86,9 @@ public final class ConfigContext {
 
     public List<Module> getModules() {
         return modules;
+    }
+
+    public ImmutableHierarchicalConfiguration getConfiguration() {
+        return configuration;
     }
 }

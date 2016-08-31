@@ -1,5 +1,7 @@
 package org.m410.fabricate.service;
 
+import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.configuration2.ImmutableHierarchicalConfiguration;
 import org.m410.fabricate.builder.*;
 import org.m410.fabricate.config.ConfigProvider;
 
@@ -18,9 +20,11 @@ public interface FabricateService {
 
     void execute(String[] taskList) throws Exception;
 
+    void setEnv(String env);
+
     void addConfigProvider(ConfigProvider provider);
 
-    void addConfig(Map<String, Object> config);
+    void addConfig(Configuration config, String provider, String env);
 
     void addCommandListener(CommandListener c);
 

@@ -7,10 +7,13 @@ import java.util.Map;
 /**
  * @author m410
  */
+@Deprecated
+// todo replace with yaml-config
 public final class ConfigBuilder  {
     private Map<String,Object> projectConfiguration;
     private List<Map<String,Object>> envConfig;
 
+    @Deprecated
     public ConfigBuilder(Map<String, Object> projectConfiguration) {
         this.projectConfiguration = projectConfiguration;
     }
@@ -22,6 +25,7 @@ public final class ConfigBuilder  {
         return this;
     }
 
+    @Deprecated
     public ConfigBuilder applyOver(Map<String,Object> base) {
         HashMap<String, Object> outMap = new HashMap<>();
         merge(outMap,base);
@@ -39,6 +43,7 @@ public final class ConfigBuilder  {
     }
 
     @SuppressWarnings("unchecked")
+    @Deprecated
     void merge(Map<String, Object> under, Map<String, Object> over) {
         for (String overKey : over.keySet()) {
             Object underValue = under.get(overKey);

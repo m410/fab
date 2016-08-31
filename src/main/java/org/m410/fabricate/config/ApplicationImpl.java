@@ -17,7 +17,10 @@ public class ApplicationImpl implements Application {
     public ApplicationImpl() {
     }
 
+    // todo ApplicationImpl(ImmutableHierarchicalConfiguration config) {}
+
     @SuppressWarnings("unchecked")
+    @Deprecated
     public ApplicationImpl(Map<String, Object> data) {
         name = (String)data.get("name");
         org = (String)data.get("org");

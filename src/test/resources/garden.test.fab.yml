@@ -20,6 +20,7 @@ dependencies:
   - {scope: compile, org: org.apache, name: commons-lang, rev: 1.0.0}
   - {scope: compile, org: org.apache, name: commons-util, rev: 1.0.0}
 
+
 persistence:
   - name: m410-jpa
     organization: "org.m410.mod.persistence"
@@ -42,6 +43,7 @@ modules:
     symbolicName: org.m410.fab-java-task
     organization: org.m410.mod
 
+# logging(org.m410.fab.logging:garden-logback):
 logging:
   - name: garden-logback
     org: org.m410.fab.logging

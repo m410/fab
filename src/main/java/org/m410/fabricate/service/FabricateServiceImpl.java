@@ -1,9 +1,11 @@
 package org.m410.fabricate.service;
 
+import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.configuration2.ImmutableHierarchicalConfiguration;
 import org.m410.fabricate.builder.*;
-import org.m410.fabricate.config.ConfigBuilder;
 import org.m410.fabricate.config.ConfigContext;
 import org.m410.fabricate.config.ConfigProvider;
+import org.m410.fabricate.config.ConfigContextBuilder;
 import org.m410.fabricate.service.internal.serialize.CachedProject;
 import org.m410.fabricate.service.internal.serialize.HashUtil;
 import org.yaml.snakeyaml.DumperOptions;
@@ -26,6 +28,8 @@ public class FabricateServiceImpl implements FabricateService {
     private List<TaskListener> taskListeners = new ArrayList<>();
     private List<ConfigListener> configListeners = new ArrayList<>();
     private List<ConfigProvider> configProviders = new ArrayList<>();
+    private String environment = "default";
+    private String logLevel = "info";
 
     @Override
     public FabricateService addCommand(Command c) {
@@ -39,13 +43,14 @@ public class FabricateServiceImpl implements FabricateService {
         configProviders.add(provider);
     }
 
+
     /**
      * Adds all the configuration files to the context.
      * @param config
      */
     @Override
-    public void addConfig(Map<String, Object> config) {
-        configProviders.add(new ConfigProviderImpl(config));
+    public void addConfig(Configuration config, String env, String type) {
+        configProviders.add(new ConfigProviderImpl(config, env, ConfigProvider.Type.valueOf(type)));
     }
 
     @Override
@@ -70,10 +75,10 @@ public class FabricateServiceImpl implements FabricateService {
 
     @Override
     public void postStartupWiring() {
-        commandModifiers.stream().forEach(commandModifier -> {
-            commands.stream().forEach(command -> {
+        commandModifiers.forEach(commandModifier -> {
+            commands.forEach(command -> {
                 commandModifier.modify(command);
-                commandListeners.stream().forEach(l -> l.notify(new CommandEvent(command)));
+                commandListeners.forEach(l -> l.notify(new CommandEvent(command)));
             });
         });
     }
@@ -81,11 +86,7 @@ public class FabricateServiceImpl implements FabricateService {
     @Override
     public void execute(String[] args) throws Exception {
 
-        // todo need to get defaults from base config
-        String env = extractEnvironment(args);
-        String logLevel = extractLogLevel(args);
-
-        BuildContext buildContext = configureInitialBuildContext(env, logLevel);
+        BuildContext buildContext = configureInitialBuildContext(environment, logLevel);
 
         // todo check each task to see if it takes args
         for (String arg : Arrays.asList(args)) {
@@ -104,22 +105,28 @@ public class FabricateServiceImpl implements FabricateService {
             }
         }
 
-        dumpContext(buildContext, env);
+        dumpContext(buildContext, environment);
     }
 
-    private String extractLogLevel(String[] args) {
-        return "info";
+    @Override
+    public void setEnv(String env) {
+        this.environment = env;
     }
 
-    private String extractEnvironment(String[] args) {
-        return "dev";
-    }
-
+    // todo replace with commons yaml configuration
     @SuppressWarnings("unchecked")
     BuildContext configureInitialBuildContext(String env, String logLevel) throws Exception {
-        ConfigBuilder builder = new ConfigBuilder(configProviders.get(0).config()).parseLocalProject();
-        configProviders.stream().skip(1).map(ConfigProvider::config).forEach(builder::applyOver);
-        ConfigContext config = builder.applyEnvOver(env).build();
+//
+//        // todo -- replace with yaml-configuration
+//        ConfigBuilder builder = new ConfigBuilder(configProviders.get(0).configuration()).parseLocalProject();
+//        configProviders.stream().skip(1).map(ConfigProvider::config).forEach(builder::applyOver);
+//        ConfigContext config = builder.applyEnvOver(env).build();
+//        // -- end replace
+
+        ConfigContext config = ConfigContextBuilder.builder()
+                .env(env)
+                .providers(configProviders)
+                .make();
 
         String hash = HashUtil.getMD5Checksum(HashUtil.projectFile());
         File projectCacheFile = projectConfigFile(config.getBuild().getCacheDir(), env);

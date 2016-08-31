@@ -1,5 +1,8 @@
 package org.m410.fabricate.config;
 
+import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.configuration2.ImmutableHierarchicalConfiguration;
+
 import java.util.Map;
 import java.util.Set;
 
@@ -8,7 +11,18 @@ import java.util.Set;
  */
 public interface ConfigProvider {
 
-    Map<String, Object> config();
+    Configuration configuration();
 
-    Set<String> validate(Map<String,Object> fullConfig);
+    Set<String> validate(ImmutableHierarchicalConfiguration fullConfig);
+
+    Type getType();
+
+    String getEnvName();
+
+    enum Type {
+        LOCAL,
+        PROJECT,
+        MODULE,
+        ARCHETYPE
+    }
 }

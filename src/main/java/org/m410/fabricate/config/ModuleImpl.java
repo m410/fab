@@ -15,8 +15,9 @@ public class ModuleImpl implements Module {
     public ModuleImpl() {
     }
 
+    // todo ModuleImpl(String name, ImmutableHierarchicalConfiguration config) {}
+
     public ModuleImpl(Map<String,Object> data) {
-//        type = (String)data.get("type");
         name = (String)data.get("name");
         org = (String)data.get("org");
         version = data.get("version") != null ? data.get("version").toString() : null;

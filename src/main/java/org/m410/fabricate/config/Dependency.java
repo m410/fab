@@ -15,6 +15,8 @@ public class Dependency {
     public Dependency() {
     }
 
+    // todo Dependency(ImmutableHierarchicalConfiguration config) {}
+
     public Dependency(Map<String,Object> data) {
         org = (String)data.get("org");
         name = (String)data.get("name");
