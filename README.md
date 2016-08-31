@@ -10,6 +10,8 @@ Install scoop from the url: http://scoop.sh and run the command:
 
 ## Install on mac using homebrew
 
+$$$$ instructoins to create forumla locally.
+ 
 Install homebrew from the url: http://brew.sh and run the command:
     
     > brew install https://raw.githubusercontent.com/m410/fab/master/fab.rb

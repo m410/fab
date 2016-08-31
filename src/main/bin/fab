@@ -90,7 +90,7 @@ if $mingw ; then
     FAB_HOME="`(cd "$FAB_HOME"; pwd)`"
   [ -n "$JAVA_HOME" ] &&
     JAVA_HOME="`(cd "$JAVA_HOME"; pwd)`"
-  # TODO classpath?
+  # classpath?
 fi
 
 if [ -z "$JAVACMD" ] ; then
