@@ -54,20 +54,18 @@ public final class ProjectRunner {
 
             final File configFile = ConfigFileUtil.projectConfigFile(System.getProperty("user.dir"));
             final File configCacheDir = ConfigFileUtil.projectConfCache(System.getProperty("user.dir"));
-            Project config = new Project(configFile, configCacheDir, envName);
+            Project project = new Project(configFile, configCacheDir, envName);
 
-            config.getBundles().stream()
+            project.getBundles().stream()
                     .filter(bundle -> !bundle.getName().equals("fab-share")) // prevents loading twice
                     .forEach(bundle -> addBundle(ctx, bundle));
             Arrays.stream(ctx.getBundles()).forEach(this::startBundle);
 
             Object buildService = ctx.getService(ctx.getServiceReference("org.m410.fabricate.service.FabricateService"));
 
-            // need provider type, env
-            for (Reference conf : config.getReferences())
-                buildService.getClass()
-                        .getMethod("addConfig", Configuration.class, String.class, String.class)
-                        .invoke(buildService, conf.getConfiguration(), conf.getEnv(), conf.getType().toString());
+            buildService.getClass()
+                    .getMethod("addConfig", Configuration.class)
+                    .invoke(buildService, project.getConfiguration());
 
             buildService.getClass().getMethod("setEnv").invoke(buildService, envName);
             buildService.getClass().getMethod("postStartupWiring").invoke(buildService);
@@ -94,20 +92,23 @@ public final class ProjectRunner {
 
     private static void addBundle(final BundleContext ctx, final BundleRef bundleRef) {
         // todo check project file sys cache, if not there put it there
-        try {
-            final String bundlePath = bundleRef.getUrl().toString();
-            final boolean present = Arrays.stream(ctx.getBundles())
+
+        bundleRef.getRemoteReference().ifPresent(rr ->{
+            String bundlePath = rr.toString();
+            boolean present = Arrays.stream(ctx.getBundles())
                     .filter(b -> b.getSymbolicName().equals(bundleRef.getSymbolicName()))
                     .findFirst()
                     .isPresent();
 
             if (!present) {
-                ctx.installBundle(bundlePath);
+                try {
+                    ctx.installBundle(bundlePath);
+                }
+                catch (BundleException e) {
+                    throw new RuntimeException(e);
+                }
             }
-        }
-        catch (Exception e) {
-            throw new InvalidBundleRefException(e,bundleRef);
-        }
+        });
     }
 
     void checkAndSetupProjectDir() throws IOException {

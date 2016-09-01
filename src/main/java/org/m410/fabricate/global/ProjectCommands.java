@@ -15,7 +15,7 @@ public class ProjectCommands {
     public void resources(Project build) {
         System.out.println("");
         System.out.println("  " + build.getArchetype());
-        build.getReferences().stream().forEach(r -> System.out.println("  " + r));
+//        build.getReferences().stream().forEach(r -> System.out.println("  " + r));
 //        System.out.println("");
 //        build.resources().stream().forEach(r -> System.out.println("  " + r));
         System.out.println("");

@@ -2,13 +2,16 @@ package org.m410.fabricate.config;
 
 import org.apache.commons.configuration2.BaseHierarchicalConfiguration;
 import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.configuration2.HierarchicalConfiguration;
 import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.commons.configuration2.tree.ImmutableNode;
 import org.m410.config.YamlConfig;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.channels.AsynchronousFileChannel;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -23,10 +26,6 @@ public final class Project implements Reference {
     private final Archetype archetype;
     private final BuildProperties build;
 
-    private final Reference archetypeReference;
-    private final List<Reference> projectEnvReferences;
-    private final List<Reference> moduleBaseReferences;
-    private final List<Reference> localEnvReferences;
     private final List<String> environments;
     private final Type type;
     private final Level level;
@@ -46,26 +45,37 @@ public final class Project implements Reference {
         this.level = Level.PROJECT;
 
         this.environments = YamlConfig.environments(projectFile);
-        this.configuration = YamlConfig.load(projectFile); // the default
+        BaseHierarchicalConfiguration fileConf = YamlConfig.load(projectFile);
 
-        this.org = this.configuration.getString("application.organization");
-        this.name = this.configuration.getString("application.name");
-        this.version = this.configuration.getString("application.version");
+        this.org = fileConf.getString("application.organization");
+        this.name = fileConf.getString("application.name");
+        this.version = fileConf.getString("application.version");
 
         this.confCache = confCache;
         this.projectFile = projectFile;
         this.url = projectFile.toURI().toURL();
 
-        archetype = loadArchetype(configuration);
-        archetypeReference = Resolver.resolveRemote(archetype,  confCache, Collections.singletonList(Resolver.defaultRepo));
+        archetype = loadArchetype(fileConf);
 
-        build = loadBuild(configuration, archetypeReference.getConfiguration());
+        final List<Repository> repos = Collections.singletonList(Resolver.defaultRepo);
+        Reference archetypeReference = Resolver.resolveRemote(archetype, confCache, repos);
 
-        moduleBaseReferences = loadModules(configuration);
+        build = loadBuild(fileConf, archetypeReference.getConfiguration());
+
+        List<Reference> moduleBaseReferences = loadModules(fileConf);
         moduleBaseReferences.addAll(resolveRemote(moduleBaseReferences));
 
-        localEnvReferences = envs(localConfigFile(projectFile), environments); // local envs
-        projectEnvReferences = envs(projectFile, environments);
+        List<Reference> localEnvReferences = envs(localConfigFile(projectFile), environments); // local envs
+        List<Reference> projectEnvReferences = envs(projectFile, environments);
+
+        this.configuration = YamlConfigBuilder.builder()
+                .withEnv(env)
+                .addLocalEnvs(localEnvReferences) // env's
+                .addProjectEnvs(projectEnvReferences)  // env's
+                .addProject(fileConf) // default
+                .addModules(moduleBaseReferences) //  remote, local & project already loaded
+                .addArchetype(archetypeReference) // remote
+                .make();
     }
 
     private Collection<? extends Reference> resolveRemote(List<Reference> moduleBaseReferences) {
@@ -125,24 +135,66 @@ public final class Project implements Reference {
     }
 
     private List<Reference> envs(File file, List<String> envs) {
-        List<Reference> localEnvConfs = new ArrayList<>();
-        envs.forEach(e-> new ConfigRef(configuration,Type.PROJECT, Level.PROJECT,e));
-        return localEnvConfs;
+        return envs.stream()
+                .map(e -> toConfigRef(file, e))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .filter(c -> !c.getEnv().equals("default"))
+                .filter(c -> c.getName() != null)
+                .collect(Collectors.toList());
+    }
+
+    private Optional<ConfigRef> toConfigRef(File file, String e) {
+
+        if (!file.exists()) {
+            return Optional.empty();
+        }
+
+        try {
+            final BaseHierarchicalConfiguration load = YamlConfig.load(file, e);
+            return Optional.of(new ConfigRef(load, Type.PROJECT, Level.PROJECT, e));
+        }
+        catch (ConfigurationException e1) {
+            throw new RuntimeException(e1);
+        }
     }
 
     private File localConfigFile(File projectFile) {
         return new File(projectFile.getAbsolutePath().replace("fab.yml","local.fab.yml"));
     }
 
-    public List<BundleRef> getBundles() throws MalformedURLException {
-        List<BundleRef> bundles = new ArrayList<>();
-        bundles.addAll(loadBundle(archetypeReference.getConfiguration(), Type.ARCHETYPE, Level.REMOTE)); // load parent first
-        bundles.addAll(loadBundle(configuration, Type.PROJECT, Level.PROJECT));
+    public List<? extends Reference> getModuleReferences() {
+        Pattern modulePattern = Pattern.compile("^(persistence|modules|views|testing|logging)\\(.*?\\)$");
+        List<ModuleRef> modules = new ArrayList<>();
 
-        for (Reference module : moduleBaseReferences) {
-            bundles.addAll(loadBundle(module.getConfiguration(), Type.MODULE, Level.REMOTE));
+        final Iterator<String> keys = configuration.getKeys();
+
+        while (keys.hasNext()) {
+            String next = keys.next();
+
+            if (modulePattern.matcher(next).matches()) {
+                configuration.configurationsAt(next).forEach(c -> {
+                    modules.add(new ModuleRef(next, c, Type.PROJECT, Level.PROJECT, environment));
+                });
+            }
         }
 
+        return modules;
+    }
+
+    public List<BundleRef> getBundles() throws MalformedURLException {
+        List<BundleRef> bundles = new ArrayList<>();
+        final Iterator<String> keys = configuration.getKeys();
+
+        while (keys.hasNext()) {
+            String next = keys.next();
+
+            if (next.endsWith("bundles")) {
+                configuration.configurationsAt(next).forEach(c -> {
+                    bundles.add(new BundleRef(c, Type.ARCHETYPE, Level.PROJECT, environment));
+                });
+            }
+        }
         return bundles;
     }
 
@@ -163,7 +215,6 @@ public final class Project implements Reference {
     }
 
     private Archetype loadArchetype(BaseHierarchicalConfiguration configuration) throws MalformedURLException {
-        // todo download remote reference
         return new Archetype(configuration.configurationAt("archetype"));
     }
 
@@ -175,13 +226,7 @@ public final class Project implements Reference {
         mods.addAll(loadModStereotypes("testing", configuration, Type.PROJECT, Level.PROJECT));
         mods.addAll(loadModStereotypes("logging", configuration, Type.PROJECT, Level.PROJECT));
 
-        // todo for each load the remote reference.
-
         return mods;
-    }
-
-    public List<Reference> getModuleBaseReferences() throws MalformedURLException {
-        return moduleBaseReferences;
     }
 
     private List<Reference> loadModStereotypes(String nodeName, BaseHierarchicalConfiguration config, Type type, Level level)  {
@@ -200,44 +245,15 @@ public final class Project implements Reference {
         return mods;
     }
 
-
-    private List<BundleRef> loadBundle(BaseHierarchicalConfiguration config, Type type, Level level) {
-        if(config == null) {
-            return new ArrayList<>();
-        }
-        else {
-            return config.configurationsAt("bundles")
-                    .stream()
-                    .map(c -> new BundleRef(c, type, level, environment))
-                    .collect(Collectors.toList());
-        }
-    }
-
-    public List<Reference> getReferences() {
-        List<Reference> configurations = new ArrayList<>();
-
-        configurations.addAll(this.localEnvReferences);
-        configurations.addAll(this.projectEnvReferences);
-        configurations.add(this);
-        moduleBaseReferences.forEach(configurations::add);
-        configurations.add(this.archetypeReference);
-
-        return configurations;
-    }
-
-    public Reference getArchetypeReference() {
-        return archetypeReference;
-    }
-
     @Override
     public String toString() {
         return "ProjectConfig{" +
                "projectFile=" + projectFile +
                ", archetype=" + archetype +
                ", build=" + build +
-               ", parent=" + archetypeReference +
-               ", modules=" + moduleBaseReferences +
+               ", modules=" +  // moduleBaseReferences +
                ", confCache=" + confCache +
                '}';
     }
+
 }

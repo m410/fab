@@ -15,7 +15,6 @@ import java.net.URL;
  */
 public final class BundleRef extends ReferenceBase {
     private final String symbolicName;
-    private URL localUrl;
 
     public BundleRef(HierarchicalConfiguration<ImmutableNode> c, Type type, Level l, String env) {
         this.configuration = (BaseHierarchicalConfiguration) c;
@@ -23,14 +22,23 @@ public final class BundleRef extends ReferenceBase {
         this.org = c.getString("organization");
         this.version = c.getString("version");
         this.environment = env;
-        this.type = type;
-        this.level = l;
-        this.localUrl = null;
+        this.type = type; // archetype or module
+        this.level = l; // always remote
         this.symbolicName = c.getString("symbolicName");
+
+        try {
+            this.remoteReference = c.containsKey("remote_reference") ?
+               new URL(c.getString("remote_reference")) :
+               toUrl();
+        }
+        catch (MalformedURLException e) {
+            throw new InvalidConfigurationException("invalid url: " + c.getString("remote_reference"), e);
+        }
     }
 
-    public URL getLocalUrl() {
-        return localUrl;
+    private URL toUrl() throws MalformedURLException {
+        // todo implement me
+        return null;
     }
 
     public String getSymbolicName() {

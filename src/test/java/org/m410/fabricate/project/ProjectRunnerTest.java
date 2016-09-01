@@ -24,20 +24,20 @@ public class ProjectRunnerTest {
         if(!configCacheDir.exists() && !configCacheDir.mkdirs())
             fail("could not make test output directories");
 
-        Project config = new Project(file,configCacheDir, "default");
-        assertNotNull("no config created", config);
+        Project project = new Project(file,configCacheDir, "default");
+        assertNotNull("no config created", project);
 
-        assertNotNull("no archetype", config.getArchetype());
-        assertNotNull("no org", config.getArchetype().getOrg());
-        assertEquals("org.m410.fabricate.garden", config.getArchetype().getOrg());
+        assertNotNull("no archetype", project.getArchetype());
+        assertNotNull("no org", project.getArchetype().getOrg());
+        assertEquals("org.m410.fabricate.garden", project.getArchetype().getOrg());
 
-        assertNotNull("no version", config.getArchetype().getVersion());
-        assertEquals("0.1-SNAPSHOT", config.getArchetype().getVersion());
+        assertNotNull("no version", project.getArchetype().getVersion());
+        assertEquals("0.1-SNAPSHOT", project.getArchetype().getVersion());
 
-        assertNotNull("no modules", config.getModuleBaseReferences());
-        assertEquals(3, config.getModuleBaseReferences().size());
+        assertNotNull("no modules", project.getModuleReferences());
+        assertEquals(3, project.getModuleReferences().size());
 
-        assertNotNull("no bundles", config.getBundles());
-        assertEquals(4, config.getBundles().size());
+        assertNotNull("no bundles", project.getBundles());
+        assertEquals(4, project.getBundles().size());
     }
 }

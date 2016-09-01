@@ -16,7 +16,7 @@ public final class ModuleRef extends ReferenceBase {
     private final Pattern pattern = Pattern.compile("^(\\w+)\\(([\\w\\.]+):([a-zA-Z0-9-_]+):(.+)\\)$");
     private final String stereotype;
 
-    public ModuleRef(String moduleName,  HierarchicalConfiguration<ImmutableNode> c, Type type, Level l, String env)  {
+    public ModuleRef(String moduleName, HierarchicalConfiguration<ImmutableNode> c, Type type, Level l, String env) {
         this.type = type;
         this.environment = env;
         this.configuration = (BaseHierarchicalConfiguration) c;

@@ -20,12 +20,11 @@ public class ProjectConfigTest {
             fail("could not make test output directories");
 
         assertNotNull(configCacheDir);
-        Project config = new Project(file, configCacheDir, "default");
-        assertNotNull(config);
-        assertEquals(5, config.getReferences().size());
-        assertEquals(4, config.getBundles().size());
-        assertEquals(3, config.getModuleBaseReferences().size());
-        assertNotNull(config.getArchetypeReference());
+        Project project = new Project(file, configCacheDir, "default");
+        assertNotNull(project);
+        assertNotNull(project.getArchetype());
+        assertEquals(4, project.getBundles().size());
+        assertEquals(3, project.getModuleReferences().size());
     }
 
 }
