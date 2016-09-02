@@ -5,8 +5,6 @@ import org.apache.commons.configuration2.ImmutableHierarchicalConfiguration;
 import org.m410.fabricate.builder.*;
 import org.m410.fabricate.config.ConfigProvider;
 
-import java.util.Map;
-
 /**
  * Document Me..
  *
@@ -22,9 +20,7 @@ public interface FabricateService {
 
     void setEnv(String env);
 
-    void addConfigProvider(ConfigProvider provider);
-
-    void addConfig(Configuration config, String provider, String env);
+    void addConfig(ImmutableHierarchicalConfiguration config);
 
     void addCommandListener(CommandListener c);
 

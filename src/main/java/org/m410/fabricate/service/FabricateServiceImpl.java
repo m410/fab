@@ -1,19 +1,10 @@
 package org.m410.fabricate.service;
 
-import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.ImmutableHierarchicalConfiguration;
 import org.m410.fabricate.builder.*;
 import org.m410.fabricate.config.ConfigContext;
-import org.m410.fabricate.config.ConfigProvider;
-import org.m410.fabricate.config.ConfigContextBuilder;
-import org.m410.fabricate.service.internal.serialize.CachedProject;
 import org.m410.fabricate.service.internal.serialize.HashUtil;
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
 
-import java.io.*;
-import java.nio.file.FileSystems;
 import java.util.*;
 
 /**
@@ -27,30 +18,25 @@ public class FabricateServiceImpl implements FabricateService {
     private List<CommandListener> commandListeners = new ArrayList<>();
     private List<TaskListener> taskListeners = new ArrayList<>();
     private List<ConfigListener> configListeners = new ArrayList<>();
-    private List<ConfigProvider> configProviders = new ArrayList<>();
+
+    private ImmutableHierarchicalConfiguration configuration;
     private String environment = "default";
     private String logLevel = "info";
 
     @Override
     public FabricateService addCommand(Command c) {
-        commandListeners.stream().forEach(it -> it.notify(new CommandEvent(c)));
+        commandListeners.forEach(it -> it.notify(new CommandEvent(c)));
         commands.add(c);
         return this;
     }
-
-    @Override
-    public void addConfigProvider(ConfigProvider provider) {
-        configProviders.add(provider);
-    }
-
 
     /**
      * Adds all the configuration files to the context.
      * @param config
      */
     @Override
-    public void addConfig(Configuration config, String env, String type) {
-        configProviders.add(new ConfigProviderImpl(config, env, ConfigProvider.Type.valueOf(type)));
+    public void addConfig(ImmutableHierarchicalConfiguration config) {
+        configuration = config;
     }
 
     @Override
@@ -105,7 +91,7 @@ public class FabricateServiceImpl implements FabricateService {
             }
         }
 
-        dumpContext(buildContext, environment);
+//        dumpContext(buildContext, environment);
     }
 
     @Override
@@ -116,67 +102,61 @@ public class FabricateServiceImpl implements FabricateService {
     // todo replace with commons yaml configuration
     @SuppressWarnings("unchecked")
     BuildContext configureInitialBuildContext(String env, String logLevel) throws Exception {
-//
-//        // todo -- replace with yaml-configuration
-//        ConfigBuilder builder = new ConfigBuilder(configProviders.get(0).configuration()).parseLocalProject();
-//        configProviders.stream().skip(1).map(ConfigProvider::config).forEach(builder::applyOver);
-//        ConfigContext config = builder.applyEnvOver(env).build();
-//        // -- end replace
+        ConfigContext config = new ConfigContext(configuration);
 
-        ConfigContext config = ConfigContextBuilder.builder()
-                .env(env)
-                .providers(configProviders)
-                .make();
-
+        // todo really isn't the services responsibility to cache and read the file.
+        // should be done by the cli.
         String hash = HashUtil.getMD5Checksum(HashUtil.projectFile());
-        File projectCacheFile = projectConfigFile(config.getBuild().getCacheDir(), env);
+        return new BuildContextImpl(new CliStdOutImpl(logLevel), config, hash, env);
 
-        if(!projectCacheFile.exists()) {
-            return new BuildContextImpl(new CliStdOutImpl(logLevel), config, hash, env);
-        }
-        else {
-            CachedProject cachedProject = (CachedProject) new Yaml(new Constructor(CachedProject.class))
-                    .load(new FileInputStream(projectCacheFile));
-
-            if(!hash.equals(cachedProject.getHash())) {
-                projectCacheFile.delete();
-                return new BuildContextImpl(new CliStdOutImpl(logLevel), config, hash, env);
-            }
-            else {
-                return new BuildContextImpl(new CliStdOutImpl(logLevel), cachedProject, env);
-            }
-        }
+//        File projectCacheFile = projectConfigFile(config.getBuild().getCacheDir(), env);
+//
+//        if(!projectCacheFile.exists()) {
+//            return new BuildContextImpl(new CliStdOutImpl(logLevel), config, hash, env);
+//        }
+//        else {
+//            CachedProject cachedProject = (CachedProject) new Yaml(new Constructor(CachedProject.class))
+//                    .load(new FileInputStream(projectCacheFile));
+//
+//            if(!hash.equals(cachedProject.getHash())) {
+//                projectCacheFile.delete();
+//                return new BuildContextImpl(new CliStdOutImpl(logLevel), config, hash, env);
+//            }
+//            else {
+//                return new BuildContextImpl(new CliStdOutImpl(logLevel), cachedProject, env);
+//            }
+//        }
     }
 
-    private File projectConfigFile(String cacheDir, String env) {
-        final String fileName = "project." + env + ".yml";
-        return FileSystems.getDefault().getPath(cacheDir, fileName).toFile();
-    }
+//    private File projectConfigFile(String cacheDir, String env) {
+//        final String fileName = "project." + env + ".yml";
+//        return FileSystems.getDefault().getPath(cacheDir, fileName).toFile();
+//    }
 
-    public void dumpContext(BuildContext ctx, String env) throws IOException {
-        CachedProject cachedProject = new CachedProject(ctx);
-        File projectCacheFile = projectConfigFile(ctx.getBuild().getCacheDir(), env);
-        final FileWriter fileWriter = new FileWriter(projectCacheFile);
-        DumperOptions options = new DumperOptions();
-        options.setExplicitStart(true);
-        options.setAllowReadOnlyProperties(true);
-        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-        options.setDefaultScalarStyle(DumperOptions.ScalarStyle.DOUBLE_QUOTED);
-        new Yaml(options).dump(cachedProject, fileWriter);
-    }
+//    public void dumpContext(BuildContext ctx, String env) throws IOException {
+//        CachedProject cachedProject = new CachedProject(ctx);
+//        File projectCacheFile = projectConfigFile(ctx.getBuild().getCacheDir(), env);
+//        final FileWriter fileWriter = new FileWriter(projectCacheFile);
+//        DumperOptions options = new DumperOptions();
+//        options.setExplicitStart(true);
+//        options.setAllowReadOnlyProperties(true);
+//        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+//        options.setDefaultScalarStyle(DumperOptions.ScalarStyle.DOUBLE_QUOTED);
+//        new Yaml(options).dump(cachedProject, fileWriter);
+//    }
 
-    public File projectFile(File projectRoot) {
-        File[] files = projectRoot.listFiles((dir, filename) -> filename.endsWith(".fab.yml"));
-
-        if (files == null)
-            throw new NoConfigurationFileException();
-
-        if (files.length > 1)
-            throw new ToManyConfigurationFilesException();
-
-        if (files.length == 0)
-            throw new NoConfigurationFileException();
-
-        return files[0];
-    }
+//    public File projectFile(File projectRoot) {
+//        File[] files = projectRoot.listFiles((dir, filename) -> filename.endsWith(".fab.yml"));
+//
+//        if (files == null)
+//            throw new NoConfigurationFileException();
+//
+//        if (files.length > 1)
+//            throw new ToManyConfigurationFilesException();
+//
+//        if (files.length == 0)
+//            throw new NoConfigurationFileException();
+//
+//        return files[0];
+//    }
 }
