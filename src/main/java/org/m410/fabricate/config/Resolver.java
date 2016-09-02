@@ -11,30 +11,24 @@ import java.util.List;
 /**
  * @author Michael Fortin
  */
-public class Resolver {
+public final class Resolver {
 
     static final Repository defaultRepo = new Repository("http://repo.m410.org/content/repositories/releases/");
-    static final String ORGANIZATION = "organization";
-    static final String NAME = "name";
-    static final String VERSION = "version";
-
 
     /**
-     *
-     * @param reference the project reference to resolve to a remote reference.
+     * @param reference    the project reference to resolve to a remote reference.
      * @param repositories placeholder arg, should list of remote repositories
-     * to resolve where to download the reference if the base_config flag doesn't
-     * exist.
-     *
+     *                     to resolve where to download the reference if the base_config flag doesn't
+     *                     exist.
      * @return a new reference to the remote file, or thows exception if it can't find it.
      */
     public static Reference resolveRemote(Reference reference, File cacheDir, List<Repository> repositories) {
         final File localCacheFile = cacheConfigFile(reference, cacheDir);
 
-        if(localCacheFile.exists()) {
+        if (localCacheFile.exists()) {
             return new RemoteReference(reference, localCacheFile);
         }
-        else if(reference.getRemoteReference().isPresent()) {
+        else if (reference.getRemoteReference().isPresent()) {
             writeToFile(reference.getRemoteReference().get(), localCacheFile);
             return new RemoteReference(reference, localCacheFile);
         }
@@ -46,12 +40,12 @@ public class Resolver {
     }
 
     static void writeToFile(URL inputUrl, File outputFile) {
-        try(BufferedInputStream input = new BufferedInputStream(inputUrl.openStream());
-            BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(outputFile))) {
+        try (BufferedInputStream input = new BufferedInputStream(inputUrl.openStream());
+             BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(outputFile))) {
             copyStream(input, output);
         }
         catch (IOException e) {
-            throw new RuntimeException("could not copy to local disk",e);
+            throw new RuntimeException("could not copy to local disk", e);
         }
     }
 
@@ -59,10 +53,10 @@ public class Resolver {
 
         try {
             return new URL(repositories.get(0).getRoot() + // todo enable for many repositories
-                              resource.getOrg().replaceAll("\\.", "/") + "/" +
-                              resource.getName() + "/" +
-                              resource.getVersion() +"/"+
-                              resource.getName() +"-"+resource.getVersion()+".yml");
+                           resource.getOrg().replaceAll("\\.", "/") + "/" +
+                           resource.getName() + "/" +
+                           resource.getVersion() + "/" +
+                           resource.getName() + "-" + resource.getVersion() + ".yml");
         }
         catch (MalformedURLException e) {
             throw new RuntimeException(e);
@@ -92,6 +86,6 @@ public class Resolver {
                 resource.getName(),
                 resource.getVersion(),
                 "configuration.yml")
-            .toFile();
+                .toFile();
     }
 }

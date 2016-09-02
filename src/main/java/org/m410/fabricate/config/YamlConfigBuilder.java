@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * @author Michael Fortin
  */
-public class YamlConfigBuilder {
+public final class YamlConfigBuilder {
     private String env;
     private List<Reference> localEnvReferences;
     private List<Reference> projectEnvReferences;
@@ -30,7 +30,7 @@ public class YamlConfigBuilder {
     }
 
     public static YamlConfigBuilder builder() {
-        return new YamlConfigBuilder(null,null,null,null,null,null);
+        return new YamlConfigBuilder(null, null, null, null, null, null);
     }
 
 
@@ -107,21 +107,21 @@ public class YamlConfigBuilder {
         localEnvReferences.stream()
                 .filter(r -> r.getEnv().equals(env))
                 .findFirst()
-                .ifPresent(r -> combined.addConfiguration(r.getConfiguration(),"local-env"));
+                .ifPresent(r -> combined.addConfiguration(r.getConfiguration(), "local-env"));
 
         projectEnvReferences.stream()
                 .filter(r -> !r.getEnv().equals("default"))
                 .filter(r -> r.getEnv().equals(env))
                 .findFirst()
-                .ifPresent(r -> combined.addConfiguration(r.getConfiguration(),"project-env"));
+                .ifPresent(r -> combined.addConfiguration(r.getConfiguration(), "project-env"));
 
-        combined.addConfiguration(project,"project-default");
+        combined.addConfiguration(project, "project-default");
 
         moduleBaseReferences.stream()
                 .filter(r -> r.getLevel() == Reference.Level.REMOTE)
-                .forEach(r -> combined.addConfiguration(r.getConfiguration(),"remote-" + r.getName()));
+                .forEach(r -> combined.addConfiguration(r.getConfiguration(), "remote-" + r.getName()));
 
-        combined.addConfiguration(archetypeReference.getConfiguration(),"remote-archetype");
+        combined.addConfiguration(archetypeReference.getConfiguration(), "remote-archetype");
 
         return new YamlConfiguration(combined);
     }

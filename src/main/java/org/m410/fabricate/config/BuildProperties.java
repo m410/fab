@@ -2,8 +2,6 @@ package org.m410.fabricate.config;
 
 import org.apache.commons.configuration2.ImmutableHierarchicalConfiguration;
 
-import java.util.Map;
-
 /**
  * Build properties for a build run.
  *
@@ -29,7 +27,7 @@ public class BuildProperties {
     private String packageClassifier;
     private String packageName;
 
-    public BuildProperties(ImmutableHierarchicalConfiguration base, ImmutableHierarchicalConfiguration app) {
+    public BuildProperties(ImmutableHierarchicalConfiguration base) {
         // todo implement me..
     }
 
@@ -175,27 +173,6 @@ public class BuildProperties {
 
     public void setPackageName(String packageName) {
         this.packageName = packageName;
-    }
-
-    public void merge(BuildProperties build) {
-        defaultEnvironment = empty(defaultEnvironment) ? build.defaultEnvironment : defaultEnvironment;
-        defaultCommand = empty(defaultCommand) ? build.defaultCommand : defaultCommand;
-        lang = empty(lang) ? build.lang : lang;
-        langVersion = empty(langVersion) ? build.langVersion : langVersion;
-        compilerArgs = empty(compilerArgs) ? build.compilerArgs : compilerArgs;
-        targetDir = empty(targetDir) ? build.targetDir : targetDir;
-        webappDir = empty(webappDir) ? build.webappDir : webappDir;
-        sourceDir = empty(sourceDir) ? build.sourceDir : sourceDir;
-        sourceOutputDir = empty(sourceOutputDir) ? build.sourceOutputDir : sourceOutputDir;
-        resourceDir = empty(resourceDir) ? build.resourceDir : resourceDir;
-        testDir = empty(testDir) ? build.testDir : testDir;
-        testOutputDir = empty(testOutputDir) ? build.testOutputDir : testOutputDir;
-        testResourceDir = empty(testResourceDir) ? build.testResourceDir : testResourceDir;
-        vcs = empty(vcs) ? build.vcs : vcs;
-        packageSource = empty(packageSource) ? build.packageSource : packageSource;
-        packageDocs = empty(packageDocs) ? build.packageDocs : packageDocs;
-        packageClassifier = empty(packageClassifier) ? build.packageClassifier : packageClassifier;
-        packageName = empty(packageName) ? build.packageName : packageName;
     }
 
     private static boolean empty(String s) {

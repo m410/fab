@@ -63,6 +63,10 @@ public final class ProjectRunner {
 
             Object buildService = ctx.getService(ctx.getServiceReference("org.m410.fabricate.service.FabricateService"));
 
+            // todo does it need to set commands?
+
+            // todo save to cache.
+
             buildService.getClass()
                     .getMethod("addConfig", Configuration.class)
                     .invoke(buildService, project.getConfiguration());
@@ -73,8 +77,7 @@ public final class ProjectRunner {
             buildService.getClass().getMethod("execute", String[].class).invoke(buildService, new Object[]{objects});
         }
         catch (InvocationTargetException e) {
-            // just throw the root cause
-            throw e.getTargetException();
+            throw e.getTargetException(); // just throw the root cause
         }
         finally {
             framework.stop();
@@ -111,7 +114,7 @@ public final class ProjectRunner {
         });
     }
 
-    void checkAndSetupProjectDir() throws IOException {
+    private void checkAndSetupProjectDir() throws IOException {
         final File localCacheDir = FileSystems.getDefault().getPath(".fab").toFile();
 
         if (!localCacheDir.exists()) {
@@ -126,7 +129,7 @@ public final class ProjectRunner {
         }
     }
 
-    FrameworkFactory getFrameworkFactory() throws Exception {
+    private FrameworkFactory getFrameworkFactory() throws Exception {
         final String name = "META-INF/services/org.osgi.framework.launch.FrameworkFactory";
         java.net.URL url = Main.class.getClassLoader().getResource(name);
 

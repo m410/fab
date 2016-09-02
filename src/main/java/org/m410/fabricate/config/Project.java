@@ -1,17 +1,13 @@
 package org.m410.fabricate.config;
 
 import org.apache.commons.configuration2.BaseHierarchicalConfiguration;
-import org.apache.commons.configuration2.Configuration;
-import org.apache.commons.configuration2.HierarchicalConfiguration;
 import org.apache.commons.configuration2.ex.ConfigurationException;
-import org.apache.commons.configuration2.tree.ImmutableNode;
 import org.m410.config.YamlConfig;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.channels.AsynchronousFileChannel;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -24,7 +20,6 @@ public final class Project implements Reference {
     private final File projectFile;
 
     private final Archetype archetype;
-    private final BuildProperties build;
 
     private final List<String> environments;
     private final Type type;
@@ -39,7 +34,8 @@ public final class Project implements Reference {
     private final BaseHierarchicalConfiguration configuration;
     private final URL url;
 
-    public Project(final File projectFile, final File confCache, final String env) throws IOException, ConfigurationException {
+    public Project(final File projectFile, final File confCache, final String env) throws IOException,
+            ConfigurationException {
         this.environment = env;
         this.type = Type.PROJECT;
         this.level = Level.PROJECT;
@@ -59,8 +55,6 @@ public final class Project implements Reference {
 
         final List<Repository> repos = Collections.singletonList(Resolver.defaultRepo);
         Reference archetypeReference = Resolver.resolveRemote(archetype, confCache, repos);
-
-        build = loadBuild(fileConf, archetypeReference.getConfiguration());
 
         List<Reference> moduleBaseReferences = loadModules(fileConf);
         moduleBaseReferences.addAll(resolveRemote(moduleBaseReferences));
@@ -82,7 +76,7 @@ public final class Project implements Reference {
         final List<Repository> repositories = Collections.singletonList(Resolver.defaultRepo);
 
         return moduleBaseReferences.stream()
-                .map(m -> Resolver.resolveRemote(m , confCache, repositories))
+                .map(m -> Resolver.resolveRemote(m, confCache, repositories))
                 .collect(Collectors.toList());
     }
 
@@ -160,7 +154,7 @@ public final class Project implements Reference {
     }
 
     private File localConfigFile(File projectFile) {
-        return new File(projectFile.getAbsolutePath().replace("fab.yml","local.fab.yml"));
+        return new File(projectFile.getAbsolutePath().replace("fab.yml", "local.fab.yml"));
     }
 
     public List<? extends Reference> getModuleReferences() {
@@ -207,11 +201,7 @@ public final class Project implements Reference {
     }
 
     public BuildProperties getBuild() {
-        return build;
-    }
-
-    private BuildProperties loadBuild(BaseHierarchicalConfiguration app, BaseHierarchicalConfiguration base) {
-        return new BuildProperties(base, app);
+        return new BuildProperties(configuration);
     }
 
     private Archetype loadArchetype(BaseHierarchicalConfiguration configuration) throws MalformedURLException {
@@ -229,15 +219,16 @@ public final class Project implements Reference {
         return mods;
     }
 
-    private List<Reference> loadModStereotypes(String nodeName, BaseHierarchicalConfiguration config, Type type, Level level)  {
+    private List<Reference> loadModStereotypes(String nodeName, BaseHierarchicalConfiguration config, Type type,
+            Level level) {
         List<Reference> mods = new ArrayList<>();
         final Iterator<String> keys = config.getKeys();
-        Pattern modulePattern = Pattern.compile("^("+nodeName+")\\(.*?\\)$");
+        Pattern modulePattern = Pattern.compile("^(" + nodeName + ")\\(.*?\\)$");
 
         while (keys.hasNext()) {
             final String next = keys.next();
 
-            if(modulePattern.matcher(next).matches()) {
+            if (modulePattern.matcher(next).matches()) {
                 mods.add(new ModuleRef(next, config.configurationAt(next), type, level, environment));
             }
         }
@@ -250,7 +241,6 @@ public final class Project implements Reference {
         return "ProjectConfig{" +
                "projectFile=" + projectFile +
                ", archetype=" + archetype +
-               ", build=" + build +
                ", modules=" +  // moduleBaseReferences +
                ", confCache=" + confCache +
                '}';

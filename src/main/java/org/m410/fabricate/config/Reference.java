@@ -10,12 +10,15 @@ import java.util.Optional;
  */
 public interface Reference {
     String getName();
+
     String getVersion();
+
     String getOrg();
 
     String getEnv();
 
     Type getType();
+
     Level getLevel();
 
     BaseHierarchicalConfiguration getConfiguration();

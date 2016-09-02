@@ -23,8 +23,8 @@ public final class ConfigRef extends ReferenceBase {
 
         try {
             this.remoteReference = c.containsKey("remote_reference") ?
-                        new URL(c.getString("remote_reference")) :
-                        null;
+                                   new URL(c.getString("remote_reference")) :
+                                   null;
         }
         catch (MalformedURLException e) {
             throw new InvalidConfigurationException("invalid url: " + c.getString("remote_reference"), e);

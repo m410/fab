@@ -22,22 +22,22 @@ public final class ModuleRef extends ReferenceBase {
         this.configuration = (BaseHierarchicalConfiguration) c;
         this.level = l;
 
-        final Matcher matcher = pattern.matcher(moduleName.replaceAll("\\.\\.","."));
+        final Matcher matcher = pattern.matcher(moduleName.replaceAll("\\.\\.", "."));
 
-        if(matcher.find()) {
+        if (matcher.find()) {
             this.stereotype = matcher.group(1);
             this.org = matcher.group(2);
             this.name = matcher.group(3);
             this.version = matcher.group(4);
         }
         else {
-            throw new InvalidConfigurationException("invalid module name: '" + moduleName +"'");
+            throw new InvalidConfigurationException("invalid module name: '" + moduleName + "'");
         }
 
         try {
             this.remoteReference = c.containsKey("remote_reference") ?
-                    new URL(c.getString("remote_reference")) :
-                    null;
+                                   new URL(c.getString("remote_reference")) :
+                                   null;
         }
         catch (MalformedURLException e) {
             throw new InvalidConfigurationException("invalid url: " + c.getString("remote_reference"), e);

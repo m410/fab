@@ -28,8 +28,8 @@ public final class BundleRef extends ReferenceBase {
 
         try {
             this.remoteReference = c.containsKey("remote_reference") ?
-               new URL(c.getString("remote_reference")) :
-               toUrl();
+                                   new URL(c.getString("remote_reference")) :
+                                   toUrl();
         }
         catch (MalformedURLException e) {
             throw new InvalidConfigurationException("invalid url: " + c.getString("remote_reference"), e);
@@ -42,20 +42,22 @@ public final class BundleRef extends ReferenceBase {
     }
 
     public String getSymbolicName() {
-        if(symbolicName != null)
+        if (symbolicName != null) {
             return symbolicName;
-        else
+        }
+        else {
             return name;
+        }
     }
 
     @Override
     public String toString() {
         return "BundleRef(" +
-                "name='" + name + '\'' +
-                ", org='" + org + '\'' +
-                ", version='" + version + '\'' +
-                ", url=" + remoteReference +
-                ')';
+               "name='" + name + '\'' +
+               ", org='" + org + '\'' +
+               ", version='" + version + '\'' +
+               ", url=" + remoteReference +
+               ')';
     }
 
 }

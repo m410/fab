@@ -12,7 +12,7 @@ import java.nio.file.PathMatcher;
  *
  * @author m410
  */
-public class ConfigFileUtil {
+public final class ConfigFileUtil {
     public static File projectConfigFile(final String userDir) throws IOException {
         PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**.fab.yml");
         Path path = FileSystems.getDefault().getPath(userDir);
@@ -21,6 +21,6 @@ public class ConfigFileUtil {
 
     public static File projectConfCache(String property) {
         // todo fix hardcode
-        return FileSystems.getDefault().getPath("",".fab/config").toFile();
+        return FileSystems.getDefault().getPath("", ".fab/config").toFile();
     }
 }
