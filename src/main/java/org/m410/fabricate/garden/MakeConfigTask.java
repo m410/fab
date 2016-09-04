@@ -1,8 +1,10 @@
 package org.m410.fabricate.garden;
 
 
+import org.m410.config.YamlConfig;
 import org.m410.fabricate.builder.BuildContext;
 import org.m410.fabricate.builder.Task;
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.FileWriter;
@@ -26,34 +28,9 @@ public class MakeConfigTask implements Task {
     }
 
     @Override public void execute(BuildContext context) throws Exception {
-        Map<String,Object> map = new HashMap<>();
-
-        final Map<String, Object> app = new HashMap<>();
-        app.put("properties",context.getApplication().getProperties());
-        app.put("name",context.getApplication().getName());
-        app.put("org",context.getApplication().getOrg());
-        app.put("version",context.getApplication().getVersion());
-        app.put("applicationClass",context.getApplication().getApplicationClass());
-        app.put("description",context.getApplication().getDescription());
-        app.put("authors",context.getApplication().getAuthors());
-
-        map.put("application", app);
-        final ArrayList<Map<String, Object>> modules = new ArrayList<>();
-        context.getModules().stream().forEach(module ->{
-            final HashMap<String, Object> modMap = new HashMap<>();
-            modMap.putAll(module.getProperties());
-            modMap.put("name", module.getName());
-            modMap.put("org", module.getOrg());
-            modMap.put("version", module.getVersion());
-            modules.add(modMap);
-        });
-        map.put("modules", modules);
-
-        FileSystems.getDefault().getPath(context.getBuild().getSourceOutputDir()).toFile().mkdirs();
-
-        final Path path = FileSystems.getDefault().getPath(context.getBuild().getSourceOutputDir(),"garden.fab.yml");
-        Writer writer = new FileWriter(path.toFile());
-        new Yaml().dump(map,writer);
-        writer.close();
+        final String sourceOutputDir = context.getBuild().getSourceOutputDir();
+        FileSystems.getDefault().getPath(sourceOutputDir).toFile().mkdirs();
+        final Path path = FileSystems.getDefault().getPath(sourceOutputDir,"garden.fab.yml");
+        YamlConfig.write(context.getConfiguration(), path.toFile());
     }
 }

@@ -46,8 +46,8 @@ public class ProxyServletTest {
         List<Dependency> deps = new ArrayList<>();
         deps.add(new Dependency("compile","org.apache.commons","commons-lang3","3.3.2",false));
 
-        Build build = new BuildImpl(map);
-        Application app = new ApplicationImpl(map);
+        Build build = null;//new BuildImpl(map);
+        Application app = null;//new ApplicationImpl(map);
 
         Cli cli = new Cli() {
             Logger log = LoggerFactory.getLogger(this.getClass());
