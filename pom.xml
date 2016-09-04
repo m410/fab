@@ -35,7 +35,7 @@
         <dependency>
             <groupId>org.m410.fabricate</groupId>
             <artifactId>fab-share</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <version>0.2-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

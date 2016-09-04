@@ -1,33 +1,33 @@
 archetype:
   name: java-lib
-  version: 0.1-SNAPSHOT
+  version: 0.2-SNAPSHOT
   organization: org.m410.fabricate
 
 bundles:
   - name: fab-share
     org: org.m410.fabricate
-    version: 0.1-SNAPSHOT
-    url: file:/Users/m410/Projects/m410.org/fabricate/fab-share/target/fab-share-0.1-SNAPSHOT.jar
+    version: 0.2-SNAPSHOT
+#    remote_reference: file:target/fab-share-0.2-SNAPSHOT.jar
   - name: java-lib
     org: org.m410.fabricate
-    version: 0.1-SNAPSHOT
-    url: file:/Users/m410/Projects/m410.org/fabricate/fab-java-lib-project/target/java-lib-0.1-SNAPSHOT.jar
+    version: 0.2-SNAPSHOT
+#    remote_reference: file:target/java-lib-0.2-SNAPSHOT.jar
   - name: fab-jar
     org: org.m410.fabricate
-    version: 0.1-SNAPSHOT
-    url: file:/Users/m410/Projects/m410.org/fabricate/fab-jar/target/fab-jar-0.1-SNAPSHOT.jar
+    version: 0.2-SNAPSHOT
+#    remote_reference: file:target/fab-jar-0.2-SNAPSHOT.jar
   - name: fab-junit
     org: org.m410.fabricate
-    version: 0.1-SNAPSHOT
-    url: file:/Users/m410/Projects/m410.org/fabricate/fab-junit/target/fab-junit-0.1-SNAPSHOT.jar
+    version: 0.2-SNAPSHOT
+#    remote_reference: file:target/fab-junit-0.2-SNAPSHOT.jar
   - name: fab-java-compiler
     org: org.m410.fabricate
-    version: 0.1-SNAPSHOT
-    url: file:/Users/m410/Projects/m410.org/fabricate/fab-java-compiler/target/fab-java-compiler-0.1-SNAPSHOT.jar
+    version: 0.2-SNAPSHOT
+#    remote_reference: file:target/fab-java-compiler-0.2-SNAPSHOT.jar
   - name: fab-dependencies
     org: org.m410.fabricate
-    version: 0.1-SNAPSHOT
-    url: file:/Users/m410/Projects/m410.org/fabricate/fab-java-dependencies/target/fab-java-dependencies-0.1-SNAPSHOT.jar
+    version: 0.2-SNAPSHOT
+#    remote_reference: file:target/fab-java-dependencies-0.2-SNAPSHOT.jar
 
 build:
   cacheDir: .fab
