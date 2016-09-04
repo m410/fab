@@ -1,15 +1,22 @@
 package org.m410.fabricate.jar;
 
+import org.apache.commons.configuration2.BaseHierarchicalConfiguration;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.junit.Before;
 import org.junit.Test;
+import org.m410.config.YamlConfig;
 import org.m410.fabricate.builder.BuildContext;
 import org.m410.fabricate.builder.BuildContextImpl;
 import org.m410.fabricate.builder.Cli;
 import org.m410.fabricate.config.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,27 +31,14 @@ public class JarTaskTest {
     BuildContext context;
 
     @Before
-    public void before() {
-        Map<String,Object> map = new HashMap<>();
-
-        final String src = "src/test/assets/src";
-        map.put("sourceOutputDir", FileSystems.getDefault().getPath(src).toFile().getAbsolutePath());
-        final String tgt = "src/test/assets/target";
-        map.put("targetDir", FileSystems.getDefault().getPath(tgt).toFile().getAbsolutePath());
-
-        map.put("name", "test-app");
-        map.put("org","org.m410.test");
-        map.put("description","none");
-        map.put("version","1.0.0");
-        map.put("applicationClass","none");
-        map.put("authors","none");
-        map.put("properties", new HashMap<String,Object>());
-
+    public void before() throws ConfigurationException {
         List<Dependency> deps = new ArrayList<Dependency>();
         deps.add(new Dependency("compile","org.apache.commons","commons-lang3","3.3.2",false));
 
-        Build build = new BuildImpl(map);
-        Application app = new ApplicationImpl(map);
+        final BaseHierarchicalConfiguration load = YamlConfig.load(new File("src/test/resources/test.yml"));
+
+        Build build = new BuildImpl(load);
+        Application app = new ApplicationImpl(load);
 
         Cli cli = new Cli() {
             Logger log = LoggerFactory.getLogger(this.getClass());
