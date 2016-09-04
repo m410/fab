@@ -12,7 +12,7 @@
     <packaging>pom</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <fab-cli-version>0.1-SNAPSHOT</fab-cli-version>
+        <fab-cli-version>0.2-SNAPSHOT</fab-cli-version>
     </properties>
     <build>
         <plugins>

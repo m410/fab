@@ -11,12 +11,12 @@ repositories:
 archetypes:
   - name: garden
     org: org.m410.fabricate
-    rev: "0.1-SNAPSHOT"
+    rev: "0.2-SNAPSHOT"
     description: A java web mvc framework that produces a war
     home: http://m410.org
   - name: java-lib
     org: org.m410.fabricate
-    rev: "0.1-SNAPSHOT"
+    rev: "0.2-SNAPSHOT"
     description: A basic project that produces a jar
     home: http://m410.org
 
