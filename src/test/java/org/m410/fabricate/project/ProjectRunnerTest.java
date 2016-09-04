@@ -32,7 +32,7 @@ public class ProjectRunnerTest {
         assertEquals("org.m410.fabricate.garden", project.getArchetype().getOrg());
 
         assertNotNull("no version", project.getArchetype().getVersion());
-        assertEquals("0.1-SNAPSHOT", project.getArchetype().getVersion());
+        assertEquals("0.2-SNAPSHOT", project.getArchetype().getVersion());
 
         assertNotNull("no modules", project.getModuleReferences());
         assertEquals(3, project.getModuleReferences().size());

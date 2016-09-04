@@ -3,4 +3,4 @@ module(org.m410.mod:any-module:0.2.0):
   bundles:
     - name: module
       org: org.m410.fabricate
-      version: 0.1-SNAPSHOT
+      version: 0.2-SNAPSHOT

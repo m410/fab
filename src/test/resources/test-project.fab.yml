@@ -1,8 +1,8 @@
 archetype:
   name: test-project
-  version: 0.1-SNAPSHOT
+  version: 0.2-SNAPSHOT
   organization: org.m410.fabricate.garden
-  remote_reference: file:/Users/m410/Projects/m410.org/fabricate/fab-cli/src/test/resources/test-project.default.fab.yml
+  remote_reference: file:src/test/resources/test-project.default.fab.yml
 
 application:
   name: &name demo2
@@ -19,7 +19,7 @@ deploy:
 publish:
   url: http://some-maven-repo.com/
 persistence(org.m410.mod.persistence:m410-jpa:0.1):
-  remote_reference: file:/Users/m410/Projects/m410.org/fabricate/fab-cli/src/test/resources/persistence.fab.yml
+  remote_reference: file:src/test/resources/persistence.fab.yml
   properties:
     hibernate.dialect: org.hibernate.dialect.H2Dialect
     hibernate.connection.driver_class: org.h2.Driver
@@ -29,10 +29,10 @@ persistence(org.m410.mod.persistence:m410-jpa:0.1):
     hibernate.hbm2ddl.auto: update
 
 modules(org.m410.mod:any-module:0.2.0):
-  remote_reference: file:/Users/m410/Projects/m410.org/fabricate/fab-cli/src/test/resources/module.fab.yml
+  remote_reference: file:src/test/resources/module.fab.yml
 
 logging(org.m410.mod.persistence:m410-logback:0.1):
-  remote_reference: file:/Users/m410/Projects/m410.org/fabricate/fab-cli/src/test/resources/module.fab.yml
+  remote_reference: file:src/test/resources/module.fab.yml
   appenders:
     - name: STDOUT
       appender class: ch.qos.logback.core.ConsoleAppender

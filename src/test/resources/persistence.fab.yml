@@ -2,6 +2,6 @@ module(org.m410.mod.persistence:m410-jpa:0.1):
   bundles:
     - name: persistence
       org: org.m410.fabricate
-      version: 0.1-SNAPSHOT
+      version: 0.2-SNAPSHOT
 
   dependencies:

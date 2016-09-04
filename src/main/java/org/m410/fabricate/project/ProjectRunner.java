@@ -66,6 +66,8 @@ public final class ProjectRunner {
             // todo does it need to set commands?
 
             // todo save to cache.
+            // todo this can be simplified a bit, it's sole purpose should be to create a project and cache it.
+
 
             buildService.getClass()
                     .getMethod("addConfig", Configuration.class)

@@ -14,9 +14,14 @@ import java.util.stream.Collectors;
 
 
 /**
+ * This is the heart of of the CLI, it creates a project from by assembling all the configuration files into
+ * one merged configuration.
+ *
  * @author m410
  */
 public final class Project implements Reference {
+    private final Pattern modulePattern = Pattern.compile("^(persistence|modules|views|testing|logging)\\(.*?\\)$");
+
     private final File projectFile;
 
     private final Archetype archetype;
@@ -158,7 +163,6 @@ public final class Project implements Reference {
     }
 
     public List<? extends Reference> getModuleReferences() {
-        Pattern modulePattern = Pattern.compile("^(persistence|modules|views|testing|logging)\\(.*?\\)$");
         List<ModuleRef> modules = new ArrayList<>();
 
         final Iterator<String> keys = configuration.getKeys();
@@ -209,6 +213,7 @@ public final class Project implements Reference {
     }
 
     private List<Reference> loadModules(BaseHierarchicalConfiguration configuration) throws IOException {
+        // todo this could be cleaned up by using the modulePattern regex
         List<Reference> mods = new ArrayList<>();
         mods.addAll(loadModStereotypes("persistence", configuration, Type.PROJECT, Level.PROJECT));
         mods.addAll(loadModStereotypes("modules", configuration, Type.PROJECT, Level.PROJECT));
