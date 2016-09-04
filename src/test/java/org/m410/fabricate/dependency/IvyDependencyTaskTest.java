@@ -1,15 +1,22 @@
 package org.m410.fabricate.dependency;
 
+import org.apache.commons.configuration2.BaseHierarchicalConfiguration;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.junit.Before;
 import org.junit.Test;
+import org.m410.config.YamlConfig;
 import org.m410.fabricate.builder.BuildContext;
 import org.m410.fabricate.builder.BuildContextImpl;
 import org.m410.fabricate.builder.Cli;
 import org.m410.fabricate.config.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,40 +33,26 @@ public class IvyDependencyTaskTest {
 
     BuildContext context;
 
+    Cli cli = new Cli() {
+        Logger log = LoggerFactory.getLogger(this.getClass());
+        @Override public String ask(String question) { log.debug(question); return ""; }
+        @Override public void warn(String in) { log.warn(in); }
+        @Override public void info(String in) { log.info(in); }
+        @Override public void debug(String in) { log.debug(in); }
+        @Override public void error(String in) { log.error(in); }
+        @Override public void println(String s) { System.out.println(s); }
+    };
+
     @Before
-    public void before() {
-        Map<String,Object> map = new HashMap<>();
-        final String tgt = "src/test/assets";
-        final File file = FileSystems.getDefault().getPath(tgt).toFile();
-
-        if(!file.exists() && !file.mkdirs())
-            fail("could not make cache directory");
-
-        map.put("cacheDir", file.getAbsolutePath());
-        map.put("name", "test-app");
-        map.put("org","org.m410.test");
-        map.put("description","none");
-        map.put("version","1.0.0");
-        map.put("applicationClass","none");
-        map.put("authors","none");
-        map.put("properties", new HashMap<String,Object>());
+    public void before() throws ConfigurationException {
+        final BaseHierarchicalConfiguration load = YamlConfig.load(new File("src/test/resources/test.yml"));
 
         List<Dependency> deps = new ArrayList<>();
         deps.add(new Dependency("compile","org.apache.commons","commons-lang3","3.3.2",false));
         deps.add(new Dependency("test","junit","junit","4.11",false));
 
-        Build build = new BuildImpl(map);
-        Application app = new ApplicationImpl(map);
-
-        Cli cli = new Cli() {
-            Logger log = LoggerFactory.getLogger(this.getClass());
-            @Override public String ask(String question) { log.debug(question); return ""; }
-            @Override public void warn(String in) { log.warn(in); }
-            @Override public void info(String in) { log.info(in); }
-            @Override public void debug(String in) { log.debug(in); }
-            @Override public void error(String in) { log.error(in); }
-            @Override public void println(String s) { System.out.println(s); }
-        };
+        Build build = new BuildImpl(load);
+        Application app = new ApplicationImpl(load);
 
         context = new BuildContextImpl(cli,app,build,"dev",deps,null);
     }
