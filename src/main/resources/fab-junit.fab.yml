@@ -6,8 +6,8 @@ modules:
 bundles:
   - name: fab-junit
     organization: org.m410.garden
-    version: "0.1-SNAPSHOT"
-    url: file:/Users/m410/Projects/m410.org/fabricate/fab-junit/target/fab-junit-0.1-SNAPSHOT.jar
+    version: "0.2-SNAPSHOT"
+    remote_reference: file:target/fab-junit-0.2-SNAPSHOT.jar
 
 dependencies:
   - { scope: test, org: org.hamcrest, name: hamcrest-core, rev: "1.3"}
