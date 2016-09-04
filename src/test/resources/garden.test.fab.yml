@@ -1,6 +1,6 @@
 archetype:
   name: garden
-  version: 0.1-SNAPSHOT
+  version: 0.2-SNAPSHOT
   organization: org.m410.fabricate.garden
 
 application:
@@ -20,55 +20,49 @@ dependencies:
   - {scope: compile, org: org.apache, name: commons-lang, rev: 1.0.0}
   - {scope: compile, org: org.apache, name: commons-util, rev: 1.0.0}
 
+persistence(org.m410.mod.persistence:m410-jpa:0.1):
+  remote_reference: file:target/fab-java-task-0.2-SNAPSHOT.jar
+  symbolicName: org.m410.fab-java-task
+  properties:
+    hibernate.dialect: org.hibernate.dialect.H2Dialect
+    hibernate.connection.driver_class: org.h2.Driver
+    hibernate.connection.username: sa
+    hibernate.connection.password: ""
+    hibernate.connection.url: "jdbc:h2:db/demo"
+    hibernate.hbm2ddl.auto: update
 
-persistence:
-  - name: m410-jpa
-    organization: "org.m410.mod.persistence"
-    version: "0.1"
-    url: file:/Users/m410/Projects/fabricate/fab-java-task-bundle/target/fab-java-task-0.1-SNAPSHOT.jar
-    symbolicName: org.m410.fab-java-task
-    properties:
-      hibernate.dialect: org.hibernate.dialect.H2Dialect
-      hibernate.connection.driver_class: org.h2.Driver
-      hibernate.connection.username: sa
-      hibernate.connection.password: ""
-      hibernate.connection.url: "jdbc:h2:db/demo"
-      hibernate.hbm2ddl.auto: update
+modules(org.m410.fab.module:randomModule:0.2.0):
+  remote_reference: file:target/fab-java-task-0.2-SNAPSHOT.jar
+  symbolicName: org.m410.fab-java-task
+  organization: org.m410.mod
 
-modules:
-  - name: randomModule
-    org: org.m410.fab.module
-    version: 0.2.0
-    url: file:/Users/m410/Projects/fabricate/fab-java-task-bundle/target/fab-java-task-0.1-SNAPSHOT.jar
-    symbolicName: org.m410.fab-java-task
-    organization: org.m410.mod
-
-# logging(org.m410.fab.logging:garden-logback):
-logging:
-  - name: garden-logback
-    org: org.m410.fab.logging
-    version: 0.1.0
-    appenders:
-      - name: STDOUT
-        appender_class: ch.qos.logback.core.ConsoleAppender
-        layout: ch.qos.logback.classic.encoder.PatternLayoutEncoder
-        pattern: "%-4relative [%thread] %-5level %class - %msg%n"
-    logger:
-      - name: org.m410
-        level: TRACE
-    root:
-      level: DEBUG
-      ref: [STDOUT]
+logging(org.m410.fab.logging:garden-logback:0.1.0):
+  appenders:
+    - name: STDOUT
+      appender_class: ch.qos.logback.core.ConsoleAppender
+      layout: ch.qos.logback.classic.encoder.PatternLayoutEncoder
+      pattern: "%-4relative [%thread] %-5level %class - %msg%n"
+  logger:
+    - name: org.m410
+      level: TRACE
+  root:
+    level: DEBUG
+    ref: [STDOUT]
 
 web_xml:
   description: *desc
   display-name: *name
 
-environment_overrides:
-  - environment: dev
-    application:
-      org: org.m410.development
-    build:
-      defaultCommand: env_command
-  - environment: test
-  - environment: production
+
+---
+environment: dev
+application:
+  org: org.m410.development
+build:
+  defaultCommand: env_command
+
+---
+environment: test
+
+---
+environment: production

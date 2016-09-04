@@ -1,15 +1,15 @@
 archetype:
   name: garden
-  version: 0.1-SNAPSHOT
+  version: 0.2-SNAPSHOT
   organization: org.m410.fabricate.garden
 
 bundles:
   - name: fab-share
     org: org.m410.fabricate
-    version: 0.1-SNAPSHOT
+    version: 0.2-SNAPSHOT
   - name: garden
     org: org.m410.fabricate.garden
-    version: 0.1-SNAPSHOT
+    version: 0.2-SNAPSHOT
 
 build:
   defaultEnvironment: someValue1

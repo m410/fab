@@ -1,5 +1,6 @@
 package org.m410.fabricate.builder;
 
+import org.apache.commons.configuration2.ImmutableHierarchicalConfiguration;
 import org.m410.fabricate.config.Application;
 import org.m410.fabricate.config.Build;
 import org.m410.fabricate.config.Dependency;
@@ -14,16 +15,24 @@ import java.util.Map;
  * @author Michael Fortin
  */
 public interface BuildContext {
+
     String getHash();
+
     boolean isFromCache();
+
     String environment();
+
     Cli cli();
 
-    // how to handle caching of environments, maybe separate files?
-    // cached elements
     Application getApplication();
+
     Build getBuild();
+
     List<Dependency> getDependencies();
+
     List<Module> getModules();
+
     Map<String,String> getClasspath();
+
+    ImmutableHierarchicalConfiguration getConfiguration();
 }

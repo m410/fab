@@ -13,6 +13,7 @@ import java.security.MessageDigest;
 /**
  * @author m410
  */
+@Deprecated
 public class HashUtil {
 
     public static File projectFile() throws IOException {

@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 /**
  * @author Michael Fortin
  */
+@Deprecated
 public final class ConfigContextBuilder {
     private String env;
     private Collection<ConfigProvider> configProviders;
@@ -23,7 +24,7 @@ public final class ConfigContextBuilder {
         return new ConfigContextBuilder();
     }
 
-    public ConfigContext make() throws ConfigurationException {
+    public ProjectContext make() throws ConfigurationException {
         CombinedConfiguration combined = new CombinedConfiguration(new UnionCombiner());
         findIn(env,ConfigProvider.Type.LOCAL)
                 .ifPresent(p -> combined.addConfiguration(p.configuration(),"LOCAL"));
@@ -37,7 +38,7 @@ public final class ConfigContextBuilder {
                 .ifPresent(p -> combined.addConfiguration(p.configuration(),"ARCHETYPE"));
         ImmutableHierarchicalConfiguration configuration = new YamlConfiguration(combined);
 
-        return new ConfigContext(configuration);
+        return new ProjectContext(configuration);
     }
 
     private List<ConfigProvider> listIn(String aDefault, ConfigProvider.Type module) {

@@ -11,6 +11,7 @@ import java.util.Set;
 /**
  * @author m410
  */
+@Deprecated
 public final class ConfigProviderImpl implements ConfigProvider {
     private Configuration config;
     private String envName;

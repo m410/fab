@@ -9,6 +9,7 @@ import java.util.Set;
 /**
  * @author m410
  */
+@Deprecated
 public interface ConfigProvider {
 
     Configuration configuration();

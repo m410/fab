@@ -5,24 +5,19 @@ import java.util.Map;
 /**
  * @author m410
  */
-public class Dependency {
-    private String org;
-    private String name;
-    private String rev;
-    private String scope;
-    private boolean transitive = false;
-
-    public Dependency() {
-    }
-
-    // todo Dependency(ImmutableHierarchicalConfiguration config) {}
+public final class Dependency implements Comparable<Dependency>{
+    private final String org;
+    private final String name;
+    private final String rev;
+    private final String scope;
+    private final boolean transitive;
 
     public Dependency(Map<String,Object> data) {
         org = (String)data.get("org");
         name = (String)data.get("name");
         rev = (String)data.get("rev");
         scope = (String)data.get("scope");
-        transitive = (boolean)data.getOrDefault("transitive",false);
+        transitive = (Boolean)data.getOrDefault("transitive",Boolean.FALSE);
     }
 
     public Dependency(String scope, String org, String name, String rev, boolean transitive) {
@@ -53,24 +48,41 @@ public class Dependency {
         return transitive;
     }
 
-    public void setOrg(String org) {
-        this.org = org;
+    @Override
+    public int compareTo(Dependency o) {
+        return this.org.compareTo(o.org) +
+                this.name.compareTo(o.name) +
+                this.rev.compareTo(o.rev) ;
+        // todo need better revision comparison
     }
 
-    public void setName(String name) {
-        this.name = name;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        Dependency that = (Dependency) o;
+
+        if (!org.equals(that.org)) {
+            return false;
+        }
+        if (!name.equals(that.name)) {
+            return false;
+        }
+
+        return rev.equals(that.rev);
     }
 
-    public void setRev(String rev) {
-        this.rev = rev;
-    }
-
-    public void setScope(String scope) {
-        this.scope = scope;
-    }
-
-    public void setTransitive(boolean transitive) {
-        this.transitive = transitive;
+    @Override
+    public int hashCode() {
+        int result = org.hashCode();
+        result = 31 * result + name.hashCode();
+        result = 31 * result + rev.hashCode();
+        return result;
     }
 
     @Override

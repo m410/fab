@@ -12,6 +12,7 @@ import java.util.Map;
 /**
  * @author m410
  */
+@Deprecated
 public class CachedProject {
     private String hash;
     private Application application;

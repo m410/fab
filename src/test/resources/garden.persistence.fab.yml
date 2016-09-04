@@ -1,11 +1,8 @@
-module:
-  - name: m410-jpa
-    organization: "org.m410.mod.persistence"
-    version: "0.1"
-    test_param: test_value
-    properties:
-      prop_name: value
-      prop_name2: value2
+module(org.m410.mod.persistence:m410-jpa:0.1):
+  test_param: test_value
+  properties:
+    prop_name: value
+    prop_name2: value2
 
 dependencies:
   - { scope: compile, org: com.h2database, name: h2, rev: 1.3.174 }

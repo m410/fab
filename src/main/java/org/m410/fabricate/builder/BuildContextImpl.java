@@ -1,5 +1,6 @@
 package org.m410.fabricate.builder;
 
+import org.apache.commons.configuration2.ImmutableHierarchicalConfiguration;
 import org.m410.fabricate.config.*;
 import org.m410.fabricate.service.internal.serialize.CachedProject;
 
@@ -20,7 +21,9 @@ public final class BuildContextImpl implements BuildContext {
     private final Map<String,String> classpaths;
     private final String hash;
     private final boolean fromCache;
+    private final ImmutableHierarchicalConfiguration configuration;
 
+    // for testing
     public BuildContextImpl(Cli cli, Application application, Build build, String environment,
                             List<Dependency> dependencies, List<Module> modules) {
         this.cli = cli;
@@ -32,9 +35,10 @@ public final class BuildContextImpl implements BuildContext {
         this.fromCache = false;
         this.classpaths = new HashMap<>();
         this.hash = null;
+        this.configuration = null;
     }
 
-    public BuildContextImpl(Cli cli, ConfigContext context, String hash, String environment) {
+    public BuildContextImpl(Cli cli, ProjectContext context, String hash, String environment) {
         this.hash = hash;
         this.fromCache = false;
         this.cli = cli;
@@ -44,18 +48,12 @@ public final class BuildContextImpl implements BuildContext {
         this.dependencies = context.getDependencies();
         this.modules = context.getModules();
         this.classpaths = new HashMap<>();
+        this.configuration = context.getConfiguration();
     }
 
-    public BuildContextImpl(CliStdOutImpl cli, CachedProject cacheProj, String env) {
-        this.cli = cli;
-        this.hash = cacheProj.getHash();
-        this.application = cacheProj.getApplication();
-        this.build = cacheProj.getBuild();
-        this.environment = env;
-        this.dependencies = cacheProj.getDependencies();
-        this.modules = cacheProj.getModules();
-        this.classpaths = cacheProj.getClasspath();
-        this.fromCache = true;
+    @Override
+    public ImmutableHierarchicalConfiguration getConfiguration() {
+        return configuration;
     }
 
     @Override

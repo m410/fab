@@ -7,6 +7,7 @@ import java.io.Serializable;
  *
  * @author Michael Fortin
  */
+// todo replace with just the instance
 public interface Build extends Serializable {
 
     String getDefaultLogLevel();

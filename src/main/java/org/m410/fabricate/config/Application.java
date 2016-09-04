@@ -1,13 +1,15 @@
 package org.m410.fabricate.config;
 
+import org.apache.commons.configuration2.ImmutableHierarchicalConfiguration;
+
 import java.io.Serializable;
-import java.util.Map;
 
 /**
  * Document Me..
  *
  * @author Michael Fortin
  */
+// todo replace with just the instance
 public interface Application extends Serializable {
     String getName();
 
@@ -15,7 +17,7 @@ public interface Application extends Serializable {
 
     String getVersion();
 
-    Map<String, Object> getProperties();
+    ImmutableHierarchicalConfiguration getProperties();
 
     String getApplicationClass();
 

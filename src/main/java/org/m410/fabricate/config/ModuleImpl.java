@@ -1,30 +1,38 @@
 package org.m410.fabricate.config;
 
+import org.apache.commons.configuration2.ImmutableConfiguration;
+import org.apache.commons.configuration2.ImmutableHierarchicalConfiguration;
+
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author m410
  */
-public class ModuleImpl implements Module {
+public final class ModuleImpl implements Module {
+    private final Pattern pattern = Pattern.compile("^(\\w+)\\(([\\w\\.]+):([a-zA-Z0-9-_]+):(.+)\\)$");
+
     private Type type;
     private String name;
     private String org;
     private String version;
-    private Map<String,Object> properties;
+    private ImmutableConfiguration configuration;
 
     public ModuleImpl() {
     }
 
-    // todo ModuleImpl(String name, ImmutableHierarchicalConfiguration config) {}
+    public ModuleImpl(String name, ImmutableConfiguration configuration) {
+        this.configuration = configuration;
 
-    public ModuleImpl(Map<String,Object> data) {
-        name = (String)data.get("name");
-        org = (String)data.get("org");
-        version = data.get("version") != null ? data.get("version").toString() : null;
-        properties = data;
-        properties.remove("name");
-        properties.remove("org");
-        properties.remove("version");
+        final Matcher matcher = pattern.matcher(name.replaceAll("\\.\\.", "."));
+
+        if (matcher.find()) {
+            this.type = Type.of(matcher.group(1));
+            this.org = matcher.group(2);
+            this.name = matcher.group(3);
+            this.version = matcher.group(4);
+        }
     }
 
     @Override
@@ -48,28 +56,8 @@ public class ModuleImpl implements Module {
     }
 
     @Override
-    public Map<String, Object> getProperties() {
-        return properties;
-    }
-
-    public void setType(Type type) {
-        this.type = type;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setOrg(String org) {
-        this.org = org;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    public void setProperties(Map<String, Object> properties) {
-        this.properties = properties;
+    public ImmutableConfiguration getConfiguration() {
+        return configuration;
     }
 
     @Override

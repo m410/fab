@@ -1,18 +1,38 @@
 package org.m410.fabricate.config;
 
+import org.apache.commons.configuration2.ImmutableConfiguration;
+
 import java.util.Map;
 
 /**
  * @author m410
  */
+// todo replace with just the instance
 public interface Module {
 
-    static enum Type {
+    enum Type {
         Persistence,
-        View,
-        Runtime,
-        Logger,
-        Test
+        Views,
+        Modules,
+        Logging,
+        Testing;
+
+        public static Type of(final String x) {
+            switch (x.toLowerCase().trim()) {
+                case "persistence":
+                    return Persistence;
+                case "views":
+                    return Views;
+                case "testing":
+                    return Testing;
+                case "logging":
+                    return Logging;
+                case "modules":
+                    return Modules;
+                default:
+                    throw new IllegalArgumentException("No type of: " + x);
+            }
+        }
     }
 
     Type getType();
@@ -23,5 +43,5 @@ public interface Module {
 
     String getVersion();
 
-    Map<String,Object> getProperties();
+    ImmutableConfiguration getConfiguration();
 }

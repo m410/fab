@@ -2,7 +2,7 @@ package org.m410.fabricate.service;
 
 import org.apache.commons.configuration2.ImmutableHierarchicalConfiguration;
 import org.m410.fabricate.builder.*;
-import org.m410.fabricate.config.ConfigContext;
+import org.m410.fabricate.config.ProjectContext;
 import org.m410.fabricate.service.internal.serialize.HashUtil;
 
 import java.util.*;
@@ -90,8 +90,6 @@ public class FabricateServiceImpl implements FabricateService {
                 System.out.println("ERROR: Unknown command '"+arg+"'");
             }
         }
-
-//        dumpContext(buildContext, environment);
     }
 
     @Override
@@ -102,61 +100,12 @@ public class FabricateServiceImpl implements FabricateService {
     // todo replace with commons yaml configuration
     @SuppressWarnings("unchecked")
     BuildContext configureInitialBuildContext(String env, String logLevel) throws Exception {
-        ConfigContext config = new ConfigContext(configuration);
+        ProjectContext config = new ProjectContext(configuration);
 
         // todo really isn't the services responsibility to cache and read the file.
         // should be done by the cli.
         String hash = HashUtil.getMD5Checksum(HashUtil.projectFile());
         return new BuildContextImpl(new CliStdOutImpl(logLevel), config, hash, env);
-
-//        File projectCacheFile = projectConfigFile(config.getBuild().getCacheDir(), env);
-//
-//        if(!projectCacheFile.exists()) {
-//            return new BuildContextImpl(new CliStdOutImpl(logLevel), config, hash, env);
-//        }
-//        else {
-//            CachedProject cachedProject = (CachedProject) new Yaml(new Constructor(CachedProject.class))
-//                    .load(new FileInputStream(projectCacheFile));
-//
-//            if(!hash.equals(cachedProject.getHash())) {
-//                projectCacheFile.delete();
-//                return new BuildContextImpl(new CliStdOutImpl(logLevel), config, hash, env);
-//            }
-//            else {
-//                return new BuildContextImpl(new CliStdOutImpl(logLevel), cachedProject, env);
-//            }
-//        }
     }
 
-//    private File projectConfigFile(String cacheDir, String env) {
-//        final String fileName = "project." + env + ".yml";
-//        return FileSystems.getDefault().getPath(cacheDir, fileName).toFile();
-//    }
-
-//    public void dumpContext(BuildContext ctx, String env) throws IOException {
-//        CachedProject cachedProject = new CachedProject(ctx);
-//        File projectCacheFile = projectConfigFile(ctx.getBuild().getCacheDir(), env);
-//        final FileWriter fileWriter = new FileWriter(projectCacheFile);
-//        DumperOptions options = new DumperOptions();
-//        options.setExplicitStart(true);
-//        options.setAllowReadOnlyProperties(true);
-//        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-//        options.setDefaultScalarStyle(DumperOptions.ScalarStyle.DOUBLE_QUOTED);
-//        new Yaml(options).dump(cachedProject, fileWriter);
-//    }
-
-//    public File projectFile(File projectRoot) {
-//        File[] files = projectRoot.listFiles((dir, filename) -> filename.endsWith(".fab.yml"));
-//
-//        if (files == null)
-//            throw new NoConfigurationFileException();
-//
-//        if (files.length > 1)
-//            throw new ToManyConfigurationFilesException();
-//
-//        if (files.length == 0)
-//            throw new NoConfigurationFileException();
-//
-//        return files[0];
-//    }
 }
