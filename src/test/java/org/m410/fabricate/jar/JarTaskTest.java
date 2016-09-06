@@ -30,6 +30,16 @@ public class JarTaskTest {
 
     BuildContext context;
 
+    Cli cli = new Cli() {
+        Logger log = LoggerFactory.getLogger(this.getClass());
+        @Override public String ask(String question) { log.debug(question); return ""; }
+        @Override public void warn(String in) { log.warn(in); }
+        @Override public void info(String in) { log.info(in); }
+        @Override public void debug(String in) { log.debug(in); }
+        @Override public void error(String in) { log.error(in); }
+        @Override public void println(String s) { System.out.println(s); }
+    };
+
     @Before
     public void before() throws ConfigurationException {
         List<Dependency> deps = new ArrayList<Dependency>();
@@ -39,16 +49,6 @@ public class JarTaskTest {
 
         Build build = new BuildImpl(load);
         Application app = new ApplicationImpl(load);
-
-        Cli cli = new Cli() {
-            Logger log = LoggerFactory.getLogger(this.getClass());
-            @Override public String ask(String question) { log.debug(question); return ""; }
-            @Override public void warn(String in) { log.warn(in); }
-            @Override public void info(String in) { log.info(in); }
-            @Override public void debug(String in) { log.debug(in); }
-            @Override public void error(String in) { log.error(in); }
-            @Override public void println(String s) { System.out.println(s); }
-        };
 
         context = new BuildContextImpl(cli,app,build,"dev",deps,null);
     }
