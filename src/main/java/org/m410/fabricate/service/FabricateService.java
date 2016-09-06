@@ -1,5 +1,6 @@
 package org.m410.fabricate.service;
 
+import org.apache.commons.configuration2.BaseHierarchicalConfiguration;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.ImmutableHierarchicalConfiguration;
 import org.m410.fabricate.builder.*;
@@ -20,7 +21,7 @@ public interface FabricateService {
 
     void setEnv(String env);
 
-    void addConfig(ImmutableHierarchicalConfiguration config);
+    void addConfig(BaseHierarchicalConfiguration config);
 
     void addCommandListener(CommandListener c);
 

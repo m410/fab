@@ -1,5 +1,6 @@
 package org.m410.fabricate.service;
 
+import org.apache.commons.configuration2.BaseHierarchicalConfiguration;
 import org.apache.commons.configuration2.ImmutableHierarchicalConfiguration;
 import org.m410.fabricate.builder.*;
 import org.m410.fabricate.config.ProjectContext;
@@ -35,7 +36,7 @@ public class FabricateServiceImpl implements FabricateService {
      * @param config
      */
     @Override
-    public void addConfig(ImmutableHierarchicalConfiguration config) {
+    public void addConfig(BaseHierarchicalConfiguration config) {
         configuration = config;
     }
 
