@@ -7,27 +7,27 @@ bundles:
   - name: fab-share
     org: org.m410.fabricate
     version: 0.2-SNAPSHOT
-#    remote_reference: file:target/fab-share-0.2-SNAPSHOT.jar
+    remote_reference: file:/Users/m410/Projects/m410.org/fabricate/fab-share/target/fab-share-0.2-SNAPSHOT.jar
   - name: fab-java-garden-project
     org: org.m410.fabricate
     version: 0.2-SNAPSHOT
-#    remote_reference: file:target/garden-0.2-SNAPSHOT.jar
+    remote_reference: file:/Users/m410/Projects/m410.org/fabricate/fab-java-garden-project/target/garden-0.2-SNAPSHOT.jar
   - name: fab-war
     org: org.m410.fabricate
     version: 0.2-SNAPSHOT
-#    remote_reference: file:target/fab-war-0.2-SNAPSHOT.jar
+    remote_reference: file:/Users/m410/Projects/m410.org/fabricate/fab-war/target/fab-war-0.2-SNAPSHOT.jar
   - name: fab-junit
     org: org.m410.fabricate
     version: 0.2-SNAPSHOT
-#    remote_reference: file:target/fab-junit-0.2-SNAPSHOT.jar
+    remote_reference: file:/Users/m410/Projects/m410.org/fabricate/fab-junit/target/fab-junit-0.2-SNAPSHOT.jar
   - name: fab-java-compiler
     org: org.m410.fabricate
     version: 0.2-SNAPSHOT
-#    remote_reference: file:target/fab-java-compiler-0.2-SNAPSHOT.jar
+    remote_reference: file:/Users/m410/Projects/m410.org/fabricate/fab-java-compiler/target/fab-java-compiler-0.2-SNAPSHOT.jar
   - name: fab-dependencies
     org: org.m410.fabricate
     version: 0.2-SNAPSHOT
-#    remote_reference: file:target/fab-java-dependencies-0.2-SNAPSHOT.jar
+    remote_reference: file:/Users/m410/Projects/m410.org/fabricate/fab-java-dependencies/target/fab-java-dependencies-0.2-SNAPSHOT.jar
 
 dependencies:
   - { scope: compile, org: org.m410.garden, name: garden, rev: 0.2.0-SNAPSHOT }
