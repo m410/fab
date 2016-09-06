@@ -33,6 +33,7 @@ public final class Resolver {
             return new RemoteReference(reference, localCacheFile);
         }
         else {
+            // todo test each repository
             URL url = makeUrl(reference, repositories);
             writeToFile(url, localCacheFile);
             return new RemoteReference(reference, localCacheFile);

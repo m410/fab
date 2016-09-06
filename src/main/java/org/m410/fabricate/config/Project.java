@@ -56,8 +56,9 @@ public final class Project implements Reference {
         this.projectFile = projectFile;
         this.url = projectFile.toURI().toURL();
 
-        archetype = loadArchetype(fileConf);
+        archetype = new Archetype(fileConf);
 
+        // todo pull repositories from config
         final List<Repository> repos = Collections.singletonList(Resolver.defaultRepo);
         Reference archetypeReference = Resolver.resolveRemote(archetype, confCache, repos);
 
@@ -206,10 +207,6 @@ public final class Project implements Reference {
 
     public BuildProperties getBuild() {
         return new BuildProperties(configuration);
-    }
-
-    private Archetype loadArchetype(BaseHierarchicalConfiguration configuration) throws MalformedURLException {
-        return new Archetype(configuration.configurationAt("archetype"));
     }
 
     private List<Reference> loadModules(BaseHierarchicalConfiguration configuration) throws IOException {

@@ -1,6 +1,8 @@
 package org.m410.fabricate.project;
 
+import org.apache.commons.configuration2.BaseHierarchicalConfiguration;
 import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.configuration2.ImmutableHierarchicalConfiguration;
 import org.apache.felix.framework.util.Util;
 import org.apache.felix.main.AutoProcessor;
 import org.apache.felix.main.Main;
@@ -54,29 +56,46 @@ public final class ProjectRunner {
 
             final File configFile = ConfigFileUtil.projectConfigFile(System.getProperty("user.dir"));
             final File configCacheDir = ConfigFileUtil.projectConfCache(System.getProperty("user.dir"));
+
+            log(configFile);
+            log(configCacheDir);
+
             Project project = new Project(configFile, configCacheDir, envName);
+            project.getBundles().forEach(bundle -> addBundle(ctx, bundle));
 
-            project.getBundles().stream()
-                    .filter(bundle -> !bundle.getName().equals("fab-share")) // prevents loading twice
-                    .forEach(bundle -> addBundle(ctx, bundle));
-            Arrays.stream(ctx.getBundles()).forEach(this::startBundle);
+            int idx = 0;
+            long bundleId = -1;
+            for (Bundle bundle : ctx.getBundles()) {
+                log(idx +": "+bundle.getBundleId()+", "+bundle.getSymbolicName());
+                idx++;
 
-            Object buildService = ctx.getService(ctx.getServiceReference("org.m410.fabricate.service.FabricateService"));
+                if(bundle.getSymbolicName().equals("org.m410.fabricate.fab-share")) {
+                    bundleId = bundle.getBundleId();
+                }
+            }
+
+            startBundle(ctx.getBundle(bundleId));
+
+            Arrays.stream(ctx.getBundles())
+                    .filter(c->!c.getSymbolicName().equals("org.m410.fabricate.fab-share")) // already started
+                    .forEach(this::startBundle);
+
+            Object service = ctx.getService(ctx.getServiceReference("org.m410.fabricate.service.FabricateService"));
 
             // todo does it need to set commands?
 
             // todo save to cache.
             // todo this can be simplified a bit, it's sole purpose should be to create a project and cache it.
 
+            service.getClass().getMethod("setEnv", String.class)
+                    .invoke(service, envName);
+            // might have to pass as string to avoid NoSuchMethodException
+            service.getClass().getMethod("addConfig", BaseHierarchicalConfiguration.class)
+                    .invoke(service, project.getConfiguration());
 
-            buildService.getClass()
-                    .getMethod("addConfig", Configuration.class)
-                    .invoke(buildService, project.getConfiguration());
-
-            buildService.getClass().getMethod("setEnv").invoke(buildService, envName);
-            buildService.getClass().getMethod("postStartupWiring").invoke(buildService);
+            service.getClass().getMethod("postStartupWiring").invoke(service);
             final String[] objects = args.toArray(new String[args.size()]);
-            buildService.getClass().getMethod("execute", String[].class).invoke(buildService, new Object[]{objects});
+            service.getClass().getMethod("execute", String[].class).invoke(service, new Object[]{objects});
         }
         catch (InvocationTargetException e) {
             throw e.getTargetException(); // just throw the root cause
@@ -89,14 +108,17 @@ public final class ProjectRunner {
 
     private void startBundle(Bundle b) {
         try {
+            log("start: " + b);
             b.start();
         } catch (BundleException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static void addBundle(final BundleContext ctx, final BundleRef bundleRef) {
+    void addBundle(final BundleContext ctx, final BundleRef bundleRef) {
         // todo check project file sys cache, if not there put it there
+
+        // todo fix won't work without remote_reference
 
         bundleRef.getRemoteReference().ifPresent(rr ->{
             String bundlePath = rr.toString();
@@ -107,6 +129,7 @@ public final class ProjectRunner {
 
             if (!present) {
                 try {
+                    log("install:"+bundleRef+", path:"+bundlePath);
                     ctx.installBundle(bundlePath);
                 }
                 catch (BundleException e) {
@@ -168,5 +191,11 @@ public final class ProjectRunner {
 
         return map;
 
+    }
+
+    private void log(Object msg) {
+        if(debug) {
+            System.out.println(msg);
+        }
     }
 }

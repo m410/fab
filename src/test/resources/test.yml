@@ -1,0 +1,15 @@
+archetype:
+  name: test-app
+  organization: org.something
+  version: 0.1.1
+  remote_reference: file:src/test/resources/test.yml
+
+sourceOutputDir: src/test/assets/src
+org: org.m410.test
+applicationClass: none
+name: test-app
+description: none
+version: 1.0.0
+targetDir: src/test/assets/target
+properties: {}
+authors: none

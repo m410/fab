@@ -19,7 +19,7 @@ public final class BundleRef extends ReferenceBase {
     public BundleRef(HierarchicalConfiguration<ImmutableNode> c, Type type, Level l, String env) {
         this.configuration = (BaseHierarchicalConfiguration) c;
         this.name = c.getString("name");
-        this.org = c.getString("organization");
+        this.org = c.getString("org");
         this.version = c.getString("version");
         this.environment = env;
         this.type = type; // archetype or module
@@ -56,7 +56,7 @@ public final class BundleRef extends ReferenceBase {
                "name='" + name + '\'' +
                ", org='" + org + '\'' +
                ", version='" + version + '\'' +
-               ", url=" + remoteReference +
+               ", remote_reference=" + remoteReference +
                ')';
     }
 
