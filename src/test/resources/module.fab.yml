@@ -1,6 +1,6 @@
 # some comment here
 module(org.m410.mod:any-module:0.2.0):
   bundles:
-    - name: module
+    - name: garden
       org: org.m410.fabricate
       version: 0.2-SNAPSHOT

@@ -6,6 +6,7 @@ import org.apache.commons.configuration2.tree.ImmutableNode;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Path;
 
 /**
  * A reference to an OSGI bundle that is loaded at build run.  Typically only in the base
@@ -15,6 +16,7 @@ import java.net.URL;
  */
 public final class BundleRef extends ReferenceBase {
     private final String symbolicName;
+    private URL url;
 
     public BundleRef(HierarchicalConfiguration<ImmutableNode> c, Type type, Level l, String env) {
         this.configuration = (BaseHierarchicalConfiguration) c;
@@ -28,17 +30,41 @@ public final class BundleRef extends ReferenceBase {
 
         try {
             this.remoteReference = c.containsKey("remote_reference") ?
-                                   new URL(c.getString("remote_reference")) :
-                                   toUrl();
+                       new URL(c.getString("remote_reference")) :
+                       null;
         }
         catch (MalformedURLException e) {
             throw new InvalidConfigurationException("invalid url: " + c.getString("remote_reference"), e);
         }
     }
 
-    private URL toUrl() throws MalformedURLException {
-        // todo implement me
-        return null;
+    public String toMavenPath() {
+        return "/"+org.replaceAll("\\.", "/")+"/"+name+"/"+version+"/"+name+"-"+version+".jar";
+    }
+
+    public String toMavenSnapshotMetadata() {
+        return "/"+org.replaceAll("\\.", "/")+"/"+name+"/"+version+"/maven-metadata.xml";
+    }
+
+    public boolean isMavenSnapshot() {
+        return version.endsWith("SNAPSHOT");
+    }
+
+    public URL getUrl() {
+        return url;
+    }
+
+    public void setUrl(URL url) {
+        this.url = url;
+    }
+
+
+    public String getFileName() {
+        return name +"-"+version+".jar";
+    }
+
+    public String toSnapshotPath(String sVersion) {
+        return "/"+org.replaceAll("\\.", "/")+"/"+name+"/"+version+"/"+name+"-"+sVersion+".jar";
     }
 
     public String getSymbolicName() {
@@ -59,5 +85,4 @@ public final class BundleRef extends ReferenceBase {
                ", remote_reference=" + remoteReference +
                ')';
     }
-
 }

@@ -5,7 +5,7 @@ archetype:
 
 bundles:
   - name: garden
-    organization: org.m410.fabricate.garden
+    organization: org.m410.fabricate
     version: 0.2-SNAPSHOT
     remote_reference: file:target/fab-java-garden-project-0.2-SNAPSHOT.jar
 

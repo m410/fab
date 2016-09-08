@@ -3,14 +3,15 @@ package org.m410.fabricate.config;
 import org.apache.commons.configuration2.BaseHierarchicalConfiguration;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.m410.config.YamlConfig;
+import org.m410.config.YamlConfiguration;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 
 /**
@@ -35,34 +36,41 @@ public final class Project implements Reference {
     private final String version;
     private final String environment;
 
-    private final File confCache;
+    private final File cacheDir;
     private final BaseHierarchicalConfiguration configuration;
     private final URL url;
+    private final Resolver resolver;
+    private final String checksum;
 
-    public Project(final File projectFile, final File confCache, final String env) throws IOException,
+    public Project(final File projectFile, final File cacheDir, final String env) throws IOException,
             ConfigurationException {
         this.environment = env;
         this.type = Type.PROJECT;
         this.level = Level.PROJECT;
+        this.checksum = HashUtil.getMD5Checksum(projectFile);
+
+        // todo read cached config & checksum, if hasn't changed, us it.
 
         this.environments = YamlConfig.environments(projectFile);
-        BaseHierarchicalConfiguration fileConf = YamlConfig.load(projectFile);
+        BaseHierarchicalConfiguration projectConfig = YamlConfig.load(projectFile);
 
-        this.org = fileConf.getString("application.organization");
-        this.name = fileConf.getString("application.name");
-        this.version = fileConf.getString("application.version");
+        this.org = projectConfig.getString("application.organization");
+        this.name = projectConfig.getString("application.name");
+        this.version = projectConfig.getString("application.version");
 
-        this.confCache = confCache;
+        this.cacheDir = cacheDir;
         this.projectFile = projectFile;
         this.url = projectFile.toURI().toURL();
+        this.archetype = new Archetype(projectConfig);
 
-        archetype = new Archetype(fileConf);
+        List<Repository> repositories = new ArrayList<>();
+        repositories.addAll(Arrays.asList(Resolver.defaultRepo,Resolver.snapshotRepo)); // should remove this
+        repositories.addAll(makeRepositories(projectConfig));
+        this.resolver = new Resolver(cacheDir, repositories);
 
-        // todo pull repositories from config
-        final List<Repository> repos = Collections.singletonList(Resolver.defaultRepo);
-        Reference archetypeReference = Resolver.resolveRemote(archetype, confCache, repos);
+        Reference archetypeReference = resolver.resolveRemote(archetype);
 
-        List<Reference> moduleBaseReferences = loadModules(fileConf);
+        List<Reference> moduleBaseReferences = loadModules(projectConfig);
         moduleBaseReferences.addAll(resolveRemote(moduleBaseReferences));
 
         List<Reference> localEnvReferences = envs(localConfigFile(projectFile), environments); // local envs
@@ -72,17 +80,24 @@ public final class Project implements Reference {
                 .withEnv(env)
                 .addLocalEnvs(localEnvReferences) // env's
                 .addProjectEnvs(projectEnvReferences)  // env's
-                .addProject(fileConf) // default
+                .addProject(projectConfig) // default
                 .addModules(moduleBaseReferences) //  remote, local & project already loaded
                 .addArchetype(archetypeReference) // remote
                 .make();
     }
 
-    private Collection<? extends Reference> resolveRemote(List<Reference> moduleBaseReferences) {
-        final List<Repository> repositories = Collections.singletonList(Resolver.defaultRepo);
+    private Collection<? extends Repository> makeRepositories(BaseHierarchicalConfiguration fileConf) {
+        return IntStream.range(0, fileConf.getMaxIndex("repositories")+1)
+                .mapToObj(i -> new Repository(
+                        fileConf.getString("repositories("+i+").id"),
+                        fileConf.getString("repositories("+i+").url")
+                ))
+                .collect(Collectors.toList());
+    }
 
+    private Collection<? extends Reference> resolveRemote(List<Reference> moduleBaseReferences) {
         return moduleBaseReferences.stream()
-                .map(m -> Resolver.resolveRemote(m, confCache, repositories))
+                .map(m -> resolver.resolveRemote(m))
                 .collect(Collectors.toList());
     }
 
@@ -181,8 +196,10 @@ public final class Project implements Reference {
         return modules;
     }
 
-    public List<BundleRef> getBundles() throws MalformedURLException {
+    public List<BundleRef> getBundles() {
         List<BundleRef> bundles = new ArrayList<>();
+//        final int bundleCount = configuration.getMaxIndex("bundles");
+
         final Iterator<String> keys = configuration.getKeys();
 
         while (keys.hasNext()) {
@@ -194,6 +211,16 @@ public final class Project implements Reference {
                 });
             }
         }
+
+        for (BundleRef bundle : bundles) {
+            try {
+                bundle.setUrl(resolver.resolveBundle(bundle).toURI().toURL());
+            }
+            catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
         return bundles;
     }
 
@@ -244,8 +271,21 @@ public final class Project implements Reference {
                "projectFile=" + projectFile +
                ", archetype=" + archetype +
                ", modules=" +  // moduleBaseReferences +
-               ", confCache=" + confCache +
+               ", confCache=" + cacheDir +
                '}';
     }
 
+    public void writeToCache() throws IOException, ConfigurationException {
+        final File file = cacheDir.toPath().resolve(environment + ".yml").toFile();
+
+        try(FileWriter out = new FileWriter(file)) {
+            ((YamlConfiguration)configuration).write(out);
+        }
+
+        final File hash = cacheDir.toPath().resolve(environment + ".md5").toFile();
+
+        try(FileWriter out = new FileWriter(hash)) {
+            out.write(this.checksum);
+        }
+    }
 }

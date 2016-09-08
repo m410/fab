@@ -1,8 +1,6 @@
 package org.m410.fabricate.project;
 
 import org.apache.commons.configuration2.BaseHierarchicalConfiguration;
-import org.apache.commons.configuration2.Configuration;
-import org.apache.commons.configuration2.ImmutableHierarchicalConfiguration;
 import org.apache.felix.framework.util.Util;
 import org.apache.felix.main.AutoProcessor;
 import org.apache.felix.main.Main;
@@ -61,20 +59,10 @@ public final class ProjectRunner {
             log(configCacheDir);
 
             Project project = new Project(configFile, configCacheDir, envName);
+            project.writeToCache();
+
             project.getBundles().forEach(bundle -> addBundle(ctx, bundle));
-
-            int idx = 0;
-            long bundleId = -1;
-            for (Bundle bundle : ctx.getBundles()) {
-                log(idx +": "+bundle.getBundleId()+", "+bundle.getSymbolicName());
-                idx++;
-
-                if(bundle.getSymbolicName().equals("org.m410.fabricate.fab-share")) {
-                    bundleId = bundle.getBundleId();
-                }
-            }
-
-            startBundle(ctx.getBundle(bundleId));
+            startBundle(ctx.getBundle(fineFabShareBundleId(ctx)));
 
             Arrays.stream(ctx.getBundles())
                     .filter(c->!c.getSymbolicName().equals("org.m410.fabricate.fab-share")) // already started
@@ -82,14 +70,11 @@ public final class ProjectRunner {
 
             Object service = ctx.getService(ctx.getServiceReference("org.m410.fabricate.service.FabricateService"));
 
-            // todo does it need to set commands?
-
-            // todo save to cache.
-            // todo this can be simplified a bit, it's sole purpose should be to create a project and cache it.
-
             service.getClass().getMethod("setEnv", String.class)
                     .invoke(service, envName);
-            // might have to pass as string to avoid NoSuchMethodException
+
+            // todo replace with text instead of BaseHierarchicalConfiguration
+            // Fabricate factory will have to recreate it to avoid NoSuchMethodException
             service.getClass().getMethod("addConfig", BaseHierarchicalConfiguration.class)
                     .invoke(service, project.getConfiguration());
 
@@ -105,6 +90,20 @@ public final class ProjectRunner {
         }
     }
 
+    private long fineFabShareBundleId(BundleContext ctx) {
+        int idx = 0;
+        long bundleId = -1;
+        for (Bundle bundle : ctx.getBundles()) {
+            log(idx +": "+bundle.getBundleId()+", "+bundle.getSymbolicName());
+            idx++;
+
+            if(bundle.getSymbolicName().equals("org.m410.fabricate.fab-share")) {
+                bundleId = bundle.getBundleId();
+            }
+        }
+        return bundleId;
+    }
+
 
     private void startBundle(Bundle b) {
         try {
@@ -115,28 +114,35 @@ public final class ProjectRunner {
         }
     }
 
-    void addBundle(final BundleContext ctx, final BundleRef bundleRef) {
-        // todo check project file sys cache, if not there put it there
+    void addBundle(final BundleContext ctx, final BundleRef bundleRef)  {
+        bundleRef.getRemoteReference().ifPresent(rr -> fromRemotReference(ctx, bundleRef, rr));
 
-        // todo fix won't work without remote_reference
-
-        bundleRef.getRemoteReference().ifPresent(rr ->{
-            String bundlePath = rr.toString();
-            boolean present = Arrays.stream(ctx.getBundles())
-                    .filter(b -> b.getSymbolicName().equals(bundleRef.getSymbolicName()))
-                    .findFirst()
-                    .isPresent();
-
-            if (!present) {
-                try {
-                    log("install:"+bundleRef+", path:"+bundlePath);
-                    ctx.installBundle(bundlePath);
-                }
-                catch (BundleException e) {
-                    throw new RuntimeException(e);
-                }
+        if(!bundleRef.getRemoteReference().isPresent()) {
+            try {
+                ctx.installBundle(bundleRef.getSymbolicName(), bundleRef.getUrl().openStream());
             }
-        });
+            catch (BundleException  | IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private void fromRemotReference(BundleContext ctx, BundleRef bundleRef, URL rr) {
+        String bundlePath = rr.toString();
+        boolean present = Arrays.stream(ctx.getBundles())
+                .filter(b -> b.getSymbolicName().equals(bundleRef.getSymbolicName()))
+                .findFirst()
+                .isPresent();
+
+        if (!present) {
+            try {
+                log("install:"+bundleRef+", path:"+bundlePath);
+                ctx.installBundle(bundlePath);
+            }
+            catch (BundleException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     private void checkAndSetupProjectDir() throws IOException {
@@ -177,10 +183,11 @@ public final class ProjectRunner {
 
     private Map<String, String> loadConfigProperties() throws IOException {
         Properties props = new Properties();
-        URL propURL = new File(new File(".fab"), Main.CONFIG_PROPERTIES_FILE_VALUE).toURI().toURL();
-        InputStream is = propURL.openConnection().getInputStream();
-        props.load(is);
-        is.close();
+        final File file = new File(new File(".fab"), Main.CONFIG_PROPERTIES_FILE_VALUE);
+
+        try(FileInputStream is = new FileInputStream(file)) {
+            props.load(is);
+        }
 
         // Perform variable substitution for system properties and convert to dictionary.
         Map<String, String> map = new HashMap<>();
@@ -190,7 +197,6 @@ public final class ProjectRunner {
         }
 
         return map;
-
     }
 
     private void log(Object msg) {
