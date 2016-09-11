@@ -66,8 +66,7 @@ public class WarTask implements Task {
 
 
     private Collection<File> toFiles(String cp) {
-        return Arrays.asList(cp.split(System.getProperty("path.separator")))
-                .stream()
+        return Arrays.stream(cp.split(System.getProperty("path.separator")))
                 .map(File::new)
                 .collect(Collectors.toList());
     }
