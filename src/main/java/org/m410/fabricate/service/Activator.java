@@ -94,9 +94,6 @@ public class Activator implements BundleActivator {
                         new Command("publish", "Copies artifacts to a local maven repository", false)
                                 .withStep(new Step("publish").append(new LocalPublishTask())))
                 .addCommand(
-                        new Command("tasks", "List all available tasks", false)
-                                .withStep(new Step("default").append(commandListTask)))
-                .addCommand(
                         new Command("dependencies", "List dependencies for environment", false)
                                 .withStep(new Step("initialize"))
                                 .withStep(new Step("default").append(new DependencyDumpTask()))
@@ -112,7 +109,10 @@ public class Activator implements BundleActivator {
                                 .withStep(new Step("default").append(new CleanTask())))
                 .addCommand(
                         new Command("bundles", "Display build bundles", false)
-                                .withStep(new Step("default").append(new BundleTask())));
+                                .withStep(new Step("default").append(new BundleTask())))
+                .addCommand(
+                        new Command("tasks", "List all available tasks", false)
+                                .withStep(new Step("default").append(commandListTask)));
     }
 
     @Override

@@ -2,11 +2,17 @@ package org.m410.fabricate.service;
 
 import org.apache.commons.configuration2.BaseHierarchicalConfiguration;
 import org.apache.commons.configuration2.ImmutableHierarchicalConfiguration;
+import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.m410.config.YamlConfiguration;
 import org.m410.fabricate.builder.*;
 import org.m410.fabricate.config.ProjectContext;
 import org.m410.fabricate.service.internal.serialize.HashUtil;
 
-import java.util.*;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Document Me..
@@ -38,6 +44,21 @@ public class FabricateServiceImpl implements FabricateService {
     @Override
     public void addConfig(BaseHierarchicalConfiguration config) {
         configuration = config;
+    }
+
+    @Override
+    public void addConfig(String config) throws IOException, ConfigurationException {
+        File tmp = File.createTempFile("configuration-", ".yml");
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(tmp))) {
+            writer.write(config);
+        }
+
+        final YamlConfiguration yamlConfiguration = new YamlConfiguration();
+        yamlConfiguration.read(new FileReader(tmp));
+        this.configuration = yamlConfiguration;
+
+        tmp.delete();
     }
 
     @Override

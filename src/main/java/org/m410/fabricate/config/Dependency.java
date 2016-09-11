@@ -13,6 +13,9 @@ public final class Dependency implements Comparable<Dependency>{
     private final boolean transitive;
 
     public Dependency(Map<String,Object> data) {
+        // todo remove me
+        System.out.println("test: " + data);
+
         org = (String)data.get("org");
         name = (String)data.get("name");
         rev = (String)data.get("rev");

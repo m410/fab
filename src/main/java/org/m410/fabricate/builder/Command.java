@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * @author m410
  */
-public final class Command implements Serializable{
+public final class Command implements Serializable, Comparable<Command> {
     private final String name;
     private final String description;
     private final boolean takesArgs;
@@ -72,4 +72,30 @@ public final class Command implements Serializable{
     public boolean isTakesArgs() {
         return takesArgs;
     }
+
+    @Override
+    public int compareTo(Command o) {
+        return this.name.compareTo(o.name);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        Command command = (Command) o;
+
+        return name.equals(command.name);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
+
 }

@@ -1,10 +1,10 @@
 package org.m410.fabricate.service;
 
 import org.apache.commons.configuration2.BaseHierarchicalConfiguration;
-import org.apache.commons.configuration2.Configuration;
-import org.apache.commons.configuration2.ImmutableHierarchicalConfiguration;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.m410.fabricate.builder.*;
-import org.m410.fabricate.config.ConfigProvider;
+
+import java.io.IOException;
 
 /**
  * Document Me..
@@ -22,6 +22,8 @@ public interface FabricateService {
     void setEnv(String env);
 
     void addConfig(BaseHierarchicalConfiguration config);
+
+    void addConfig(String config) throws IOException, ConfigurationException;
 
     void addCommandListener(CommandListener c);
 

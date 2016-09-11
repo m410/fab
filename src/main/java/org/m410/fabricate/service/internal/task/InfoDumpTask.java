@@ -1,15 +1,10 @@
 package org.m410.fabricate.service.internal.task;
 
+import org.m410.config.YamlConfiguration;
 import org.m410.fabricate.builder.BuildContext;
 import org.m410.fabricate.builder.Task;
-import org.m410.fabricate.config.Dependency;
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.nodes.Tag;
-import org.yaml.snakeyaml.representer.Representer;
 
-import java.util.HashMap;
-import java.util.List;
+import java.io.StringWriter;
 
 /**
  * @author m410
@@ -28,20 +23,11 @@ public class InfoDumpTask implements Task {
 
     @Override
     public void execute(BuildContext context) throws Exception {
-        DumperOptions options = new DumperOptions();
-        Representer representer = new Representer();
-        representer.addClassTag(Dependency.class, Tag.MAP);
+        final YamlConfiguration configuration = (YamlConfiguration) context.getConfiguration();
 
-        final Yaml yaml = new Yaml(representer,options);
-        final HashMap<String, Object> config = new HashMap<>();
-
-        final HashMap<String, Object> map = new HashMap<>();
-        map.put("env" , context.environment());
-        map.put("application" , context.getApplication());
-        map.put("build" , context.getBuild());
-        map.put("modules" , context.getModules());
-
-        config.put("configuration",map);
-        context.cli().println(yaml.dumpAsMap(config));
+        try (StringWriter out = new StringWriter()) {
+            configuration.write(out);
+            context.cli().println(out.toString());
+        }
     }
 }
