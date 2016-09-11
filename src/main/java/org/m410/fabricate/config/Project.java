@@ -5,7 +5,9 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.m410.config.YamlConfig;
 import org.m410.config.YamlConfiguration;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
@@ -41,6 +43,7 @@ public final class Project implements Reference {
     private final URL url;
     private final Resolver resolver;
     private final String checksum;
+    private File runtimeConfigFile;
 
     public Project(final File projectFile, final File cacheDir, final String env) throws IOException,
             ConfigurationException {
@@ -265,20 +268,14 @@ public final class Project implements Reference {
         return mods;
     }
 
-    @Override
-    public String toString() {
-        return "ProjectConfig{" +
-               "projectFile=" + projectFile +
-               ", archetype=" + archetype +
-               ", modules=" +  // moduleBaseReferences +
-               ", confCache=" + cacheDir +
-               '}';
+    public File getRuntimeConfigFile() {
+        return runtimeConfigFile;
     }
 
     public void writeToCache() throws IOException, ConfigurationException {
-        final File file = cacheDir.toPath().resolve(environment + ".yml").toFile();
+        runtimeConfigFile = cacheDir.toPath().resolve(environment + ".yml").toFile();
 
-        try(FileWriter out = new FileWriter(file)) {
+        try (FileWriter out = new FileWriter(runtimeConfigFile)) {
             ((YamlConfiguration)configuration).write(out);
         }
 
@@ -287,5 +284,15 @@ public final class Project implements Reference {
         try(FileWriter out = new FileWriter(hash)) {
             out.write(this.checksum);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "ProjectConfig{" +
+               "projectFile=" + projectFile +
+               ", archetype=" + archetype +
+               ", modules=" +  // moduleBaseReferences +
+               ", confCache=" + cacheDir +
+               '}';
     }
 }

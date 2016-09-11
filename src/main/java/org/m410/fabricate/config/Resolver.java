@@ -12,11 +12,9 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * Resolves references to external configuration files and bundles.  This should be an
@@ -68,6 +66,20 @@ public final class Resolver {
 
     public File resolveBundle(BundleRef bundle) {
         final File file = cacheDir.toPath().resolve("bundles").resolve(bundle.getFileName()).toFile();
+        file.getParentFile().mkdirs();
+
+        if (file.exists()) {
+            return file;
+        }
+
+        bundle.getRemoteReference().ifPresent(url -> {
+            try (InputStream is = url.openStream()) {
+                Files.copy(is, file.toPath());
+            }
+            catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
 
         if(file.exists()) {
             return file;

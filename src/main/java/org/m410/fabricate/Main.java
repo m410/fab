@@ -5,7 +5,10 @@ import org.m410.fabricate.global.GlobalRunner;
 import org.m410.fabricate.project.ProjectRunner;
 
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.util.List;
 
 /**
@@ -35,7 +38,7 @@ public final class Main {
             runGlobalCmd(cmd.getArgList());
         }
         else if(isProjectDir(System.getProperty("user.dir"))) {
-            runProjectCmd(cmd.getArgList(), cmd.getOptionValue("e","defaut"), cmd.hasOption("debug"));
+            runProjectCmd(cmd.getArgList(), cmd.getOptionValue("e", "default"), cmd.hasOption("debug"));
         }
         else {
             System.out.println("The current directory is not a project directory or unknown command.  Try 'fab -help'");

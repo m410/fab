@@ -1,10 +1,11 @@
 package org.m410.fabricate.project;
 
-import org.apache.commons.configuration2.BaseHierarchicalConfiguration;
 import org.apache.felix.framework.util.Util;
 import org.apache.felix.main.AutoProcessor;
 import org.apache.felix.main.Main;
-import org.m410.fabricate.config.*;
+import org.m410.fabricate.config.BundleRef;
+import org.m410.fabricate.config.ConfigFileUtil;
+import org.m410.fabricate.config.Project;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -16,6 +17,7 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.util.*;
 
 /**
@@ -62,21 +64,20 @@ public final class ProjectRunner {
             project.writeToCache();
 
             project.getBundles().forEach(bundle -> addBundle(ctx, bundle));
-            startBundle(ctx.getBundle(fineFabShareBundleId(ctx)));
+            startBundle(ctx.getBundle(findIdByName(ctx, "org.apache.felix.framework"))); // start first
+            startBundle(ctx.getBundle(findIdByName(ctx, "org.m410.fabricate.fab-share"))); // start first
 
             Arrays.stream(ctx.getBundles())
-                    .filter(c->!c.getSymbolicName().equals("org.m410.fabricate.fab-share")) // already started
+                    .filter(c -> !c.getSymbolicName().equals("org.apache.felix.framework")) // already started
+                    .filter(c -> !c.getSymbolicName().equals("org.m410.fabricate.fab-share")) // already started
                     .forEach(this::startBundle);
 
             Object service = ctx.getService(ctx.getServiceReference("org.m410.fabricate.service.FabricateService"));
 
-            service.getClass().getMethod("setEnv", String.class)
-                    .invoke(service, envName);
+            service.getClass().getMethod("setEnv", String.class).invoke(service, envName);
 
-            // todo replace with text instead of BaseHierarchicalConfiguration
-            // Fabricate factory will have to recreate it to avoid NoSuchMethodException
-            service.getClass().getMethod("addConfig", BaseHierarchicalConfiguration.class)
-                    .invoke(service, project.getConfiguration());
+            String out = String.join("\n", Files.readAllLines(project.getRuntimeConfigFile().toPath()));
+            service.getClass().getMethod("addConfig", String.class).invoke(service, out);
 
             service.getClass().getMethod("postStartupWiring").invoke(service);
             final String[] objects = args.toArray(new String[args.size()]);
@@ -90,14 +91,14 @@ public final class ProjectRunner {
         }
     }
 
-    private long fineFabShareBundleId(BundleContext ctx) {
+    private long findIdByName(BundleContext ctx, String name) {
         int idx = 0;
         long bundleId = -1;
         for (Bundle bundle : ctx.getBundles()) {
-            log(idx +": "+bundle.getBundleId()+", "+bundle.getSymbolicName());
+            log(idx + ": " + bundle.getBundleId() + ", " + bundle.getSymbolicName());
             idx++;
 
-            if(bundle.getSymbolicName().equals("org.m410.fabricate.fab-share")) {
+            if (bundle.getSymbolicName().equals(name)) {
                 bundleId = bundle.getBundleId();
             }
         }
@@ -109,19 +110,20 @@ public final class ProjectRunner {
         try {
             log("start: " + b);
             b.start();
-        } catch (BundleException e) {
+        }
+        catch (BundleException e) {
             throw new RuntimeException(e);
         }
     }
 
-    void addBundle(final BundleContext ctx, final BundleRef bundleRef)  {
+    void addBundle(final BundleContext ctx, final BundleRef bundleRef) {
         bundleRef.getRemoteReference().ifPresent(rr -> fromRemotReference(ctx, bundleRef, rr));
 
-        if(!bundleRef.getRemoteReference().isPresent()) {
+        if (!bundleRef.getRemoteReference().isPresent()) {
             try {
                 ctx.installBundle(bundleRef.getSymbolicName(), bundleRef.getUrl().openStream());
             }
-            catch (BundleException  | IOException e) {
+            catch (BundleException | IOException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -136,7 +138,7 @@ public final class ProjectRunner {
 
         if (!present) {
             try {
-                log("install:"+bundleRef+", path:"+bundlePath);
+                log("install:" + bundleRef + ", path:" + bundlePath);
                 ctx.installBundle(bundlePath);
             }
             catch (BundleException e) {
@@ -172,8 +174,9 @@ public final class ProjectRunner {
                     s = s.trim();
                     // Try to load first non-empty, non-commented line.
 
-                    if ((s.length() > 0) && (s.charAt(0) != '#'))
+                    if ((s.length() > 0) && (s.charAt(0) != '#')) {
                         return (FrameworkFactory) Class.forName(s).newInstance();
+                    }
                 }
             }
         }
@@ -185,7 +188,7 @@ public final class ProjectRunner {
         Properties props = new Properties();
         final File file = new File(new File(".fab"), Main.CONFIG_PROPERTIES_FILE_VALUE);
 
-        try(FileInputStream is = new FileInputStream(file)) {
+        try (FileInputStream is = new FileInputStream(file)) {
             props.load(is);
         }
 
@@ -200,7 +203,7 @@ public final class ProjectRunner {
     }
 
     private void log(Object msg) {
-        if(debug) {
+        if (debug) {
             System.out.println(msg);
         }
     }
