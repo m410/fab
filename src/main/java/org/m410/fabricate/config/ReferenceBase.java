@@ -57,4 +57,17 @@ public abstract class ReferenceBase implements Reference {
     public Optional<URL> getRemoteReference() {
         return Optional.ofNullable(remoteReference);
     }
+
+    @Override
+    public String toString() {
+        return "Reference{" +
+               "name='" + name + '\'' +
+               ", org='" + org + '\'' +
+               ", version='" + version + '\'' +
+               ", type=" + type +
+               ", level=" + level +
+               ", environment='" + environment + '\'' +
+               ", remoteReference=" + remoteReference +
+               '}';
+    }
 }

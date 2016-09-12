@@ -12,12 +12,19 @@ application:
   applicationClass: org.m410.angular.web.MyApplication
   author: Michael Fortin
   description: &desc My Demo App
+
 build:
   package docs: true
+
 deploy:
   method: scp {}
+
 publish:
   url: http://some-maven-repo.com/
+
+dependencies:
+- { scope: compile, org: commons-beanutils, name: commons-beanutils, rev: 1.9.2 }
+
 persistence(org.m410.mod.persistence:m410-jpa:0.1):
   remote_reference: file:src/test/resources/persistence.fab.yml
   properties:
@@ -30,20 +37,3 @@ persistence(org.m410.mod.persistence:m410-jpa:0.1):
 
 modules(org.m410.mod:any-module:0.2.0):
   remote_reference: file:src/test/resources/module.fab.yml
-
-logging(org.m410.mod.persistence:m410-logback:0.1):
-  remote_reference: file:src/test/resources/module.fab.yml
-  appenders:
-    - name: STDOUT
-      appender class: ch.qos.logback.core.ConsoleAppender
-      layout: ch.qos.logback.classic.encoder.PatternLayoutEncoder
-      pattern: "%-4relative [%thread] %-5level %class - %msg%n"
-  logger:
-    - name: org.m410
-      level: TRACE
-  root:
-    level: DEBUG
-    ref: [STDOUT]
-web_xml:
-  - description: *desc
-  - display-name: *name

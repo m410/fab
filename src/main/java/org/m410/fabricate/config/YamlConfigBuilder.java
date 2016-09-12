@@ -5,6 +5,7 @@ import org.apache.commons.configuration2.CombinedConfiguration;
 import org.apache.commons.configuration2.tree.UnionCombiner;
 import org.m410.config.YamlConfiguration;
 
+import java.io.StringWriter;
 import java.util.List;
 
 /**
@@ -119,7 +120,21 @@ public final class YamlConfigBuilder {
 
         moduleBaseReferences.stream()
                 .filter(r -> r.getLevel() == Reference.Level.REMOTE)
-                .forEach(r -> combined.addConfiguration(r.getConfiguration(), "remote-" + r.getName()));
+                .forEach(r -> {
+                    System.out.println("------");
+                    String name = "remote-" + r.getName();
+                    System.out.println("rc: " + r);
+
+                    try (StringWriter writer = new StringWriter()) {
+                        ((YamlConfiguration) r.getConfiguration()).write(writer);
+                        System.out.println(writer.toString());
+                        System.out.println("------");
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    combined.addConfiguration(r.getConfiguration(), name);
+                });
 
         combined.addConfiguration(archetypeReference.getConfiguration(), "remote-archetype");
 

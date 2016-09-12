@@ -23,8 +23,7 @@ public class ProjectConfigTest {
         Project project = new Project(file, configCacheDir, "default");
         assertNotNull(project);
         assertNotNull(project.getArchetype());
-        assertEquals(4, project.getBundles().size());
-        assertEquals(3, project.getModuleReferences().size());
+        assertEquals(3, project.getBundles().size());
+        assertEquals(2, project.getModuleReferences().size());
     }
-
 }

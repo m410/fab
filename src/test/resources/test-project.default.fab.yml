@@ -10,15 +10,15 @@ bundles:
     remote_reference: file:target/fab-java-garden-project-0.2-SNAPSHOT.jar
 
 dependencies:
-  - { scope: compile, org: com.h2database, name: h2, rev: 1.3.174 }
-  - { scope: compile, org: org.hibernate, name: hibernate-entitymanager, rev: 4.3.0.Final }
-  - { scope: compile, org: org.slf4j, name: slf4j-api, rev: 1.7.7 }
-  - { scope: compile, org: org.hibernate, name: hibernate-validator, rev: 5.1.0.Beta1 }
-  - { scope: compile, org: com.google.code.gson, name: gson, rev: 2.2.4 }
-  - { scope: compile, org: org.m410.garden, name: m410-garden, rev: 0.2.0-SNAPSHOT }
-  - { scope: compile, org: commons-beanutils, name: commons-beanutils, rev: 1.9.0 }
-  - { scope: compile, org: org.apache.commons, name: commons-lang3, rev: 3.2.1 }
-  - { scope: test, org: junit, name: junit, rev: "4.11" }
+- { scope: compile, org: org.m410.garden, name: garden, rev: 0.2.0-SNAPSHOT }
+- { scope: compile, org: com.google.code.gson, name: gson, rev: 2.2.4 }
+- { scope: compile, org: org.slf4j, name: slf4j-api, rev: 1.7.7 }
+- { scope: compile, org: org.yaml, name: snakeyaml, rev: "1.13"}
+- { scope: compile, org: com.google.guava, name: guava, rev: "18.0"}
+- { scope: compile, org: com.fasterxml, name: classmate, rev: 1.1.0 }
+- { scope: provided, org: org.glassfish.web, name: javax.el, rev: 2.2.6 }
+- { scope: provided, org: javax.el, name: el-api, rev: 2.2.1-b04 }
+- { scope: provided, org: javax.servlet, name: javax.servlet-api, rev: 3.1.0}
 
 build:
   defaultEnvironment: development

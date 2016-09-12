@@ -49,6 +49,7 @@ public final class Resolver {
      */
     public Reference resolveRemote(Reference reference) {
         final File localCacheFile = cacheConfigFile(reference, cacheDir);
+        localCacheFile.getParentFile().mkdirs();
 
         if (localCacheFile.exists()) {
             return new RemoteReference(reference, localCacheFile);

@@ -79,6 +79,8 @@ public final class Project implements Reference {
         List<Reference> localEnvReferences = envs(localConfigFile(projectFile), environments); // local envs
         List<Reference> projectEnvReferences = envs(projectFile, environments);
 
+        System.out.println(moduleBaseReferences);
+
         this.configuration = YamlConfigBuilder.builder()
                 .withEnv(env)
                 .addLocalEnvs(localEnvReferences) // env's
@@ -100,7 +102,7 @@ public final class Project implements Reference {
 
     private Collection<? extends Reference> resolveRemote(List<Reference> moduleBaseReferences) {
         return moduleBaseReferences.stream()
-                .map(m -> resolver.resolveRemote(m))
+                .map(resolver::resolveRemote)
                 .collect(Collectors.toList());
     }
 
@@ -255,6 +257,8 @@ public final class Project implements Reference {
             Level level) {
         List<Reference> mods = new ArrayList<>();
         final Iterator<String> keys = config.getKeys();
+
+        // todo replace other module pattern
         Pattern modulePattern = Pattern.compile("^(" + nodeName + ")\\(.*?\\)$");
 
         while (keys.hasNext()) {
@@ -274,12 +278,15 @@ public final class Project implements Reference {
 
     public void writeToCache() throws IOException, ConfigurationException {
         runtimeConfigFile = cacheDir.toPath().resolve(environment + ".yml").toFile();
+        runtimeConfigFile.getParentFile().mkdirs();
+
+        System.out.println("dependency count: " + configuration.immutableConfigurationsAt("dependencies").size());
 
         try (FileWriter out = new FileWriter(runtimeConfigFile)) {
             ((YamlConfiguration)configuration).write(out);
         }
 
-        final File hash = cacheDir.toPath().resolve(environment + ".md5").toFile();
+        final File hash = cacheDir.toPath().resolve(environment + ".yml.md5").toFile();
 
         try(FileWriter out = new FileWriter(hash)) {
             out.write(this.checksum);
