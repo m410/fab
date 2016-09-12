@@ -1,14 +1,12 @@
-modules:
-  - name: fab-junit
-    organization: org.m410.fabricate
-    version: "1.0-SNAPSHOT"
+testing(org.m410.fabricate:fab-junit:0.2-SNAPSHOT):
+  placeholder: placeholder
 
 bundles:
   - name: fab-junit
     organization: org.m410.garden
     version: "0.2-SNAPSHOT"
-    remote_reference: file:target/fab-junit-0.2-SNAPSHOT.jar
+    remote_reference: file:/Users/m410/Projects/m410.org/fabricate/fab-junit/target/fab-junit-0.2-SNAPSHOT.jar
 
 dependencies:
-  - { scope: test, org: org.hamcrest, name: hamcrest-core, rev: "1.3"}
-  - { scope: test, org: junit, name: junit, rev: "4.11"}
+- { scope: test, org: org.hamcrest, name: hamcrest-core, rev: "1.3"}
+- { scope: test, org: junit, name: junit, rev: "4.11"}
