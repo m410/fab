@@ -144,6 +144,8 @@ public final class JavaCompileTask implements Task {
     }
 
     private Optional<List<String>> makeClasspathOption(BuildContext context) {
+        context.cli().info(context.getClasspath().toString());
+
         String path = testCompile
                 ? classes(context) + context.getClasspath().get("test")
                 : context.getClasspath().get("compile");
