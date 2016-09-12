@@ -1,6 +1,6 @@
 package org.m410.fabricate.config;
 
-import java.util.Map;
+import org.apache.commons.configuration2.ImmutableHierarchicalConfiguration;
 
 /**
  * @author m410
@@ -12,23 +12,20 @@ public final class Dependency implements Comparable<Dependency>{
     private final String scope;
     private final boolean transitive;
 
-    public Dependency(Map<String,Object> data) {
-        // todo remove me
-        System.out.println("test: " + data);
-
-        org = (String)data.get("org");
-        name = (String)data.get("name");
-        rev = (String)data.get("rev");
-        scope = (String)data.get("scope");
-        transitive = (Boolean)data.getOrDefault("transitive",Boolean.FALSE);
-    }
-
     public Dependency(String scope, String org, String name, String rev, boolean transitive) {
         this.scope = scope;
         this.org = org;
         this.name = name;
         this.rev = rev;
         this.transitive = transitive;
+    }
+
+    public Dependency(ImmutableHierarchicalConfiguration config) {
+        org = config.getString("org");
+        name = config.getString("name");
+        rev = config.getString("rev");
+        scope = config.getString("scope");
+        transitive = config.getBoolean("transitive", Boolean.FALSE);
     }
 
     public String getOrg() {
@@ -54,10 +51,10 @@ public final class Dependency implements Comparable<Dependency>{
     @Override
     public int compareTo(Dependency o) {
         return this.org.compareTo(o.org) +
-                this.name.compareTo(o.name) +
-                this.rev.compareTo(o.rev) ;
-        // todo need better revision comparison
+               this.name.compareTo(o.name) +
+               this.rev.compareTo(o.rev); // todo need better revision comparison
     }
+
 
     @Override
     public boolean equals(Object o) {
@@ -76,8 +73,8 @@ public final class Dependency implements Comparable<Dependency>{
         if (!name.equals(that.name)) {
             return false;
         }
-
         return rev.equals(that.rev);
+
     }
 
     @Override

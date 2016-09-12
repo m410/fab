@@ -4,8 +4,6 @@ import org.apache.commons.configuration2.ImmutableHierarchicalConfiguration;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.junit.Test;
 
-import java.util.*;
-
 import static org.junit.Assert.*;
 
 /**
@@ -22,7 +20,7 @@ public class DependencyTest {
     public void testMakeDependencies() throws ConfigurationException {
         ImmutableHierarchicalConfiguration config = Fixtures.config();
 
-        Dependency dependency = new Dependency(config.get(Map.class,"dependencies(0)"));
+        Dependency dependency = new Dependency(config.immutableConfigurationAt("dependencies(0)"));
         assertNotNull(dependency.getName());
         assertNotNull(dependency.getOrg());
         assertNotNull(dependency.getRev());

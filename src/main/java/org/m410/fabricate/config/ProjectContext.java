@@ -5,7 +5,6 @@ import org.apache.commons.configuration2.ImmutableHierarchicalConfiguration;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -30,15 +29,11 @@ public final class ProjectContext {
         this.modules = extractModules(configuration);
     }
 
-    private List<Dependency> extractDependencies(ImmutableHierarchicalConfiguration configuration) {
-        System.out.println("dependency count: " + configuration.getMaxIndex("dependencies"));
-        System.out.println(configuration.get(Map.class, "dependencies(0)"));
-        final ImmutableHierarchicalConfiguration x = configuration.immutableConfigurationAt("dependencies(0)");
-        System.out.println(x);
-        System.out.println(x.getString("name"));
+    private List<Dependency> extractDependencies(ImmutableHierarchicalConfiguration conf) {
+        final ImmutableHierarchicalConfiguration x = conf.immutableConfigurationAt("dependencies(0)");
 
-        return (List<Dependency>)IntStream.range(0, configuration.getMaxIndex("dependencies") + 1)
-                .mapToObj(i -> new Dependency(configuration.get(Map.class, "dependencies(" + i + ")")))
+        return (List<Dependency>) IntStream.range(0, conf.getMaxIndex("dependencies") + 1)
+                .mapToObj(i -> new Dependency(conf.immutableConfigurationAt("dependencies(" + i + ")")))
                 .collect(Collectors.toList());
     }
 

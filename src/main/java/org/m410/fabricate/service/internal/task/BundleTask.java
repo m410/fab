@@ -20,6 +20,11 @@ public class BundleTask implements Task {
 
     @Override
     public void execute(BuildContext context) throws Exception {
-        context.cli().println("bundle information");
+        context.getConfiguration().immutableConfigurationsAt("bundles").forEach(bc -> {
+            String txt = "- " + bc.getString("name") +
+                         ":" + bc.getString("org") +
+                         ":" + bc.getString("version");
+            context.cli().println(txt);
+        });
     }
 }
