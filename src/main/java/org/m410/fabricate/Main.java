@@ -28,6 +28,8 @@ public final class Main {
         CommandLine cmd = parser.parse( options, args);
 
         // todo add logging levels [debug,info,warn,error]
+        // todo add classpath command, dependency command
+        // todo split publish to publish-local & publish-remote
 
         if(cmd.hasOption("version")) {
             System.out.println("display version info");
