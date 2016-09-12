@@ -1,7 +1,9 @@
 package org.m410.fabricate.dependency;
 
 import org.m410.fabricate.service.FabricateService;
-import org.osgi.framework.*;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 
 /**
  * @author Michael Fortin
@@ -11,6 +13,8 @@ public class Activator implements BundleActivator {
     public void start(BundleContext context) throws Exception {
         ServiceReference fabricateServiceReference = context.getServiceReference(FabricateService.class.getName());
         FabricateService fabricateService = (FabricateService) context.getService(fabricateServiceReference);
+
+        // todo replace with https://github.com/shrinkwrap/resolver
 
         fabricateService.addCommandModifier(modifier -> {
                     modifier.getSteps().stream()
