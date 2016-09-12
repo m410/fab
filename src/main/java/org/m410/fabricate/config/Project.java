@@ -44,6 +44,8 @@ public final class Project implements Reference {
     private final Resolver resolver;
     private final String checksum;
     private File runtimeConfigFile;
+    private List<BundleRef> bundles = new ArrayList<>();
+
 
     public Project(final File projectFile, final File cacheDir, final String env) throws IOException,
             ConfigurationException {
@@ -79,8 +81,6 @@ public final class Project implements Reference {
         List<Reference> localEnvReferences = envs(localConfigFile(projectFile), environments); // local envs
         List<Reference> projectEnvReferences = envs(projectFile, environments);
 
-        System.out.println(moduleBaseReferences);
-
         this.configuration = YamlConfigBuilder.builder()
                 .withEnv(env)
                 .addLocalEnvs(localEnvReferences) // env's
@@ -89,6 +89,27 @@ public final class Project implements Reference {
                 .addModules(moduleBaseReferences) //  remote, local & project already loaded
                 .addArchetype(archetypeReference) // remote
                 .make();
+
+        final Iterator<String> keys = configuration.getKeys();
+
+        while (keys.hasNext()) {
+            String next = keys.next();
+
+            if (next.endsWith("bundles")) {
+                configuration.configurationsAt(next).forEach(c -> {
+                    bundles.add(new BundleRef(c, Type.ARCHETYPE, Level.PROJECT, environment));
+                });
+            }
+        }
+
+        for (BundleRef bundle : bundles) {
+            try {
+                bundle.setUrl(resolver.resolveBundle(bundle).toURI().toURL());
+            }
+            catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     private Collection<? extends Repository> makeRepositories(BaseHierarchicalConfiguration fileConf) {
@@ -202,31 +223,11 @@ public final class Project implements Reference {
     }
 
     public List<BundleRef> getBundles() {
-        List<BundleRef> bundles = new ArrayList<>();
-//        final int bundleCount = configuration.getMaxIndex("bundles");
-
-        final Iterator<String> keys = configuration.getKeys();
-
-        while (keys.hasNext()) {
-            String next = keys.next();
-
-            if (next.endsWith("bundles")) {
-                configuration.configurationsAt(next).forEach(c -> {
-                    bundles.add(new BundleRef(c, Type.ARCHETYPE, Level.PROJECT, environment));
-                });
-            }
-        }
-
-        for (BundleRef bundle : bundles) {
-            try {
-                bundle.setUrl(resolver.resolveBundle(bundle).toURI().toURL());
-            }
-            catch (MalformedURLException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
         return bundles;
+    }
+
+    public BundleRef getBundleByName(String s) {
+        return bundles.stream().filter(b -> b.getName().equals(s)).findAny().orElse(null);
     }
 
     public File getProjectFile() {
@@ -277,10 +278,9 @@ public final class Project implements Reference {
     }
 
     public void writeToCache() throws IOException, ConfigurationException {
+        // todo check hash, if same don't write
         runtimeConfigFile = cacheDir.toPath().resolve(environment + ".yml").toFile();
         runtimeConfigFile.getParentFile().mkdirs();
-
-        System.out.println("dependency count: " + configuration.immutableConfigurationsAt("dependencies").size());
 
         try (FileWriter out = new FileWriter(runtimeConfigFile)) {
             ((YamlConfiguration)configuration).write(out);

@@ -27,6 +27,8 @@ public final class Main {
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd = parser.parse( options, args);
 
+        // todo add logging levels [debug,info,warn,error]
+
         if(cmd.hasOption("version")) {
             System.out.println("display version info");
         }

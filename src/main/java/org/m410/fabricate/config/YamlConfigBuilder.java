@@ -121,19 +121,13 @@ public final class YamlConfigBuilder {
         moduleBaseReferences.stream()
                 .filter(r -> r.getLevel() == Reference.Level.REMOTE)
                 .forEach(r -> {
-                    System.out.println("------");
-                    String name = "remote-" + r.getName();
-                    System.out.println("rc: " + r);
-
                     try (StringWriter writer = new StringWriter()) {
                         ((YamlConfiguration) r.getConfiguration()).write(writer);
-                        System.out.println(writer.toString());
-                        System.out.println("------");
+                        combined.addConfiguration(r.getConfiguration(), "remote-" + r.getName());
                     }
                     catch (Exception e) {
-                        e.printStackTrace();
+                        throw new RuntimeException(e);
                     }
-                    combined.addConfiguration(r.getConfiguration(), name);
                 });
 
         combined.addConfiguration(archetypeReference.getConfiguration(), "remote-archetype");

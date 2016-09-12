@@ -69,7 +69,7 @@ public final class Resolver {
         final File file = cacheDir.toPath().resolve("bundles").resolve(bundle.getFileName()).toFile();
         file.getParentFile().mkdirs();
 
-        if (file.exists()) {
+        if (file.exists() && file.length() > 1) {
             return file;
         }
 
@@ -82,7 +82,7 @@ public final class Resolver {
             }
         });
 
-        if(file.exists()) {
+        if (file.exists() && file.length() > 1) {
             return file;
         }
 

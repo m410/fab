@@ -15,7 +15,6 @@ import org.osgi.framework.launch.FrameworkFactory;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.util.*;
@@ -48,34 +47,43 @@ public final class ProjectRunner {
         FrameworkFactory factory = getFrameworkFactory();
         Framework framework = factory.newFramework(osgiRuntimeProps);
 
+        final File configFile = ConfigFileUtil.projectConfigFile(System.getProperty("user.dir"));
+        final File configCacheDir = ConfigFileUtil.projectConfCache(System.getProperty("user.dir"));
+
+        log(configFile);
+        log(configCacheDir);
+
         try {
             framework.init();
             AutoProcessor.process(osgiRuntimeProps, framework.getBundleContext());
             framework.start();
             BundleContext ctx = framework.getBundleContext();
 
-            final File configFile = ConfigFileUtil.projectConfigFile(System.getProperty("user.dir"));
-            final File configCacheDir = ConfigFileUtil.projectConfCache(System.getProperty("user.dir"));
-
-            log(configFile);
-            log(configCacheDir);
-
             Project project = new Project(configFile, configCacheDir, envName);
             project.writeToCache();
 
-            project.getBundles().forEach(bundle -> addBundle(ctx, bundle));
-            startBundle(ctx.getBundle(findIdByName(ctx, "org.apache.felix.framework"))); // start first
-            startBundle(ctx.getBundle(findIdByName(ctx, "org.m410.fabricate.fab-share"))); // start first
+            // add the bundles, load felix & fab-share first
+            addBundle(ctx, project.getBundleByName("fab-share"));
+
+            project.getBundles().stream()
+                    .filter(c -> !c.getSymbolicName().equals("org.m410.fabricate.fab-share"))
+                    .forEach(bundle -> addBundle(ctx, bundle));
+
+            // start the bundles, load felix & fab-share first
+            startBundle(ctx.getBundle(findIdByName(ctx, "org.apache.felix.framework")));
+            startBundle(ctx.getBundle(findIdByName(ctx, "org.m410.fabricate.fab-share")));
 
             Arrays.stream(ctx.getBundles())
-                    .filter(c -> !c.getSymbolicName().equals("org.apache.felix.framework")) // already started
-                    .filter(c -> !c.getSymbolicName().equals("org.m410.fabricate.fab-share")) // already started
+                    .filter(c -> !c.getSymbolicName().equals("org.apache.felix.framework"))
+                    .filter(c -> !c.getSymbolicName().equals("org.m410.fabricate.fab-share"))
                     .forEach(this::startBundle);
 
+            // start the service
             Object service = ctx.getService(ctx.getServiceReference("org.m410.fabricate.service.FabricateService"));
-
             service.getClass().getMethod("setEnv", String.class).invoke(service, envName);
 
+            // todo add logging level
+            
             String out = String.join("\n", Files.readAllLines(project.getRuntimeConfigFile().toPath()));
             service.getClass().getMethod("addConfig", String.class).invoke(service, out);
 
@@ -92,16 +100,14 @@ public final class ProjectRunner {
     }
 
     private long findIdByName(BundleContext ctx, String name) {
-        int idx = 0;
         long bundleId = -1;
-        for (Bundle bundle : ctx.getBundles()) {
-            log(idx + ": " + bundle.getBundleId() + ", " + bundle.getSymbolicName());
-            idx++;
 
+        for (Bundle bundle : ctx.getBundles()) {
             if (bundle.getSymbolicName().equals(name)) {
                 bundleId = bundle.getBundleId();
             }
         }
+
         return bundleId;
     }
 
@@ -117,33 +123,12 @@ public final class ProjectRunner {
     }
 
     void addBundle(final BundleContext ctx, final BundleRef bundleRef) {
-        bundleRef.getRemoteReference().ifPresent(rr -> fromRemotReference(ctx, bundleRef, rr));
 
-        if (!bundleRef.getRemoteReference().isPresent()) {
-            try {
-                ctx.installBundle(bundleRef.getSymbolicName(), bundleRef.getUrl().openStream());
-            }
-            catch (BundleException | IOException e) {
-                throw new RuntimeException(e);
-            }
+        try {
+            ctx.installBundle(bundleRef.getSymbolicName(), bundleRef.getUrl().openStream());
         }
-    }
-
-    private void fromRemotReference(BundleContext ctx, BundleRef bundleRef, URL rr) {
-        String bundlePath = rr.toString();
-        boolean present = Arrays.stream(ctx.getBundles())
-                .filter(b -> b.getSymbolicName().equals(bundleRef.getSymbolicName()))
-                .findFirst()
-                .isPresent();
-
-        if (!present) {
-            try {
-                log("install:" + bundleRef + ", path:" + bundlePath);
-                ctx.installBundle(bundlePath);
-            }
-            catch (BundleException e) {
-                throw new RuntimeException(e);
-            }
+        catch (BundleException | IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
