@@ -1,12 +1,23 @@
 package org.m410.fabricate.dependency;
 
+import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.plugins.report.XmlReportParser;
+import org.apache.ivy.util.MessageLoggerEngine;
 import org.m410.fabricate.builder.BuildContext;
 import org.m410.fabricate.builder.Task;
+import org.m410.fabricate.config.Dependency;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.nio.file.FileSystems;
 import java.text.ParseException;
@@ -15,21 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
-import org.m410.fabricate.config.Dependency;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-
-import org.apache.ivy.Ivy;
-import org.apache.ivy.util.MessageLoggerEngine;
 
 
 /**
@@ -82,7 +78,7 @@ public class IvyDependencyTask implements Task {
                 String resolveId = resolveReport.getResolveId();
                 ResolutionCacheManager manager = ivy1.getResolutionCacheManager();
 
-                scopes.stream().forEach(s-> reports.put(s, Arrays.asList(makeReport(s, resolveId, manager))));
+                scopes.forEach(s -> reports.put(s, Arrays.asList(makeReport(s, resolveId, manager))));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
