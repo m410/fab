@@ -2,7 +2,6 @@ package org.m410.fabricate.builder;
 
 import org.apache.commons.configuration2.ImmutableHierarchicalConfiguration;
 import org.m410.fabricate.config.*;
-import org.m410.fabricate.service.internal.serialize.CachedProject;
 
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +32,7 @@ public final class BuildContextImpl implements BuildContext {
         this.dependencies = dependencies;
         this.modules = modules;
         this.fromCache = false;
-        this.classpaths = new HashMap<>();
+        this.classpaths = new HashMap<>(); // todo wrong!!!!
         this.hash = null;
         this.configuration = null;
     }
@@ -47,7 +46,7 @@ public final class BuildContextImpl implements BuildContext {
         this.environment = environment;
         this.dependencies = context.getDependencies();
         this.modules = context.getModules();
-        this.classpaths = new HashMap<>();
+        this.classpaths = new HashMap<>(); // todo wrong!!!!
         this.configuration = context.getConfiguration();
     }
 

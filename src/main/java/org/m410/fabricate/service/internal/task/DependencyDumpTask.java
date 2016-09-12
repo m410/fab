@@ -20,9 +20,7 @@ public class DependencyDumpTask implements Task {
 
     @Override
     public void execute(BuildContext context) throws Exception {
-        context.getDependencies().forEach(d -> {
-            context.cli().println(d.toString());
-        });
+        context.getDependencies().forEach(d -> context.cli().println(d.toString()));
 
         for (String s : context.getClasspath().keySet()) {
             context.cli().println("");

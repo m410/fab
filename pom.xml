@@ -114,7 +114,8 @@
                             org.m410.fabricate.service*,
                             org.m410.fabricate.builder*,
                             org.m410.fabricate.config*,
-                            org.m410.fabricate.util*
+                            org.m410.fabricate.util*,
+                            org.m410.config*
                         </Export-Package>
                         <Include-Resource>{maven-dependencies}</Include-Resource>
                         <Embed-Transitive>true</Embed-Transitive>

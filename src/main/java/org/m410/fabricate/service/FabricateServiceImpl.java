@@ -28,7 +28,7 @@ public class FabricateServiceImpl implements FabricateService {
 
     private ImmutableHierarchicalConfiguration configuration;
     private String environment = "default";
-    private String logLevel = "info";
+    private String logLevel = "debug";
 
     @Override
     public FabricateService addCommand(Command c) {
@@ -92,6 +92,11 @@ public class FabricateServiceImpl implements FabricateService {
     }
 
     @Override
+    public void setLogLevel(String level) {
+        this.logLevel = level;
+    }
+
+    @Override
     public void execute(String[] args) throws Exception {
 
         BuildContext buildContext = configureInitialBuildContext(environment, logLevel);
@@ -119,7 +124,6 @@ public class FabricateServiceImpl implements FabricateService {
         this.environment = env;
     }
 
-    // todo replace with commons yaml configuration
     @SuppressWarnings("unchecked")
     BuildContext configureInitialBuildContext(String env, String logLevel) throws Exception {
         ProjectContext config = new ProjectContext(configuration);
