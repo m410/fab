@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * @author m410
@@ -38,7 +39,7 @@ public final class Main {
         }
 
         if(cmd.hasOption("version")) {
-            System.out.println("display version info");
+            System.out.println(ResourceBundle.getBundle("version").getString("version"));
         }
         else if(cmd.hasOption("help")) {
             new HelpFormatter().printHelp("fab", options, true);

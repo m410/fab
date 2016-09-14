@@ -5,9 +5,8 @@ archetype:
 
 bundles:
   - name: garden
-    organization: org.m410.fabricate
+    org: org.m410.fabricate
     version: 0.2-SNAPSHOT
-    remote_reference: file:target/fab-java-garden-project-0.2-SNAPSHOT.jar
 
 dependencies:
 - { scope: compile, org: org.m410.garden, name: garden, rev: 0.2.0-SNAPSHOT }
@@ -38,7 +37,6 @@ build:
   packageSource: false
   packageDocs: false
   packageClassifier:
-#  packageName: {application.name}-{application.version}.jar
 
 
 

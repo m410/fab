@@ -20,6 +20,11 @@ public final class RemoteReference extends ReferenceBase {
         this.environment = "default";
         this.projectReference = localRef;
 
+        if (org == null || name == null || version == null) {
+            throw new InvalidConfigurationException("invalid remote declaration: '" + org + "','" + name + "','" +
+                                                    version + "'");
+        }
+
         try {
             this.configuration = YamlConfig.load(localCacheFile);
         }

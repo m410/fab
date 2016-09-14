@@ -35,6 +35,11 @@ public final class BundleRef extends ReferenceBase {
         catch (MalformedURLException e) {
             throw new InvalidConfigurationException("invalid url: " + c.getString("remote_reference"), e);
         }
+
+        if (org == null || name == null || version == null) {
+            throw new InvalidConfigurationException("invalid bundle declaration: '" + org + "','" + name + "','" +
+                                                    version + "'");
+        }
     }
 
     public URL getUrl() {

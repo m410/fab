@@ -1,4 +1,4 @@
-module(org.m410.mod.persistence:m410-jpa:0.1):
+modules(org.m410.mod.persistence:m410-jpa:0.1):
 
 bundles:
   - name: garden

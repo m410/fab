@@ -43,6 +43,10 @@ public final class ModuleRef extends ReferenceBase {
         catch (MalformedURLException e) {
             throw new InvalidConfigurationException("invalid url: " + c.getString("remote_reference"), e);
         }
+
+        if (org == null || name == null || version == null || stereotype == null) {
+            throw new InvalidConfigurationException("invalid module name: '" + moduleName + "'");
+        }
     }
 
     public String getStereotype() {

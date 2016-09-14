@@ -30,6 +30,11 @@ public final class Archetype extends ReferenceBase {
         catch (MalformedURLException e) {
             throw new InvalidConfigurationException("invalid url", e);
         }
+
+        if (org == null || name == null || version == null) {
+            throw new InvalidConfigurationException("invalid module declaration: '" + org + "','" + name + "','" +
+                                                    version + "'");
+        }
     }
 
     public URL getBase_build() {
