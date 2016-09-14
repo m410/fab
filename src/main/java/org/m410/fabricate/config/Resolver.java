@@ -25,7 +25,10 @@ public final class Resolver {
 
     static final Repository defaultRepo = new Repository("m410","http://repo.m410.org/content/repositories/releases/");
     static final Repository snapshotRepo = new Repository("m410-snapshot","http://repo.m410.org/content/repositories/snapshots/");
-    static final Pattern snapshotVersionPattern = Pattern.compile("(?smi)<extension>jar</extension>.*?<value>(.*?)</value>");
+    static final Pattern snapshotJarVersionPattern = Pattern.compile("(?smi)<extension>jar</extension>.*?<value>(.*?)" +
+                                                                     "</value>");
+    static final Pattern snapshotYmlVersionPattern = Pattern.compile("(?smi)<extension>yml</extension>.*?<value>(.*?)" +
+                                                                     "</value>");
 
     private File cacheDir;
     private List<Repository> repositories;
@@ -58,6 +61,11 @@ public final class Resolver {
         }
         else {
             tryRemoteRepos(reference, localCacheFile);
+
+            if (!localCacheFile.exists()) {
+                throw new RuntimeException("file not retrieved: " + reference.toMavenPath());
+            }
+
             return new RemoteReference(reference, localCacheFile);
         }
     }
@@ -104,10 +112,14 @@ public final class Resolver {
 
                 if(isValidUrl(snapshotMetadata)) {
                     String metadataXml = downloadXml(snapshotMetadata);
-                    final Matcher matcher = snapshotVersionPattern.matcher(metadataXml);
+                    //                    System.out.println("metadata:" + metadataXml);
+                    final Matcher matcher = bundle.toMavenPath().endsWith("yml") ?
+                                            snapshotYmlVersionPattern.matcher(metadataXml) :
+                                            snapshotJarVersionPattern.matcher(metadataXml);
 
                     if(matcher.find()) {
                         final String snapshotUrl = repository.getUrl() + bundle.toSnapshotPath(matcher.group(1));
+                        //                        System.out.println("snapshot url:" + snapshotUrl);
 
                         if (isValidUrl(snapshotUrl)) {
                             writeToFile(file, snapshotUrl);
@@ -117,6 +129,7 @@ public final class Resolver {
             }
             else {
                 final String url = repository.getUrl() + bundle.toMavenPath();
+                System.out.println("url:" + url);
 
                 if (isValidUrl(url)) {
                     writeToFile(file, url);
@@ -157,50 +170,6 @@ public final class Resolver {
             return false;
         }
     }
-
-    //    private void writeToFile(URL inputUrl, File outputFile) {
-    //        outputFile.getParentFile().mkdirs();
-    //
-    //        if(inputUrl.getProtocol().equals("file")) {
-    //            try(InputStream is = inputUrl.openStream()) {
-    //                Files.copy(is, outputFile.toPath());
-    //            }
-    //            catch (IOException e) {
-    //                // keep going
-    //                System.err.println("could not copy file:" +e.getMessage());
-    //            }
-    //        }
-    //        else {
-    //            try(InputStream is = Request.Get(inputUrl.toString()).execute().returnContent().asStream()) {
-    //                Files.copy(is, outputFile.toPath());
-    //            }
-    //            catch (IOException e) {
-    //                // keep going
-    //                System.err.println("could not download file"+ e.getMessage());
-    //            }
-    //        }
-    //    }
-
-    //    private URL makeUrl(Reference resource, List<Repository> repositories) {
-    //        try {
-    //            return new URL(repositories.get(0).getUrl() +
-    //                           resource.getOrg().replaceAll("\\.", "/") + "/" +
-    //                           resource.getName() + "/" +
-    //                           resource.getVersion() + "/" +
-    //                           resource.getName() + "-" + resource.getVersion() + ".yml");
-    //        }
-    //        catch (MalformedURLException e) {
-    //            throw new RuntimeException(e);
-    //        }
-    //    }
-
-    //    private static void copyStream(InputStream input, OutputStream output) throws IOException {
-    //        byte[] buffer = new byte[1024]; // Adjust if you want
-    //        int bytesRead;
-    //        while ((bytesRead = input.read(buffer)) != -1) {
-    //            output.write(buffer, 0, bytesRead);
-    //        }
-    //    }
 
     private static File cacheConfigFile(Reference resource, File cacheDir) {
         Path path = FileSystems.getDefault().getPath(
