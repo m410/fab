@@ -3,11 +3,8 @@ package org.m410.fabricate.config;
 import org.apache.commons.configuration2.ImmutableHierarchicalConfiguration;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.junit.Test;
-import org.m410.config.YamlConfiguration;
 
 import java.io.IOException;
-import java.io.StringWriter;
-import java.util.stream.IntStream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -35,7 +32,7 @@ public class ProjectContextTest {
         assertNotNull(projectContext.getBuild());
         assertNotNull(projectContext.getDependencies());
         assertNotNull(projectContext.getModules());
-        assertEquals(3, projectContext.getModules().size());
+        assertEquals(4, projectContext.getModules().size());
         assertEquals(7, projectContext.getDependencies().size());
     }
 }

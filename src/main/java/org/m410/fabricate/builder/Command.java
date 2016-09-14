@@ -98,4 +98,11 @@ public final class Command implements Serializable, Comparable<Command> {
         return name.hashCode();
     }
 
+    @Override
+    public String toString() {
+        return "Command{" +
+               "name='" + name + '\'' +
+               ", takesArgs=" + takesArgs +
+               '}';
+    }
 }

@@ -1,22 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
-  <component name="FacetManager">
-    <facet type="Osmorc" name="OSGi">
-      <configuration manifestGenerationMode="OsmorcControlled" manifestLocation="" jarfileLocation="fab-share-0.2-SNAPSHOT.jar" outputPathType="CompilerOutputPath" bndFileLocation="" bundlorFileLocation="" bundleActivator="org.m410.fabricate.service.Activator" bundleSymbolicName="org.m410.fabricate.fab-share" bundleVersion="0.2-SNAPSHOT" ignoreFilePattern="" useProjectDefaultManifestFileLocation="true" alwaysRebuildBundleJAR="false" doNotSynchronizeWithMaven="false">
-        <additionalProperties>
-          <property key="Embed-Dependency" value="*;scope=compile|runtime;inline=true" />
-          <property key="Bundle-Name" value="fab-share" />
-          <property key="Bundle-ClassPath" value="." />
-          <property key="Private-Package" value="org.m410.fabricate.service.internal" />
-          <property key="Import-Package" value="org.osgi.framework, *;resolution:=optional" />
-          <property key="Export-Package" value="org.m410.fabricate.service*,org.m410.fabricate.builder*,org.m410.fabricate.config*,org.m410.fabricate.util*,org.m410.config*" />
-          <property key="Include-Resource" value="@$MAVEN_REPOSITORY$/org/yaml/snakeyaml/1.17/snakeyaml-1.17.jar,@$MAVEN_REPOSITORY$/commons-beanutils/commons-beanutils/1.9.2/commons-beanutils-1.9.2.jar,@$MODULE_DIR$/../yaml-configuration/pom.xml,@$MAVEN_REPOSITORY$/org/apache/commons/commons-configuration2/2.1/commons-configuration2-2.1.jar,@$MAVEN_REPOSITORY$/commons-collections/commons-collections/3.2.1/commons-collections-3.2.1.jar,@$MAVEN_REPOSITORY$/commons-logging/commons-logging/1.2/commons-logging-1.2.jar,@$MAVEN_REPOSITORY$/org/apache/commons/commons-lang3/3.3.2/commons-lang3-3.3.2.jar" />
-          <property key="Embed-Transitive" value="true" />
-        </additionalProperties>
-        <additionalJARContents />
-      </configuration>
-    </facet>
-  </component>
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/target/classes" />
     <output-test url="file://$MODULE_DIR$/target/test-classes" />

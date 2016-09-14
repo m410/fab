@@ -27,7 +27,7 @@ public class InfoDumpTask implements Task {
 
         try (StringWriter out = new StringWriter()) {
             configuration.write(out);
-            context.cli().println(out.toString());
+            context.cli().println(System.getProperty("line.separator") + out.toString());
         }
     }
 }

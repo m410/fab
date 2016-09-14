@@ -7,19 +7,25 @@ import org.m410.fabricate.builder.Task;
 /**
  * @author m410
  */
-public class DependencyDumpTask implements Task {
+public class ClasspathDumpTask implements Task {
     @Override
     public String getName() {
-        return "output-dependencies";
+        return "output-classpaths";
     }
 
     @Override
     public String getDescription() {
-        return "Output Dependencies";
+        return "Output Classpaths";
     }
 
     @Override
     public void execute(BuildContext context) throws Exception {
-        context.getDependencies().forEach(d -> context.cli().println(d.toString()));
+
+        for (String s : context.getClasspath().keySet()) {
+            context.cli().println("");
+            context.cli().println("classpath:" + s);
+            context.cli().println(context.getClasspath().get(s));
+        }
+
     }
 }

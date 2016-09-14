@@ -31,6 +31,9 @@ persistence(org.m410.mod.persistence:m410-jpa:0.1):
     hibernate.connection.url: "jdbc:h2:db/demo"
     hibernate.hbm2ddl.auto: update
 
+testing(org.m410.fabricate:fab-junit:0.2-SNAPSHOT):
+  placehodler: placeholder
+
 modules(org.m410.fab.module:randomModule:0.2.0):
 #  remote_reference: file:target/fab-java-task-0.2-SNAPSHOT.jar
   symbolicName: org.m410.fab-java-task

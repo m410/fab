@@ -98,7 +98,6 @@ public class FabricateServiceImpl implements FabricateService {
 
     @Override
     public void execute(String[] args) throws Exception {
-
         BuildContext buildContext = configureInitialBuildContext(environment, logLevel);
 
         // todo check each task to see if it takes args

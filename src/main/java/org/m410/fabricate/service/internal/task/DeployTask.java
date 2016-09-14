@@ -20,6 +20,6 @@ public class DeployTask implements Task {
 
     @Override
     public void execute(BuildContext context) throws Exception {
-        context.cli().debug("deploy!!!");
+        context.cli().info("deploy!!! not implemented yet");
     }
 }
