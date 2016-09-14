@@ -21,6 +21,7 @@ public class DependencyDumpTask implements Task {
     @Override
     public void execute(BuildContext context) throws Exception {
         context.getDependencies().forEach(d -> context.cli().println(d.toString()));
+        // todo convert into dependencies, and classpath dump tasks
 
         for (String s : context.getClasspath().keySet()) {
             context.cli().println("");

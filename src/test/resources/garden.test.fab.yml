@@ -21,7 +21,7 @@ dependencies:
   - {scope: compile, org: org.apache, name: commons-util, rev: 1.0.0}
 
 persistence(org.m410.mod.persistence:m410-jpa:0.1):
-  remote_reference: file:target/fab-java-task-0.2-SNAPSHOT.jar
+#  remote_reference: file:target/fab-java-task-0.2-SNAPSHOT.jar
   symbolicName: org.m410.fab-java-task
   properties:
     hibernate.dialect: org.hibernate.dialect.H2Dialect
@@ -32,7 +32,7 @@ persistence(org.m410.mod.persistence:m410-jpa:0.1):
     hibernate.hbm2ddl.auto: update
 
 modules(org.m410.fab.module:randomModule:0.2.0):
-  remote_reference: file:target/fab-java-task-0.2-SNAPSHOT.jar
+#  remote_reference: file:target/fab-java-task-0.2-SNAPSHOT.jar
   symbolicName: org.m410.fab-java-task
   organization: org.m410.mod
 
