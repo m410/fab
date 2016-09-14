@@ -92,7 +92,7 @@ public class FabricateServiceImpl implements FabricateService {
     }
 
     @Override
-    public void setLogLevel(String level) {
+    public void setOutputLevel(String level) {
         this.logLevel = level;
     }
 

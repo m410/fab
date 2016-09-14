@@ -21,7 +21,7 @@ public interface FabricateService {
 
     void setEnv(String env);
 
-    void setLogLevel(String level);
+    void setOutputLevel(String level);
 
     void addConfig(BaseHierarchicalConfiguration config);
 

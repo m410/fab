@@ -4,8 +4,6 @@ package org.m410.fabricate.builder;
  * @author m410
  */
 public class CliStdOutImpl implements Cli {
-    private static final String[] levels = {"debug","info","warn","error"};
-
     private int level = 1;
 
     public CliStdOutImpl(final String logLevel) {

@@ -49,6 +49,9 @@ public class CleanTask implements Task {
     @Override
     public void execute(BuildContext context) throws Exception {
         final Path path = FileSystems.getDefault().getPath(context.getBuild().getTargetDir());
-        Files.walkFileTree(path, visitor);
+
+        if (path.toFile().exists()) {
+            Files.walkFileTree(path, visitor);
+        }
     }
 }
