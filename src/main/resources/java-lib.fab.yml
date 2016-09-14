@@ -7,27 +7,21 @@ bundles:
   - name: fab-share
     org: org.m410.fabricate
     version: 0.2-SNAPSHOT
-#    remote_reference: file:target/fab-share-0.2-SNAPSHOT.jar
   - name: java-lib
     org: org.m410.fabricate
     version: 0.2-SNAPSHOT
-#    remote_reference: file:target/java-lib-0.2-SNAPSHOT.jar
   - name: fab-jar
     org: org.m410.fabricate
     version: 0.2-SNAPSHOT
-#    remote_reference: file:target/fab-jar-0.2-SNAPSHOT.jar
   - name: fab-junit
     org: org.m410.fabricate
     version: 0.2-SNAPSHOT
-#    remote_reference: file:target/fab-junit-0.2-SNAPSHOT.jar
   - name: fab-java-compiler
     org: org.m410.fabricate
     version: 0.2-SNAPSHOT
-#    remote_reference: file:target/fab-java-compiler-0.2-SNAPSHOT.jar
-  - name: fab-dependencies
+  - name: fab-java-dependencies
     org: org.m410.fabricate
     version: 0.2-SNAPSHOT
-#    remote_reference: file:target/fab-java-dependencies-0.2-SNAPSHOT.jar
 
 build:
   cacheDir: .fab

@@ -1,7 +1,7 @@
 archetype:
-  version: 1.0.0
+  version: 0.2-SNAPSHOT
   name: java-lib
-  organization: org.m410.fab.javalib
+  organization: org.m410.fabricate
 
 application:
   name: demo-lib
@@ -14,7 +14,7 @@ publish:
 
 build:
   langVersion: "1.8"
-  
+
 dependencies:
   - {scope: compile, org: commongs-lang, name: commons-lang3, rev: 3.2.1}
 
