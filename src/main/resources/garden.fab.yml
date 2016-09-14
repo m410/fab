@@ -7,7 +7,7 @@ bundles:
   - name: fab-share
     org: org.m410.fabricate
     version: 0.2-SNAPSHOT
-  - name: fab-java-garden-project
+  - name: garden
     org: org.m410.fabricate
     version: 0.2-SNAPSHOT
   - name: fab-war
