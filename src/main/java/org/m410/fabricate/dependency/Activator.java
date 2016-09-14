@@ -14,19 +14,14 @@ public class Activator implements BundleActivator {
         ServiceReference fabricateServiceReference = context.getServiceReference(FabricateService.class.getName());
         FabricateService fabricateService = (FabricateService) context.getService(fabricateServiceReference);
 
-        // todo replace with https://github.com/shrinkwrap/resolver
-
-        fabricateService.addCommandModifier(modifier -> {
-                    modifier.getSteps().stream()
-                            .filter(step -> step.getName().equalsIgnoreCase("initialize"))
-                            .forEach(step -> step.append(new IvyDependencyTask()));
-                }
-
-
-        );
+        fabricateService.addCommandModifier(cmd -> {
+            System.out.println(cmd);
+            cmd.getSteps().stream()
+                    .filter(step -> step.getName().equalsIgnoreCase("initialize"))
+                    .forEach(step -> step.append(new IvyDependencyTask()));
+        });
     }
 
     public void stop(BundleContext context) throws Exception {
     }
-
 }
