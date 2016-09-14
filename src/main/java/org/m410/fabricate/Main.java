@@ -9,27 +9,33 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * @author m410
  */
 public final class Main {
+    static final String[] levels = {"debug", "info", "warn", "error"};
 
     @SuppressWarnings("unchecked")
     public static void main(String[] args) throws Throwable {
         Options options = new Options();
-        options.addOption("debug", false, "Debug output");
         options.addOption("help", false, "Display help information");
         options.addOption("version", false, "Display version information");
-        options.addOption("e","env", true, "Set the environment name");
+        options.addOption("e", "env", true, "Set the environment name, defaults to 'default'");
+        options.addOption("l", "log", true, "Set the output level, defaults to 'warn', options are [debug,info,warn,error]");
 
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd = parser.parse( options, args);
 
-        // todo add logging levels [debug,info,warn,error]
-        // todo add classpath command, dependency command
-        // todo split publish to publish-local & publish-remote
+        String logLevel = cmd.hasOption("l") ? cmd.getOptionValue("l").toLowerCase() : "warn";
+        String env = cmd.hasOption("e") ? cmd.getOptionValue("e") : "default";
+
+        if (!Arrays.asList(levels).contains(logLevel)) {
+            System.out.println("Invalid logging level '" + logLevel + "', must be one of: " + Arrays.toString(levels));
+            System.exit(1);
+        }
 
         if(cmd.hasOption("version")) {
             System.out.println("display version info");
@@ -42,15 +48,15 @@ public final class Main {
             runGlobalCmd(cmd.getArgList());
         }
         else if(isProjectDir(System.getProperty("user.dir"))) {
-            runProjectCmd(cmd.getArgList(), cmd.getOptionValue("e", "default"), cmd.hasOption("debug"));
+            runProjectCmd(cmd.getArgList(), env, logLevel);
         }
         else {
             System.out.println("The current directory is not a project directory or unknown command.  Try 'fab -help'");
         }
     }
 
-    protected static void runProjectCmd(List<String> argList, String envName, boolean debug) throws Throwable {
-        new ProjectRunner(argList, envName, debug).run();
+    protected static void runProjectCmd(List<String> argList, String envName, String logLevel) throws Throwable {
+        new ProjectRunner(argList, envName, logLevel).run();
     }
 
     protected static void runGlobalCmd(List<String> argList) throws Exception {

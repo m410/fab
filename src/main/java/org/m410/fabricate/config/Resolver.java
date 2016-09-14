@@ -6,8 +6,6 @@ import org.apache.http.client.fluent.Request;
 
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,7 +36,7 @@ public final class Resolver {
      *                     to resolve where to download the reference if the base_config flag doesn't
      *                     exist.
      */
-    public Resolver(File cacheDirectory, List<Repository> repositories) {
+    Resolver(File cacheDirectory, List<Repository> repositories) {
         this.cacheDir = cacheDirectory;
         this.repositories = repositories;
     }
@@ -55,12 +53,11 @@ public final class Resolver {
             return new RemoteReference(reference, localCacheFile);
         }
         else if (reference.getRemoteReference().isPresent()) {
-            writeToFile(reference.getRemoteReference().get(), localCacheFile);
+            explicitRemoteReference(reference, localCacheFile);
             return new RemoteReference(reference, localCacheFile);
         }
         else {
-            URL url = makeUrl(reference, repositories);
-            writeToFile(url, localCacheFile);
+            tryRemoteRepos(reference, localCacheFile);
             return new RemoteReference(reference, localCacheFile);
         }
     }
@@ -73,6 +70,23 @@ public final class Resolver {
             return file;
         }
 
+        explicitRemoteReference(bundle, file);
+
+        if (file.exists() && file.length() > 1) {
+            return file;
+        }
+
+        tryRemoteRepos(bundle, file);
+
+        if (file.exists() && file.length() > 1) {
+            return file;
+        }
+        else {
+            throw new RuntimeException("Bundle not found: " + bundle + " in:" + repositories);
+        }
+    }
+
+    private void explicitRemoteReference(Reference bundle, File file) {
         bundle.getRemoteReference().ifPresent(url -> {
             try (InputStream is = url.openStream()) {
                 Files.copy(is, file.toPath());
@@ -81,11 +95,9 @@ public final class Resolver {
                 throw new RuntimeException(e);
             }
         });
+    }
 
-        if (file.exists() && file.length() > 1) {
-            return file;
-        }
-
+    private void tryRemoteRepos(Reference bundle, File file) {
         for (Repository repository : repositories) {
             if(bundle.isMavenSnapshot()) {
                 final String snapshotMetadata = repository.getUrl() + bundle.toMavenSnapshotMetadata();
@@ -111,11 +123,6 @@ public final class Resolver {
                 }
             }
         }
-
-        if(file.exists() && file.length() > 1)
-            return file;
-        else
-            throw new RuntimeException("Bundle not found: " + bundle + " in:"+ repositories);
     }
 
     private boolean writeToFile(File file, String spec2) {
@@ -151,51 +158,49 @@ public final class Resolver {
         }
     }
 
-    private void writeToFile(URL inputUrl, File outputFile) {
-        outputFile.getParentFile().mkdirs();
+    //    private void writeToFile(URL inputUrl, File outputFile) {
+    //        outputFile.getParentFile().mkdirs();
+    //
+    //        if(inputUrl.getProtocol().equals("file")) {
+    //            try(InputStream is = inputUrl.openStream()) {
+    //                Files.copy(is, outputFile.toPath());
+    //            }
+    //            catch (IOException e) {
+    //                // keep going
+    //                System.err.println("could not copy file:" +e.getMessage());
+    //            }
+    //        }
+    //        else {
+    //            try(InputStream is = Request.Get(inputUrl.toString()).execute().returnContent().asStream()) {
+    //                Files.copy(is, outputFile.toPath());
+    //            }
+    //            catch (IOException e) {
+    //                // keep going
+    //                System.err.println("could not download file"+ e.getMessage());
+    //            }
+    //        }
+    //    }
 
-        if(inputUrl.getProtocol().equals("file")) {
-            try(InputStream is = inputUrl.openStream()) {
-                Files.copy(is, outputFile.toPath());
-            }
-            catch (IOException e) {
-                // keep going
-                System.err.println("could not copy file:" +e.getMessage());
-            }
-        }
-        else {
-            try(InputStream is = Request.Get(inputUrl.toString()).execute().returnContent().asStream()) {
-                Files.copy(is, outputFile.toPath());
-            }
-            catch (IOException e) {
-                // keep going
-                System.err.println("could not download file"+ e.getMessage());
-            }
-        }
-    }
+    //    private URL makeUrl(Reference resource, List<Repository> repositories) {
+    //        try {
+    //            return new URL(repositories.get(0).getUrl() +
+    //                           resource.getOrg().replaceAll("\\.", "/") + "/" +
+    //                           resource.getName() + "/" +
+    //                           resource.getVersion() + "/" +
+    //                           resource.getName() + "-" + resource.getVersion() + ".yml");
+    //        }
+    //        catch (MalformedURLException e) {
+    //            throw new RuntimeException(e);
+    //        }
+    //    }
 
-    private URL makeUrl(Reference resource, List<Repository> repositories) {
-        // todo test each repository
-
-        try {
-            return new URL(repositories.get(0).getUrl() + // todo enable for many repositories
-                           resource.getOrg().replaceAll("\\.", "/") + "/" +
-                           resource.getName() + "/" +
-                           resource.getVersion() + "/" +
-                           resource.getName() + "-" + resource.getVersion() + ".yml");
-        }
-        catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static void copyStream(InputStream input, OutputStream output) throws IOException {
-        byte[] buffer = new byte[1024]; // Adjust if you want
-        int bytesRead;
-        while ((bytesRead = input.read(buffer)) != -1) {
-            output.write(buffer, 0, bytesRead);
-        }
-    }
+    //    private static void copyStream(InputStream input, OutputStream output) throws IOException {
+    //        byte[] buffer = new byte[1024]; // Adjust if you want
+    //        int bytesRead;
+    //        while ((bytesRead = input.read(buffer)) != -1) {
+    //            output.write(buffer, 0, bytesRead);
+    //        }
+    //    }
 
     private static File cacheConfigFile(Reference resource, File cacheDir) {
         Path path = FileSystems.getDefault().getPath(

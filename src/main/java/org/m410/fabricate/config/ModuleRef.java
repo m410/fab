@@ -21,6 +21,7 @@ public final class ModuleRef extends ReferenceBase {
         this.environment = env;
         this.configuration = (BaseHierarchicalConfiguration) c;
         this.level = l;
+        this.packageType = "yml";
 
         final Matcher matcher = pattern.matcher(moduleName.replaceAll("\\.\\.", "."));
 

@@ -25,6 +25,14 @@ public interface Reference {
 
     Optional<URL> getRemoteReference();
 
+    String toMavenPath();
+
+    String toMavenSnapshotMetadata();
+
+    boolean isMavenSnapshot();
+
+    String toSnapshotPath(String sVersion);
+
     enum Level {
         LOCAL,
         PROJECT,

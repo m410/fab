@@ -1,8 +1,6 @@
 package org.m410.fabricate.config;
 
 import org.apache.commons.configuration2.BaseHierarchicalConfiguration;
-import org.apache.commons.configuration2.ImmutableConfiguration;
-import org.apache.commons.configuration2.ImmutableHierarchicalConfiguration;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -19,6 +17,7 @@ public final class Archetype extends ReferenceBase {
         this.org = configuration.getString("archetype.organization");
         this.version = configuration.getString("archetype.version");
         this.configuration = configuration;
+        this.packageType = "yml";
 
         try {
             this.base_build = configuration.containsKey("archetype.base_build") ?

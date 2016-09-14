@@ -27,12 +27,12 @@ public final class ProjectRunner {
     static final String bundleDir = ".fab/bundles";
     static final String cacheDir = ".fab/cache";
     private final List<String> args;
-    private final boolean debug;
     private final String envName;
+    private final String outputLevel;
 
-    public ProjectRunner(List<String> args, String envName, boolean debug) {
+    public ProjectRunner(List<String> args, String envName, String logLevel) {
         this.args = args;
-        this.debug = debug;
+        this.outputLevel = logLevel;
         this.envName = envName;
     }
 
@@ -81,13 +81,13 @@ public final class ProjectRunner {
             // start the service
             Object service = ctx.getService(ctx.getServiceReference("org.m410.fabricate.service.FabricateService"));
             service.getClass().getMethod("setEnv", String.class).invoke(service, envName);
-
-            // todo add logging level
+            service.getClass().getMethod("setOutputLevel", String.class).invoke(service, outputLevel);
             
             String out = String.join("\n", Files.readAllLines(project.getRuntimeConfigFile().toPath()));
             service.getClass().getMethod("addConfig", String.class).invoke(service, out);
 
             service.getClass().getMethod("postStartupWiring").invoke(service);
+
             final String[] objects = args.toArray(new String[args.size()]);
             service.getClass().getMethod("execute", String[].class).invoke(service, new Object[]{objects});
         }
@@ -188,7 +188,7 @@ public final class ProjectRunner {
     }
 
     private void log(Object msg) {
-        if (debug) {
+        if (outputLevel.equals("debug")) {
             System.out.println(msg);
         }
     }

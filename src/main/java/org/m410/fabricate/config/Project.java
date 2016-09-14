@@ -23,7 +23,7 @@ import java.util.stream.IntStream;
  * @author m410
  */
 public final class Project implements Reference {
-    private final Pattern modulePattern = Pattern.compile("^(persistence|modules|views|testing|logging)\\(.*?\\)$");
+    static final Pattern modulePattern = Pattern.compile("^(persistence|modules|views|testing|logging)\\(.*?\\)$");
 
     private final File projectFile;
 
@@ -243,29 +243,17 @@ public final class Project implements Reference {
     }
 
     private List<Reference> loadModules(BaseHierarchicalConfiguration configuration) throws IOException {
-        // todo this could be cleaned up by using the modulePattern regex
-        List<Reference> mods = new ArrayList<>();
-        mods.addAll(loadModStereotypes("persistence", configuration, Type.PROJECT, Level.PROJECT));
-        mods.addAll(loadModStereotypes("modules", configuration, Type.PROJECT, Level.PROJECT));
-        mods.addAll(loadModStereotypes("views", configuration, Type.PROJECT, Level.PROJECT));
-        mods.addAll(loadModStereotypes("testing", configuration, Type.PROJECT, Level.PROJECT));
-        mods.addAll(loadModStereotypes("logging", configuration, Type.PROJECT, Level.PROJECT));
-
-        return mods;
+        return loadModStereotypes(configuration, Type.PROJECT, Level.PROJECT);
     }
 
-    private List<Reference> loadModStereotypes(String nodeName, BaseHierarchicalConfiguration config, Type type,
-            Level level) {
+    private List<Reference> loadModStereotypes(BaseHierarchicalConfiguration config, Type type, Level level) {
         List<Reference> mods = new ArrayList<>();
         final Iterator<String> keys = config.getKeys();
-
-        // todo replace other module pattern
-        Pattern modulePattern = Pattern.compile("^(" + nodeName + ")\\(.*?\\)$");
 
         while (keys.hasNext()) {
             final String next = keys.next();
 
-            if (modulePattern.matcher(next).matches()) {
+            if (Project.modulePattern.matcher(next).matches()) {
                 mods.add(new ModuleRef(next, config.configurationAt(next), type, level, environment));
             }
         }
@@ -291,6 +279,26 @@ public final class Project implements Reference {
         try(FileWriter out = new FileWriter(hash)) {
             out.write(this.checksum);
         }
+    }
+
+    @Override
+    public String toMavenPath() {
+        return null;
+    }
+
+    @Override
+    public String toMavenSnapshotMetadata() {
+        return null;
+    }
+
+    @Override
+    public boolean isMavenSnapshot() {
+        return false;
+    }
+
+    @Override
+    public String toSnapshotPath(String sVersion) {
+        return null;
     }
 
     @Override

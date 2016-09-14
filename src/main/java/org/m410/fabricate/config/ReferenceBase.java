@@ -17,6 +17,7 @@ public abstract class ReferenceBase implements Reference {
     protected String environment;
     protected BaseHierarchicalConfiguration configuration;
     protected URL remoteReference;
+    protected String packageType = "jar";
 
     @Override
     public String getName() {
@@ -56,6 +57,28 @@ public abstract class ReferenceBase implements Reference {
     @Override
     public Optional<URL> getRemoteReference() {
         return Optional.ofNullable(remoteReference);
+    }
+
+    @Override
+    public String toMavenPath() {
+        return "/" + org.replaceAll("\\.", "/") + "/" + name + "/" + version + "/" + name + "-" + version + "." +
+               packageType;
+    }
+
+    @Override
+    public String toMavenSnapshotMetadata() {
+        return "/" + org.replaceAll("\\.", "/") + "/" + name + "/" + version + "/maven-metadata.xml";
+    }
+
+    @Override
+    public boolean isMavenSnapshot() {
+        return version.endsWith("SNAPSHOT");
+    }
+
+    @Override
+    public String toSnapshotPath(String sVersion) {
+        final String orgOut = org.replaceAll("\\.", "/");
+        return "/" + orgOut + "/" + name + "/" + version + "/" + name + "-" + sVersion + "." + packageType;
     }
 
     @Override
