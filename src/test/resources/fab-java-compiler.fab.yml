@@ -25,9 +25,10 @@ persistence:
       hibernate.connection.url: "jdbc:h2:db/demo"
       hibernate.hbm2ddl.auto: update
 modules:
-  - remote_reference: file:target/fab-loader-bundle-0.2-SNAPSHOT.jar
-    organization: org.m410.mod
+  - organization: org.m410.mod
     version: 0.2.0
+    remote_reference: file:target/fab-loader-bundle-0.2-SNAPSHOT.jar
+
 logging:
   appenders:
     - name: STDOUT
