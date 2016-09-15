@@ -3,13 +3,13 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.m410.fabricate</groupId>
     <artifactId>fab-junit</artifactId>
-    <version>0.2-SNAPSHOT</version>
+    <version>0.2</version>
     <packaging>bundle</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <fab-share.version>0.2-SNAPSHOT</fab-share.version>
+        <fab-share.version>0.2</fab-share.version>
     </properties>
     <distributionManagement>
         <repository>
