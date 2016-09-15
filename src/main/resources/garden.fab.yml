@@ -1,31 +1,31 @@
 archetype:
   name: garden
-  version: 0.2-SNAPSHOT
+  version: "${project.version}"
   organization: org.m410.fabricate
 
 bundles:
   - name: fab-share
     org: org.m410.fabricate
-    version: 0.2-SNAPSHOT
+    version: "${fab-share.version}"
   - name: garden
     org: org.m410.fabricate
-    version: 0.2-SNAPSHOT
+    version: "${garden.version}"
   - name: fab-war
     org: org.m410.fabricate
-    version: 0.2-SNAPSHOT
+    version: "${fab-war.version}"
   - name: fab-junit
     org: org.m410.fabricate
-    version: 0.2-SNAPSHOT
+    version: "${fab-junit.version}"
   - name: fab-java-compiler
     org: org.m410.fabricate
-    version: 0.2-SNAPSHOT
+    version: "${fab-java-compiler.version}"
   - name: fab-java-dependencies
     org: org.m410.fabricate
-    version: 0.2-SNAPSHOT
+    version: "${fab-java-dependencies.version}"
 
 dependencies:
-  - { scope: compile, org: org.m410.garden, name: garden, rev: 0.2.0-SNAPSHOT }
-  - { scope: compile, org: org.m410, name: yaml-configuration, rev: 0.2-SNAPSHOT}
+  - { scope: compile, org: org.m410.garden, name: garden, rev: "${project.version}" }
+  - { scope: compile, org: org.m410, name: yaml-configuration, rev: "${yaml-configuration.version}" }
   - { scope: compile, org: org.apache.commons, name: commons-configuration2, rev: "2.1"}
   - { scope: compile, org: org.yaml, name: snakeyaml, rev: "1.17"}
   - { scope: compile, org: com.google.code.gson, name: gson, rev: 2.2.4 }

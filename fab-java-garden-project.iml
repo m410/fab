@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="Osmorc" name="OSGi">
+      <configuration manifestGenerationMode="OsmorcControlled" manifestLocation="" jarfileLocation="garden-0.2-SNAPSHOT.jar" outputPathType="CompilerOutputPath" bndFileLocation="" bundlorFileLocation="" bundleActivator="org.m410.fabricate.garden.Activator" bundleSymbolicName="org.m410.fabricate.garden" bundleVersion="1.0.0" ignoreFilePattern="" useProjectDefaultManifestFileLocation="true" alwaysRebuildBundleJAR="false" doNotSynchronizeWithMaven="false">
+        <additionalProperties>
+          <property key="Embed-Dependency" value="*;scope=compile|runtime;inline=true" />
+          <property key="Bundle-Name" value="garden" />
+          <property key="Private-Package" value="org.m410.fabricate.garden" />
+          <property key="Import-Package" value="org.osgi.framework,org.m410.fabricate.service,org.m410.fabricate.builder,*;resolution:=optional" />
+          <property key="Export-Package" value="org.m410.fabricate.garden" />
+          <property key="Include-Resource" value="@$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.main/4.4.0/org.apache.felix.main-4.4.0.jar,@$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.framework/4.4.0/org.apache.felix.framework-4.4.0.jar,@$MAVEN_REPOSITORY$/org/yaml/snakeyaml/1.13/snakeyaml-1.13.jar,@$MAVEN_REPOSITORY$/javax/websocket/javax.websocket-api/1.1/javax.websocket-api-1.1.jar,@$MAVEN_REPOSITORY$/javax/servlet/javax.servlet-api/3.1.0/javax.servlet-api-3.1.0.jar" />
+        </additionalProperties>
+        <additionalJARContents />
+      </configuration>
+    </facet>
+  </component>
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/target/classes" />
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
