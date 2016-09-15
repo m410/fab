@@ -1,5 +1,5 @@
-modules(org.m410.fabricate:fab-war:2.0-SNAPSHOT):
-  bundles:
-    - name: fab-war
-      org: org.m410.fabricate
-      rev: "0.1"
+modules(org.m410.fabricate:fab-war:${project.version}):
+bundles:
+  - name: fab-war
+    org: org.m410.fabricate
+    rev: "${project.version}"

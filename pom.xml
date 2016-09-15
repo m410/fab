@@ -7,6 +7,8 @@
     <packaging>bundle</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <fab-share.version>0.2-SNAPSHOT</fab-share.version>
+        <yaml-configuration.version>0.2-SNAPSHOT</yaml-configuration.version>
     </properties>
 
     <distributionManagement>
@@ -42,6 +44,12 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
