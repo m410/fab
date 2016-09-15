@@ -1,10 +1,10 @@
-testing(org.m410.fabricate:fab-junit:0.2-SNAPSHOT):
+testing(org.m410.fabricate:fab-junit:${project.version}):
   placeholder: placeholder
 
 bundles:
 - name: fab-junit
   org: org.m410.fabricate
-  version: 0.2-SNAPSHOT
+  version: "${project.version}"
 
 dependencies:
 - { scope: test, org: org.hamcrest, name: hamcrest-core, rev: "1.3"}
