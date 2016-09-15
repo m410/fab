@@ -1,31 +1,31 @@
 archetype:
   name: java-lib
-  version: 0.2-SNAPSHOT
+  version: "${project.version}"
   organization: org.m410.fabricate
 
 bundles:
   - name: fab-share
     org: org.m410.fabricate
-    version: 0.2-SNAPSHOT
+    version: "${fab-share.version}"
   - name: java-lib
     org: org.m410.fabricate
-    version: 0.2-SNAPSHOT
+    version: "${project.version}"
   - name: fab-jar
     org: org.m410.fabricate
-    version: 0.2-SNAPSHOT
+    version: "${fab-jar.version}"
   - name: fab-junit
     org: org.m410.fabricate
-    version: 0.2-SNAPSHOT
+    version: "${fab-junit.version}"
   - name: fab-java-compiler
     org: org.m410.fabricate
-    version: 0.2-SNAPSHOT
+    version: "${fab-java-compiler.version}"
   - name: fab-java-dependencies
     org: org.m410.fabricate
-    version: 0.2-SNAPSHOT
+    version: "${fab-java-dependencies.version}"
 
 build:
   cacheDir: .fab
-  defaultEnvironment: development
+  defaultEnvironment: default
   defaultCommand: build
   lang: java
   langVersion: "1.8"
