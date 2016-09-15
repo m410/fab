@@ -10,8 +10,6 @@ Install scoop from the url: http://scoop.sh and run the command:
 
 ## Install on mac using homebrew
 
-$$$$ instructoins to create forumla locally.
- 
 Install homebrew from the url: http://brew.sh and run the command:
     
     > brew install https://raw.githubusercontent.com/m410/fab/master/fab.rb
@@ -25,11 +23,11 @@ Make sure java is installed:
 To install on Unix (mac,linux) based systems, download the zip and place it on your file
 system.
 
-    /opt/local/fab.zip
+    /opt/local/fab-0.2.tar.gz
 
 unzip it with
 
-    > unzip /opt/local/fab.zip
+    > unzip /opt/local/fab-0.2.tar.gz
 
 And add the bin directory to you path by editing you bash profile.
 
@@ -51,22 +49,20 @@ you should see something like this:
 
 ## Projects
 
-A project is a directory on your file system that contains one fabricate configuration
-file the conforms to a project schema.
+Fab works from within a project and globally on your system.  When working outside
+of a project you can create new project, manage your repostories, etc. From
+within a project, the commands available depend on the type of project
+and modules installed.
 
- -  brzy-webapp
- -  scala library
+ -  [Garden web application example.](https://github.com/m410/example-garden)
+ -  [Basic java jar example.](https://github.com/m410/example-lib)
+ 
 
 ## Commands
 
 List the tasks in the current project
 
-    > fab -tasks
-
-List avalable archetypes
-
-    > fab-db list
+    > fab tasks
 
 
-## Tasks
 
