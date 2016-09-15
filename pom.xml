@@ -8,11 +8,11 @@
     <name>Fab(ricate) Package Installer</name>
     <description>Builds the distributable zip file, that is the fabricate command line utilities.
     </description>
-    <version>0.2</version>
+    <version>0.3-SNAPSHOT</version>
     <packaging>pom</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <fab-cli-version>0.2</fab-cli-version>
+        <fab-cli-version>0.3-SNAPSHOT</fab-cli-version>
     </properties>
     <build>
         <plugins>

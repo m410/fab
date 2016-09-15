@@ -2,7 +2,7 @@
     "homepage": "http://www.m410.org",
     "version": "0.2",
     "license": "Apache 2.0",
-    "url": "https://raw.githubusercontent.com/m410/fab/master/fab-0.2.tar.gz",
+  "url": "https://github.com/m410/fab/releases/download/0.2/fab-0.2.tar.gz",
     "extract_dir": "fab-0.2",
     "bin": "bin\\fab.bat",
     "depends": "openjdk"
