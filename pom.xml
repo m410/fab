@@ -3,12 +3,12 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.m410.fabricate</groupId>
     <artifactId>fab-war</artifactId>
-    <version>0.2</version>
+    <version>0.3-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <fab-share.version>0.2</fab-share.version>
-        <yaml-configuration.version>0.2</yaml-configuration.version>
+        <fab-share.version>0.3-SNAPSHOT</fab-share.version>
+        <yaml-configuration.version>0.3-SNAPSHOT</yaml-configuration.version>
     </properties>
 
     <distributionManagement>
@@ -32,7 +32,7 @@
         <dependency>
             <groupId>org.m410.fabricate</groupId>
             <artifactId>fab-share</artifactId>
-            <version>0.2</version>
+            <version>${fab-share.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
