@@ -7,6 +7,9 @@
     <packaging>bundle</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <fab-share.version>0.2-SNAPSHOT</fab-share.version>
     </properties>
 
     <distributionManagement>
@@ -30,7 +33,7 @@
         <dependency>
             <groupId>org.m410.fabricate</groupId>
             <artifactId>fab-share</artifactId>
-            <version>0.2-SNAPSHOT</version>
+            <version>${fab-share.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -48,16 +51,13 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
