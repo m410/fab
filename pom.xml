@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.m410.fabricate</groupId>
     <artifactId>fab-cli</artifactId>
-    <version>0.2-SNAPSHOT</version>
+    <version>0.2</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -44,7 +44,7 @@
         <dependency>
             <groupId>org.m410</groupId>
             <artifactId>yaml-configuration</artifactId>
-            <version>0.2-SNAPSHOT</version>
+            <version>0.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
