@@ -3,14 +3,14 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.m410.fabricate</groupId>
     <artifactId>fab-java-dependencies</artifactId>
-    <version>0.2</version>
+    <version>0.3-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <fab-share.version>0.2</fab-share.version>
-        <yaml-configuration.version>0.2</yaml-configuration.version>
+        <fab-share.version>0.3-SNAPSHOT</fab-share.version>
+        <yaml-configuration.version>0.3-SNAPSHOT</yaml-configuration.version>
     </properties>
 
     <distributionManagement>
