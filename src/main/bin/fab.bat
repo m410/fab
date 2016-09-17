@@ -22,9 +22,10 @@
 @REM ----------------------------------------------------------------------------
 
 @echo off
+setLocal EnableDelayedExpansion
 
-set LAUNCHER=org.m410.fab.Main
-set JAVA_OPTS="-client -Xmx512m"
+set LAUNCHER=org.m410.fabricate.Main
+set JAVA_OPTS="-Xmx512m"
 
 @REM set %HOME% to equivalent of $HOME
 if "%HOME%" == "" (set "HOME=%HOMEDRIVE%%HOMEPATH%")
@@ -57,33 +58,25 @@ echo.
 goto error
 
 :chkMHome
-if not "%BRZY_HOME%"=="" goto valMHome
-
-if "%OS%"=="Windows_NT" SET "BRZY_HOME=%~dp0.."
-if "%OS%"=="WINNT" SET "BRZY_HOME=%~dp0.."
-if not "%BRZY_HOME%"=="" goto valMHome
+for %%i in ("%~dp0..") do set "FAB_HOME=%%~fi"
+goto checkMBat
 
 echo.
-echo ERROR: BRZY_HOME not found in your environment.
-echo Please set the BRZY_HOME variable in your environment to match the
+echo ERROR: FAB_HOME not found in your environment.
+echo Please set the FAB_HOME variable in your environment to match the
 echo location of the Maven installation
 echo.
 goto error
 
-:valMHome
 
-:stripMHome
-if not "_%BRZY_HOME:~-1%"=="_\" goto checkMBat
-set "BRZY_HOME=%BRZY_HOME:~0,-1%"
-goto stripMHome
 
 :checkMBat
-if exist "%BRZY_HOME%\bin\fab.bat" goto init
+if exist "%FAB_HOME%\bin\fab.bat" goto init
 
 echo.
-echo ERROR: BRZY_HOME is set to an invalid directory.
-echo BRZY_HOME = "%BRZY_HOME%"
-echo Please set the BRZY_HOME variable in your environment to match the
+echo ERROR: FAB_HOME is set to an invalid directory.
+echo FAB_HOME = "%FAB_HOME%"
+echo Please set the FAB_HOME variable in your environment to match the
 echo location of the Brzy installation
 echo.
 goto error
@@ -104,49 +97,57 @@ if NOT "%OS%"=="Windows_NT" goto Win9xArg
 if "%@eval[2+2]" == "4" goto 4NTArgs
 
 @REM -- Regular WinNT shell
-set BRZY_CMD_LINE_ARGS=%*
+set CMD_LINE_ARGS=%*
 goto endInit
 
 @REM The 4NT Shell from jp software
 :4NTArgs
-set BRZY_CMD_LINE_ARGS=%$
+set CMD_LINE_ARGS=%$
 goto endInit
 
 :Win9xArg
 @REM Slurp the command line arguments.  This loop allows for an unlimited number
 @REM of agruments (up to the command line limit, anyway).
-set BRZY_CMD_LINE_ARGS=
+set CMD_LINE_ARGS=
 :Win9xApp
 if %1a==a goto endInit
-set BRZY_CMD_LINE_ARGS=%BRZY_CMD_LINE_ARGS% %1
+set CMD_LINE_ARGS=%CMD_LINE_ARGS% %1
 shift
 goto Win9xApp
 
 @REM Reaching here means variables are defined and arguments have been captured
 :endInit
-SET BRZY_JAVA_EXE="%JAVA_HOME%\bin\java.exe"
+SET JAVA_EXE="%JAVA_HOME%\bin\java.exe"
 
-@REM -- 4NT shell
-if "%@eval[2+2]" == "4" goto 4NTCWJars
 
-@REM -- Regular WinNT shell
-set JARS=
-for %%i in ("%BRZY_HOME%"\lib\*) do call :append %%i
-goto runbrzy
+@REM create the classpath
 
-:append
-set JARS=%JARS%;%1
-goto :eof
+set FABPATH="%FAB_HOME%"
+set CLASSPATH="
+for /R %FABPATH%\lib %%a in (*.jar) do (
+  set CLASSPATH=!CLASSPATH!;%%a
+)
+set CLASSPATH=!CLASSPATH!"
 
-@REM The 4NT Shell from jp software
-:4NTCWJars
-for %%i in ("%BRZY_HOME%\lib\*") do set JARS="%%i"
-goto runbrzy
+@REM set CLASSPATH=%FAB_HOME%\lib\commons-beanutils-1.9.1.jar;%FAB_HOME%\lib\commons-cli-1.3.1.jar;%FAB_HOME%\lib\commons-codec-1.9.jar;%FAB_HOME%\lib\commons-collections-3.2.1.jar;%FAB_HOME%\lib\commons-configuration2-2.1.jar;%FAB_HOME%\lib\commons-lang3-3.3.2.jar;%FAB_HOME%\lib\commons-logging-1.1.1.jar;%FAB_HOME%\lib\fab-cli-0.2.jar;%FAB_HOME%\lib\fluent-hc-4.5.2.jar;%FAB_HOME%\lib\httpclient-4.5.2.jar;%FAB_HOME%\lib\httpcore-4.4.4.jar;%FAB_HOME%\lib\org.apache.felix.framework-4.4.0.jar;%FAB_HOME%\lib\org.apache.felix.main-4.4.0.jar;%FAB_HOME%\lib\snakeyaml-1.13.jar;%FAB_HOME%\lib\yaml-configuration-0.2.jar;
 
-@REM Start BRZY
-:runbrzy
 
-%BRZY_JAVA_EXE% %JAVA_OPTS% -classpath %JARS%  "-Dbrzy.home=%BRZY_HOME%" %LAUNCHER% %BRZY_CMD_LINE_ARGS%
+goto runfab
+
+
+@REM Start FAB
+:runfab
+
+@REM echo JAVA_EXE = %JAVA_EXE%
+@REM echo FAB_HOME = %FAB_HOME%
+@REM echo JAVA_OPTS = %JAVA_OPTS%
+@REM echo CLASSPATH = %CLASSPATH%
+@REM echo LAUNCHER = %LAUNCHER%
+@REM echo CMD_LINE_ARGS = %CMD_LINE_ARGS%
+
+@REM %JAVA_EXE% %JAVA_OPTS% -classpath %CLASSPATH%  -Dfab.home="%FAB_HOME%" %LAUNCHER% %CMD_LINE_ARGS%
+%JAVA_EXE% %JAVA_OPTS% -classpath %CLASSPATH%  -Dfab.home="%FAB_HOME%" %LAUNCHER% %CMD_LINE_ARGS%
+
 if ERRORLEVEL 1 goto error
 goto end
 
@@ -162,8 +163,8 @@ if "%OS%"=="WINNT" goto endNT
 
 @REM For old DOS remove the set variables from ENV - we assume they were not set
 @REM before we started - at least we don't leave any baggage around
-set BRZY_JAVA_EXE=
-set BRZY_CMD_LINE_ARGS=
+set JAVA_EXE=
+set CMD_LINE_ARGS=
 goto postExec
 
 :endNT
@@ -173,5 +174,3 @@ goto postExec
 
 
 cmd /C exit /B %ERROR_CODE%
-
-
