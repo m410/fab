@@ -15,7 +15,6 @@ public class Activator implements BundleActivator {
         FabricateService fabricateService = (FabricateService) context.getService(fabricateServiceReference);
 
         fabricateService.addCommandModifier(cmd -> {
-            System.out.println(cmd);
             cmd.getSteps().stream()
                     .filter(step -> step.getName().equalsIgnoreCase("initialize"))
                     .forEach(step -> step.append(new IvyDependencyTask()));
