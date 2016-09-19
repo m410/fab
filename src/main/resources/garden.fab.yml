@@ -1,3 +1,4 @@
+environment: default
 archetype:
   name: garden
   version: "${project.version}"
