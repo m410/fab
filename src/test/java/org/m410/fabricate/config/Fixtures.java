@@ -6,8 +6,8 @@ import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.configuration2.tree.UnionCombiner;
+import org.m410.config.YamlConfig;
 import org.m410.config.YamlConfiguration;
-import org.m410.config.YamlEnvConfiguration;
 
 /**
  * @author Michael Fortin
@@ -15,12 +15,9 @@ import org.m410.config.YamlEnvConfiguration;
 public final class Fixtures {
 
     public static ImmutableHierarchicalConfiguration config() throws ConfigurationException {
-        System.setProperty("fabricate.env","development");
         CombinedConfiguration combined = new CombinedConfiguration(new UnionCombiner());
 
-        final YamlConfiguration envConfig = new FileBasedConfigurationBuilder<>(YamlEnvConfiguration.class)
-                .configure(new Parameters().hierarchical().setFileName("src/test/resources/garden.test.fab.yml"))
-                .getConfiguration();
+        final YamlConfiguration envConfig = YamlConfig.load("src/test/resources/garden.test.fab.yml", "development");
         combined.addConfiguration(envConfig,"env");
 
         final YamlConfiguration overlapConfig = new FileBasedConfigurationBuilder<>(YamlConfiguration.class)
@@ -38,7 +35,6 @@ public final class Fixtures {
                 .getConfiguration();
         combined.addConfiguration(defaultConfig,"default");
 
-        System.clearProperty("fabricate.env");
 
         return new YamlConfiguration(combined);
     }
