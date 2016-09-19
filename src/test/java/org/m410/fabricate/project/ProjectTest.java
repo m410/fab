@@ -38,7 +38,7 @@ public class ProjectTest {
         assertEquals("0.2-SNAPSHOT", project.getArchetype().getVersion());
 
         assertNotNull("no modules", project.getModuleReferences());
-        assertEquals(2, project.getModuleReferences().size());
+        assertEquals(4, project.getModuleReferences().size());
 
         assertNotNull("no bundles", project.getBundles());
         assertEquals(3, project.getBundles().size());

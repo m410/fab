@@ -129,7 +129,6 @@ public final class Resolver {
             }
             else {
                 final String url = repository.getUrl() + bundle.toMavenPath();
-                System.out.println("url:" + url);
 
                 if (isValidUrl(url)) {
                     writeToFile(file, url);

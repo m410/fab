@@ -30,8 +30,9 @@ public final class Main {
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd = parser.parse( options, args);
 
-        String logLevel = cmd.hasOption("l") ? cmd.getOptionValue("l").toLowerCase() : "warn";
-        String env = cmd.hasOption("e") ? cmd.getOptionValue("e") : "default";
+        final String logLevel = cmd.hasOption("l") ? cmd.getOptionValue("l").toLowerCase() : "warn";
+        final String env = cmd.hasOption("e") ? cmd.getOptionValue("e") : "default";
+        final String userDir = System.getProperty("user.dir");
 
         if (!Arrays.asList(levels).contains(logLevel)) {
             System.out.println("Invalid logging level '" + logLevel + "', must be one of: " + Arrays.toString(levels));
@@ -45,10 +46,10 @@ public final class Main {
             new HelpFormatter().printHelp("fab", options, true);
             new GlobalRunner(cmd.getArgList()).outputCommands();
         }
-        else if(cmd.getArgList().size() > 0 && isGlobal(cmd.getArgList().get(0))) {
+        else if (cmd.getArgList().size() > 0 && !isProjectDir(userDir) && isGlobal(cmd.getArgList().get(0))) {
             runGlobalCmd(cmd.getArgList());
         }
-        else if(isProjectDir(System.getProperty("user.dir"))) {
+        else if (isProjectDir(userDir)) {
             runProjectCmd(cmd.getArgList(), env, logLevel);
         }
         else {

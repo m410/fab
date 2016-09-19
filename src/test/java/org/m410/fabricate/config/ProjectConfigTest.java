@@ -24,6 +24,6 @@ public class ProjectConfigTest {
         assertNotNull(project);
         assertNotNull(project.getArchetype());
         assertEquals(3, project.getBundles().size());
-        assertEquals(2, project.getModuleReferences().size());
+        assertEquals(4, project.getModuleReferences().size());
     }
 }
