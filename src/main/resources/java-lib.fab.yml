@@ -1,3 +1,4 @@
+environment: default
 archetype:
   name: java-lib
   version: "${project.version}"
