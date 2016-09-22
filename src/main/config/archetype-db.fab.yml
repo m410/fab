@@ -1,34 +1,53 @@
 cache: "~/.fab"
 
-repositories:
-- id: m410
-  url: "http://repo.m410.org/content/repositories/releases"
-- id: maven-central
-  url: "http://repo.maven.apache.org/maven2"
-- id: m410-snapshot
-  url: "http://repo.brzy.org/content/repositories/snapshots"
 
 archetypes:
 - name: garden
   org: org.m410.fabricate
-  type: project # or module
   description: A java web mvc framework that produces a war
   homepage: http://m410.org
   documentation: http://m410.org
   license: Apache 2
-  dist: http://someurl.com
-  hash: asdffdasasdffdsa
+  developers:
+  - name: Michael Fortin
+    email: michael.1@m410.us
+    title: originator
+  current_version: "0.2"
   versions:
   - version: "0.2"
     release_date: 2016-01-01
-
-
+    url: https://github.com/m410/example-garden/archive/master.zip
 
 - name: java-lib
   org: org.m410.fabricate
-  description: A basic project that produces a jar
+  description: A java web mvc framework that produces a war
   homepage: http://m410.org
+  documentation: http://m410.org
   license: Apache 2
+  developers:
+  - name: Michael Fortin
+    email: michael.1@m410.us
+    title: originator
+  current_version: "0.2"
   versions:
   - version: "0.2"
     release_date: 2016-01-01
+    url: https://github.com/m410/example-lib/archive/master.zip
+
+modules:
+- name: fab-junit
+  org: org.m410.fabricate
+  description: added junit to classpath and a build task to execute unit tests in the test directory
+  homepage: http://m410.org
+  documentation: http://m410.org
+  license: Apache 2
+  developers:
+  - name: Michael Fortin
+    email: michael.1@m410.us
+    title: originator
+  current_version: "0.2"
+  versions:
+  - version: "0.2"
+    release_date: 2016-01-01
+    url: https://github.com/m410/fab/releases/download/0.2/fab-0.2.tar.gz
+    hash: b3c2c338cb387e674a8f63ac289c4c139ffff7d554cdc049fed253cd7cff4dee

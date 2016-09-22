@@ -131,4 +131,4 @@ if $cygwin; then
     CLASSPATH=`cygpath --path --windows "$CLASSPATH"`
 fi
 
-exec "$JAVACMD" $JAVA_OPTS -classpath "${CLASSPATH}" ${LAUNCHER} "$@"
+exec "$JAVACMD" $JAVA_OPTS -Dfab.home="${FAB_HOME}" -classpath "${CLASSPATH}" ${LAUNCHER} "$@"
