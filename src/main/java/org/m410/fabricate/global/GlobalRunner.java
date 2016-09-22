@@ -1,5 +1,8 @@
 package org.m410.fabricate.global;
 
+import org.apache.commons.configuration2.ex.ConfigurationException;
+
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -9,6 +12,7 @@ import java.util.List;
  * @author m410
  */
 public final class GlobalRunner {
+
     private static final List<Cmd> cmds = Arrays.asList(
             new Cmd("create", "Create a new project by name", (dataStore, args) -> {
                 new CreateCmd(dataStore, args).run();
@@ -21,11 +25,12 @@ public final class GlobalRunner {
             }));
 
     private final List<String> args;
-    private DataStore dataStore = new DataStore();
+    private DataStore dataStore;
 
-    public GlobalRunner(List<String> args) {
+    public GlobalRunner(List<String> args) throws IOException, ConfigurationException {
         this.args = args;
-        // todo need to parse or load the project/module data store
+        final String home = System.getProperty("fab.home");
+        dataStore = new DataStore(home);
     }
 
     public void run() throws Exception {
