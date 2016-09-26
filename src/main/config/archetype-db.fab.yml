@@ -1,5 +1,6 @@
 cache: "~/.fab"
 
+# todo should be split into individual files
 
 archetypes:
 - name: garden
@@ -15,8 +16,8 @@ archetypes:
   current_version: "0.2"
   versions:
   - version: "0.2"
-    release_date: 2016-01-01
-    url: https://github.com/m410/example-garden/archive/master.zip
+    release_date: 2016-09-22T11:09:40-0400
+    url: https://codeload.github.com/m410/garden/zip/0.2
 
 - name: java-lib
   org: org.m410.fabricate
@@ -31,8 +32,8 @@ archetypes:
   current_version: "0.2"
   versions:
   - version: "0.2"
-    release_date: 2016-01-01
-    url: https://github.com/m410/example-lib/archive/master.zip
+    release_date: 2016-09-22T11:09:40-0400
+    url: https://codeload.github.com/m410/example-lib/zip/0.2
 
 modules:
 - name: fab-junit
