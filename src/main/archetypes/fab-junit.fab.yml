@@ -1,0 +1,18 @@
+
+name: fab-junit
+org: org.m410.fabricate
+description: added junit to classpath and a build task to execute unit tests in the test directory
+type: module
+homepage: http://m410.org
+documentation: http://m410.org
+license: Apache 2
+developers:
+- name: Michael Fortin
+  email: michael.1@m410.us
+  title: originator
+current_version: "0.2"
+versions:
+- version: "0.2"
+  release_date: 2016-01-01
+  url: https://github.com/m410/fab/releases/download/0.2/fab-0.2.tar.gz
+  hash: b3c2c338cb387e674a8f63ac289c4c139ffff7d554cdc049fed253cd7cff4dee

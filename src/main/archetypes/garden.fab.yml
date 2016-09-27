@@ -1,0 +1,16 @@
+name: garden
+org: org.m410.fabricate
+description: A java web mvc framework that produces a war
+type: project
+homepage: http://m410.org
+documentation: http://m410.org
+license: Apache 2
+developers:
+- name: Michael Fortin
+  email: michael.1@m410.us
+  title: originator
+current_version: "0.2"
+versions:
+- version: "0.2"
+  release_date: 2016-09-22T11:09:40-0400
+  url: https://codeload.github.com/m410/example-garden/zip/0.2
