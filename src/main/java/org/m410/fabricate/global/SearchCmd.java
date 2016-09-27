@@ -1,7 +1,7 @@
 package org.m410.fabricate.global;
 
-import org.apache.commons.configuration2.ImmutableHierarchicalConfiguration;
 import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.m410.config.YamlConfiguration;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -23,7 +23,7 @@ public class SearchCmd implements Runnable {
     @Override
     public void run() {
         if (name.length == 2) {
-            List<ImmutableHierarchicalConfiguration> config = dataStore.searchBy(name[1]);
+            List<YamlConfiguration> config = dataStore.searchBy(name[1]);
 
             config.forEach(c -> {
                 final Iterator<String> keys = c.getKeys();
@@ -37,10 +37,18 @@ public class SearchCmd implements Runnable {
         }
         else {
             try (StringWriter writer = new StringWriter()) {
-                dataStore.configuration.write(writer);
+                dataStore.configurations.forEach(c -> {
+                    try {
+                        c.write(writer);
+                        writer.write(System.getProperty("line.separator"));
+                    }
+                    catch (ConfigurationException | IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
                 System.out.println(writer.toString());
             }
-            catch (ConfigurationException | IOException e) {
+            catch (IOException e) {
                 e.printStackTrace();
             }
         }

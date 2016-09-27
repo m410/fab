@@ -36,7 +36,7 @@ public class CreateCmd implements Runnable {
     }
 
     private void doCli() {
-        final Optional<ImmutableHierarchicalConfiguration> byName = dataStore.findByName(name[1]);
+        final Optional<YamlConfiguration> byName = dataStore.findByName(name[1]);
         Scanner scanner = new Scanner(System.in);
         System.out.print(" name: ");
         String name = scanner.next();
