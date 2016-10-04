@@ -1,6 +1,6 @@
 archetype:
   name: test-project
-  version: 0.2-SNAPSHOT
+  version: 0.3-SNAPSHOT
   organization: org.m410.fabricate.garden
   remote_reference: file:src/test/resources/test-project.default.fab.yml
 

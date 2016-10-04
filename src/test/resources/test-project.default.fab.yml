@@ -1,12 +1,12 @@
 archetype:
   name: garden
-  version: 0.2-SNAPSHOT
+  version: 0.3-SNAPSHOT
   organization: org.m410.fabricate.garden
 
 bundles:
   - name: garden
     org: org.m410.fabricate
-    version: 0.2-SNAPSHOT
+    version: 0.3-SNAPSHOT
 
 dependencies:
 - { scope: compile, org: org.m410.garden, name: garden, rev: 0.2.0-SNAPSHOT }
