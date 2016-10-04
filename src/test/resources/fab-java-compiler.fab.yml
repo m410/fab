@@ -27,7 +27,7 @@ persistence:
 modules:
   - organization: org.m410.mod
     version: 0.2.0
-    remote_reference: file:target/fab-loader-bundle-0.2-SNAPSHOT.jar
+    remote_reference: file:target/fab-loader-bundle-0.3-SNAPSHOT.jar
 
 logging:
   appenders:
