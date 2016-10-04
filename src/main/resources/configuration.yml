@@ -28,7 +28,7 @@ persistence(org.m410.mod.persistence:m410-jpa:0.1):
     hibernate.hbm2ddl.auto: update
 
 modules(org.m410.mod:demo:0.2.0):
-  remote_reference: file:target/fab-loader-bundle-0.2-SNAPSHOT.jar
+  remote_reference: file:target/fab-loader-bundle-0.3-SNAPSHOT.jar
 
 logging:
   appenders:

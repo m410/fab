@@ -25,7 +25,7 @@ public class MavenResolverTask implements Task {
     public void execute(BuildContext context) throws Exception {
         //  https://github.com/shrinkwrap/resolver
         //        String coordinate = "commons-fileupload:commons-fileupload:1.3.2";
-        String coordinate = "org.m410.fabricate:garden:0.2-SNAPSHOT";
+        String coordinate = "org.m410.fabricate:garden:0.3-SNAPSHOT";
 
         File[] files = Maven.configureResolver()
                 .withClassPathResolution(false)
