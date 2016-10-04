@@ -3,14 +3,14 @@ package org.m410.fabricate.builder;
 import org.apache.commons.configuration2.ImmutableHierarchicalConfiguration;
 import org.m410.fabricate.config.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.StreamSupport;
 
 /**
  * @author m410
  */
 public final class BuildContextImpl implements BuildContext {
+
     private final Cli cli;
     private final Application application;
     private final Build build;
@@ -48,6 +48,21 @@ public final class BuildContextImpl implements BuildContext {
         this.modules = context.getModules();
         this.classpaths = new HashMap<>(); // todo wrong!!!!
         this.configuration = context.getConfiguration();
+    }
+
+    @Override
+    public Optional<ImmutableHierarchicalConfiguration> configAt(String org, String name) {
+        final String n = name.replaceAll("\\.", "..");
+        final String o = org.replaceAll("\\.", "..");
+        final String pattern = "^(\\w+)\\(" + o + ":" + n + ":(.+)\\)$";
+
+        final Iterator<String> keys = configuration.getKeys();
+        Iterable<String> iterable = () -> keys;
+
+        return StreamSupport.stream(iterable.spliterator(), false)
+                .filter(key -> key.matches(pattern))
+                .findFirst()
+                .map(configuration::immutableConfigurationAt);
     }
 
     @Override

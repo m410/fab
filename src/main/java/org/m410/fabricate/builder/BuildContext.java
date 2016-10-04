@@ -8,6 +8,7 @@ import org.m410.fabricate.config.Module;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Document Me..
@@ -35,4 +36,6 @@ public interface BuildContext {
     Map<String,String> getClasspath();
 
     ImmutableHierarchicalConfiguration getConfiguration();
+
+    Optional<ImmutableHierarchicalConfiguration> configAt(String org, String name);
 }

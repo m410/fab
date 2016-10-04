@@ -1,6 +1,8 @@
 package org.m410.fabricate.util;
 
 
+import org.apache.commons.configuration2.ImmutableHierarchicalConfiguration;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -8,14 +10,11 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Common way to create configuration files from the application.
@@ -28,14 +27,19 @@ public final  class ReflectConfigFileBuilder {
     private final Collection<File> classpath;
     private final boolean appCreate;
     private final String envName;
+    private final String factoryClass;
+    private final Class confClazz = ImmutableHierarchicalConfiguration.class;
+    private final String appClassName;
 
     private ReflectConfigFileBuilder(String builderClassName, Path outputPath, Collection<File> classpath,
-            boolean appCreate, String envName) {
+            boolean appCreate, String envName, String factoryClass, String appClassName) {
         this.builderClassName = builderClassName;
         this.outputPath = outputPath;
         this.classpath = classpath;
         this.appCreate = appCreate;
         this.envName = envName;
+        this.factoryClass = factoryClass;
+        this.appClassName = appClassName;
     }
 
     public ReflectConfigFileBuilder(String builderClassName) {
@@ -44,78 +48,82 @@ public final  class ReflectConfigFileBuilder {
         appCreate = false;
         envName = null;
         this.builderClassName = builderClassName;
+        this.factoryClass = null;
+        this.appClassName = null;
     }
 
     public ReflectConfigFileBuilder withPath(Path outputPath) {
-        return new ReflectConfigFileBuilder(builderClassName,outputPath, classpath, appCreate, envName);
+        return new ReflectConfigFileBuilder(builderClassName, outputPath, classpath, appCreate, envName,
+                factoryClass, appClassName);
     }
 
     public ReflectConfigFileBuilder withClasspath(Collection<File> paths) {
-        return new ReflectConfigFileBuilder(builderClassName,outputPath,paths, appCreate, envName);
+        return new ReflectConfigFileBuilder(builderClassName, outputPath, paths, appCreate, envName, factoryClass, appClassName);
     }
 
     public ReflectConfigFileBuilder withAppCreated(boolean withConfig) {
-        return new ReflectConfigFileBuilder(builderClassName,outputPath, classpath, withConfig, envName);
+        return new ReflectConfigFileBuilder(builderClassName, outputPath, classpath, withConfig, envName, factoryClass, appClassName);
     }
 
-    public ReflectConfigFileBuilder withEnv(String name) {
-        return new ReflectConfigFileBuilder(builderClassName,outputPath, classpath, appCreate, name);
+    public ReflectConfigFileBuilder withEnv(String envName) {
+        return new ReflectConfigFileBuilder(builderClassName, outputPath, classpath, appCreate, envName, factoryClass, appClassName);
+    }
+
+    public ReflectConfigFileBuilder withFactoryClass(String factoryClass) {
+        return new ReflectConfigFileBuilder(builderClassName, outputPath, classpath, appCreate, envName,
+                factoryClass, appClassName);
+    }
+
+    public ReflectConfigFileBuilder withAppClass(String appClassName) {
+        return new ReflectConfigFileBuilder(builderClassName, outputPath, classpath, appCreate, envName, factoryClass, appClassName);
     }
 
     @SuppressWarnings("unchecked")
     public void make() throws ClassNotFoundException, NoSuchMethodException,
             InvocationTargetException, IllegalAccessException, InstantiationException,
             IOException {
+
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         URLClassLoader loader = new URLClassLoader(getUrls(), contextClassLoader);
         Class fileBuilderClazz = loader.loadClass(builderClassName);
-        Class confClazz = loader.loadClass("org.m410.garden.configuration.Configuration");
-        Class confFactoryClazz = loader.loadClass("org.m410.garden.configuration.ConfigurationFactory");
+
+        Class confFactoryClazz = loader.loadClass(factoryClass);
         Method buildtimeMethod = confFactoryClazz.getMethod("buildtime", String.class);
-        Object configurationInstance = buildtimeMethod.invoke(null,envName);
+
+        // instance of ImmutableHierarchicalConfiguration
+        Object configInstance = buildtimeMethod.invoke(null, envName);
 
         Object builderInstance;
 
-        if(appCreate)
-            builderInstance = appCreate(loader, confClazz, configurationInstance);
+        if (appCreate) {
+            builderInstance = appCreate(loader, configInstance);
+        }
         else
             builderInstance = fileBuilderClazz.newInstance();
 
         Method writeToFile = fileBuilderClazz.getMethod("writeToFile", Path.class, confClazz);
 
         outputPath.toFile().getParentFile().mkdirs();
-        writeToFile.invoke(builderInstance, outputPath, configurationInstance);
+
+        System.out.println("writeToFile:" + writeToFile);
+        System.out.println("builderInstance:" + builderInstance);
+
+        writeToFile.invoke(builderInstance, outputPath, configInstance);
     }
 
-    private Object appCreate(ClassLoader loader, Class confClazz, Object configurationInstance)
+    private Object appCreate(ClassLoader loader, Object configurationInstance)
             throws IOException, ClassNotFoundException, IllegalAccessException,
             InstantiationException, NoSuchMethodException, InvocationTargetException {
-        Class appClazz = loader.loadClass(appClassName());
+
+        Class appClazz = loader.loadClass(appClassName);
         Object applicationInstance = appClazz.newInstance();
 
         Method configureBuilderMethod = appClazz.getMethod("configureBuilder", confClazz);
+        System.out.println("configBuilderMethod:" + configureBuilderMethod);
         return configureBuilderMethod.invoke(applicationInstance, configurationInstance);
     }
 
-    private String appClassName() throws IOException {
-        // todo fix hardcode
-        Path configurationFile = FileSystems.getDefault().getPath("garden.fab.yml");
-        List<String> lines = Files.readAllLines(configurationFile, StandardCharsets.UTF_8);
-        Optional<String> line = Optional.empty();
 
-        for (String s : lines)
-            if(s.contains("applicationClass"))
-                line = Optional.of(s.substring(s.indexOf(":")+1).trim());
-
-        String className = null;
-
-        if (line.isPresent())
-            className = line.get();
-        else
-            throw new RuntimeException("could not find applicationClass line 1");
-
-        return className;
-    }
 
     private URL[] getUrls() throws MalformedURLException {
         Path classes = FileSystems.getDefault().getPath("target/classes");

@@ -1,6 +1,6 @@
 archetype:
   name: garden
-  version: 0.2-SNAPSHOT
+  version: 0.3-SNAPSHOT
   organization: org.m410.fabricate.garden
 
 application:
@@ -21,7 +21,7 @@ dependencies:
   - {scope: compile, org: org.apache, name: commons-util, rev: 1.0.0}
 
 persistence(org.m410.mod.persistence:m410-jpa:0.1):
-#  remote_reference: file:target/fab-java-task-0.2-SNAPSHOT.jar
+#  remote_reference: file:target/fab-java-task-0.3-SNAPSHOT.jar
   symbolicName: org.m410.fab-java-task
   properties:
     hibernate.dialect: org.hibernate.dialect.H2Dialect
@@ -31,11 +31,11 @@ persistence(org.m410.mod.persistence:m410-jpa:0.1):
     hibernate.connection.url: "jdbc:h2:db/demo"
     hibernate.hbm2ddl.auto: update
 
-testing(org.m410.fabricate:fab-junit:0.2-SNAPSHOT):
+testing(org.m410.fabricate:fab-junit:0.3-SNAPSHOT):
   placehodler: placeholder
 
 modules(org.m410.fab.module:randomModule:0.2.0):
-#  remote_reference: file:target/fab-java-task-0.2-SNAPSHOT.jar
+#  remote_reference: file:target/fab-java-task-0.3-SNAPSHOT.jar
   symbolicName: org.m410.fab-java-task
   organization: org.m410.mod
 
