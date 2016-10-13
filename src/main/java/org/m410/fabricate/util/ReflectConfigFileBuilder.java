@@ -1,7 +1,6 @@
 package org.m410.fabricate.util;
 
 
-import org.apache.commons.configuration2.ImmutableHierarchicalConfiguration;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,13 +21,13 @@ import java.util.List;
  * @author Michael Fortin
  */
 public final  class ReflectConfigFileBuilder {
+    private final String configClass = "org.apache.commons.configuration2.ImmutableHierarchicalConfiguration";
     private final String builderClassName;
     private final Path outputPath;
     private final Collection<File> classpath;
     private final boolean appCreate;
     private final String envName;
     private final String factoryClass;
-    private final Class confClazz = ImmutableHierarchicalConfiguration.class;
     private final String appClassName;
 
     private ReflectConfigFileBuilder(String builderClassName, Path outputPath, Collection<File> classpath,
@@ -89,6 +88,7 @@ public final  class ReflectConfigFileBuilder {
 
         Class confFactoryClazz = loader.loadClass(factoryClass);
         Method buildtimeMethod = confFactoryClazz.getMethod("buildtime", String.class);
+        Class confClazz = loader.loadClass(configClass);
 
         // instance of ImmutableHierarchicalConfiguration
         Object configInstance = buildtimeMethod.invoke(null, envName);
@@ -96,7 +96,7 @@ public final  class ReflectConfigFileBuilder {
         Object builderInstance;
 
         if (appCreate) {
-            builderInstance = appCreate(loader, configInstance);
+            builderInstance = appCreate(loader);
         }
         else
             builderInstance = fileBuilderClazz.newInstance();
@@ -111,16 +111,17 @@ public final  class ReflectConfigFileBuilder {
         writeToFile.invoke(builderInstance, outputPath, configInstance);
     }
 
-    private Object appCreate(ClassLoader loader, Object configurationInstance)
+    // todo this is also app specific, should be removed
+    private Object appCreate(ClassLoader loader)
             throws IOException, ClassNotFoundException, IllegalAccessException,
             InstantiationException, NoSuchMethodException, InvocationTargetException {
 
         Class appClazz = loader.loadClass(appClassName);
         Object applicationInstance = appClazz.newInstance();
 
-        Method configureBuilderMethod = appClazz.getMethod("configureBuilder", confClazz);
+        Method configureBuilderMethod = appClazz.getMethod("configureBuilder");
         System.out.println("configBuilderMethod:" + configureBuilderMethod);
-        return configureBuilderMethod.invoke(applicationInstance, configurationInstance);
+        return configureBuilderMethod.invoke(applicationInstance);
     }
 
 
