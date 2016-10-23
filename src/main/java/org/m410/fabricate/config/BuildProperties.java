@@ -7,6 +7,7 @@ import org.apache.commons.configuration2.ImmutableHierarchicalConfiguration;
  *
  * @author m410
  */
+@Deprecated
 public class BuildProperties {
     private String defaultEnvironment;
     private String defaultCommand;
