@@ -31,9 +31,11 @@ public class WarTask implements Task {
 
     @Override
     public void execute(BuildContext context) throws Exception {
-        final File baseDir = FileSystems.getDefault().getPath(context.getBuild().getSourceOutputDir()).toFile();
-        final File targetDir = new File(context.getBuild().getTargetDir());
-        final File webDir = FileSystems.getDefault().getPath(context.getBuild().getWebappDir()).toFile();
+        final String sourceOutputDir = context.getConfiguration().getString("build.sourceOutputDir");
+        final File baseDir = Paths.get(sourceOutputDir).toFile();
+        final File targetDir = new File(context.getConfiguration().getString("build.webappOutput"));
+        final String webappDir = context.getConfiguration().getString("build.webappDir");
+        final File webDir = FileSystems.getDefault().getPath(webappDir).toFile();
 
         String cp = context.getClasspath().get("compile");
         File explodedDir = makeExploded(targetDir, baseDir, webDir, toFiles(cp));
@@ -71,9 +73,8 @@ public class WarTask implements Task {
                 .collect(Collectors.toList());
     }
 
-    private File makeExploded(File targetDir, File sourcesDir, File webDir, Collection<File> libs)
+    private File makeExploded(File exploded, File sourcesDir, File webDir, Collection<File> libs)
             throws IOException {
-        File exploded = new File(targetDir, "war-exploded");
 
         if(!exploded.exists() && !exploded.mkdirs())
             throw new RuntimeException("Could not make war-exploded directory");
