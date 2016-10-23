@@ -72,11 +72,14 @@ public final class WebXmlTask implements Task {
                 .collect(Collectors.toList());
 
         context.cli().debug("artifacts =" + mavenProject    );
-        initWebXml(context.getBuild().getTargetDir(), context.environment(), context.getApplication().getName());
+        final String webOut = context.getConfiguration().getString("build.webappOutput");
+        initWebXml(webOut, context.environment(), context.getApplication().getName());
         moveM410Config(context.getBuild().getSourceOutputDir());
     }
 
     private void moveM410Config(String sourceOut) throws IOException {
+        // todo should e the cached env version
+        // todo fix hardcode paths
         Path source = Paths.get("garden.fab.yml");
         Path target = Paths.get("target/classes/garden.fab.yml");
 
@@ -85,7 +88,7 @@ public final class WebXmlTask implements Task {
     }
 
     private void initWebXml(String webappDir, String envName, String appName) throws IOException {
-        File outputDir = FileSystems.getDefault().getPath(webappDir, "war-exploded/WEB-INF").toFile();
+        File outputDir = FileSystems.getDefault().getPath(webappDir, "WEB-INF").toFile();
 
         if(!outputDir.exists() && !outputDir.mkdirs())
             throw new RuntimeException("Could not create web-inf directory");
