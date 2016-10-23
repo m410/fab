@@ -93,28 +93,28 @@ public class Activator implements BundleActivator {
                 .addCommand(
                         new Command("dependencies", "List dependencies for environment", false)
                                 .withStep(new Step("initialize"))
-                                .withStep(new Step("default").append(new DependencyDumpTask()))
+                                .withStep(new Step("run").append(new DependencyDumpTask()))
                 )
                 .addCommand(
                         new Command("classpaths", "Display each classpath entry", false)
                                 .withStep(new Step("initialize"))
-                                .withStep(new Step("default").append(new ClasspathDumpTask()))
+                                .withStep(new Step("run").append(new ClasspathDumpTask()))
                            )
                 .addCommand(
                         new Command("info", "List all environment configuration properties", false)
-                                .withStep(new Step("default").append(new InfoDumpTask())))
+                                .withStep(new Step("run").append(new InfoDumpTask())))
                 .addCommand(
                         new Command("help", "Display Help", false)
-                                .withStep(new Step("default").append(new HelpTask())))
+                                .withStep(new Step("run").append(new HelpTask())))
                 .addCommand(
                         new Command("clean", "Remove project Artifacts", false)
-                                .withStep(new Step("default").append(new CleanTask())))
+                                .withStep(new Step("run").append(new CleanTask())))
                 .addCommand(
                         new Command("bundles", "Display build bundles", false)
-                                .withStep(new Step("default").append(new BundleTask())))
+                                .withStep(new Step("run").append(new BundleTask())))
                 .addCommand(
                         new Command("tasks", "List all available tasks", false)
-                                .withStep(new Step("default").append(commandListTask)));
+                                .withStep(new Step("run").append(commandListTask)));
     }
 
     @Override

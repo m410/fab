@@ -27,6 +27,7 @@ public interface BuildContext {
 
     Application getApplication();
 
+    @Deprecated
     Build getBuild();
 
     List<Dependency> getDependencies();
