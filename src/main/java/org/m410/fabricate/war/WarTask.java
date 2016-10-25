@@ -31,14 +31,21 @@ public class WarTask implements Task {
 
     @Override
     public void execute(BuildContext context) throws Exception {
+
         final String sourceOutputDir = context.getConfiguration().getString("build.sourceOutputDir");
         final File baseDir = Paths.get(sourceOutputDir).toFile();
-        final File targetDir = new File(context.getConfiguration().getString("build.webappOutput"));
-        final String webappDir = context.getConfiguration().getString("build.webappDir");
-        final File webDir = FileSystems.getDefault().getPath(webappDir).toFile();
+
+        final String targetDirStr = context.getConfiguration().getString("build.targetDir");
+        final File targetDir = Paths.get(targetDirStr).toFile();
+
+        final String exploded = context.getConfiguration().getString("build.webappOutput");
+        final File explodedPath = Paths.get(exploded).toFile();
+
+        final String staticFile = context.getConfiguration().getString("build.webappDir");
+        final File staticDir = Paths.get(staticFile).toFile();
 
         String cp = context.getClasspath().get("compile");
-        File explodedDir = makeExploded(targetDir, baseDir, webDir, toFiles(cp));
+        File explodedDir = makeExploded(explodedPath, baseDir, staticDir, toFiles(cp));
         makeManifest(explodedDir);
 
         if (!explodedDir.exists() && !explodedDir.mkdirs())
