@@ -1,9 +1,6 @@
 package org.m410.fabricate.config;
 
 import org.apache.commons.configuration2.ImmutableConfiguration;
-import org.apache.commons.configuration2.ImmutableHierarchicalConfiguration;
-
-import java.util.Map;
 
 /**
  * @author m410
@@ -35,26 +32,26 @@ public class BuildImpl implements Build {
     }
 
     public BuildImpl(ImmutableConfiguration config) {
-        defaultEnvironment = config.getString("defaultEnvironment","development");
-        defaultCommand = config.getString("defaultCommand","build");
-        lang = config.getString("lang","java");
-        langVersion = config.getString("langVersion","1.8");
-        compilerArgs = config.getString("compilerArgs","-ea");
-        targetDir = config.getString("targetDir","target");
-        webappDir = config.getString("webappDir","webapp");
-        sourceDir = config.getString("sourceDir","src/java");
-        sourceOutputDir = config.getString("sourceOutputDir","target/classes");
-        resourceDir = config.getString("resourceDir","src/resources");
-        testDir = config.getString("testDir","test/java");
+        defaultEnvironment = config.getString("build.defaultEnvironment", "development");
+        defaultCommand = config.getString("build.defaultCommand", "build");
+        lang = config.getString("build.lang", "java");
+        langVersion = config.getString("build.langVersion", "1.8");
+        compilerArgs = config.getString("build.compilerArgs", "-ea");
+        targetDir = config.getString("build.targetDir", "target");
+        webappDir = config.getString("build.webappDir", "webapp");
+        sourceDir = config.getString("build.sourceDir", "src/java");
+        sourceOutputDir = config.getString("build.sourceOutputDir", "dist/classes");
+        resourceDir = config.getString("build.resourceDir", "src/resources");
+        testDir = config.getString("build.testDir", "test/java");
         testOutputDir = config.getString("testOutputDir","target/test-classes");
         testResourceDir = config.getString("testResourceDir","test/resources");
         vcs = config.getString("vcs","git");
-        packageSource = config.getBoolean(" packageSource",false);
-        packageDocs = config.getBoolean(" packageDocs",false);
-        packageClassifier = config.getString("packageClassifier");
-        packageName = config.getString("packageName");
+        packageSource = config.getBoolean("build.packageSource", false);
+        packageDocs = config.getBoolean("build.packageDocs", false);
+        packageClassifier = config.getString("build.packageClassifier");
+        packageName = config.getString("build.packageName");
         defaultLogLevel = config.getString("defaultLogLevel","info");
-        cacheDir = config.getString("cacheDir",".fab");
+        cacheDir = config.getString("build.cacheDir", ".fab");
     }
 
     @Override

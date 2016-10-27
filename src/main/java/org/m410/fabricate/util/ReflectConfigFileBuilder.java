@@ -127,7 +127,8 @@ public final  class ReflectConfigFileBuilder {
 
 
     private URL[] getUrls() throws MalformedURLException {
-        Path classes = FileSystems.getDefault().getPath("target/classes");
+        // todo remove hardcoded path
+        Path classes = FileSystems.getDefault().getPath("dist/classes");
         List<URL> classPath = new ArrayList<>();
         classPath.add(classes.toUri().toURL());
 
