@@ -1,2 +1,13 @@
-sourceDir: src/test/assets/src
-sourceOutputDir: src/test/assets/target/classes
+build:
+  sourceDir: src/test/assets/src
+  sourceOutputDir: src/test/assets/target/classes
+  testDir: src/test/assets/test
+  testOutputDir: src/test/assets/target/test-classes
+
+application:
+  name: name
+  org: org
+  version: one
+
+dependencies:
+- {name: name}
