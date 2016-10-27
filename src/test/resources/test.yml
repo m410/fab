@@ -1,8 +1,11 @@
-cacheDir: src/test/assets
-org: org.m410.test
-applicationClass: none
-name: test-app
-description: none
-version: 1.0.0
-properties: {}
-authors: none
+application:
+  org: org.m410.test
+  applicationClass: none
+  name: test-app
+  description: none
+  version: 1.0.0
+  properties: {}
+  authors: none
+
+build:
+  cacheDir: src/test/assets
