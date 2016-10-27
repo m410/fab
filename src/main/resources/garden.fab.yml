@@ -38,27 +38,35 @@ dependencies:
   - { scope: provided, org: javax.servlet, name: javax.servlet-api, rev: 3.1.0}
 
 build:
+  cacheDir: .fab
   defaultEnvironment: default
   defaultCommand: build
+
   lang: java
   langVersion: "1.8"
   compilerArgs: -ea
-  targetDir: target
-  webappDir: webapp
-  webappOutput: target/webapp
+
+  targetDir: dist
+
+  webappDir: src/webapp
+  webappOutput: dist/webapp
+
   sourceDir: src/java
-  sourceOutputDir: target/classes
+  sourceOutputDir: dist/classes
   resourceDir: src/resources
+
+  generatedSources: dist/generated-classes
+
   testDir: test/java
-  testOutputDir: target/test-classes
   testResourceDir: test/resources
+  testOutputDir: dist/test-classes
+
   packageSource: false
   packageDocs: false
   packageName:
 
-deploy:
-
-publish:
+  arch: ${sys:os.arch}
+  osName: ${sys:os.name}
 
 
 

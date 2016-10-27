@@ -74,14 +74,13 @@ public final class WebXmlTask implements Task {
         context.cli().debug("artifacts =" + mavenProject    );
         final String webOut = context.getConfiguration().getString("build.webappOutput");
         initWebXml(webOut, context.environment(), context.getApplication().getName());
-        moveM410Config(context.getBuild().getSourceOutputDir());
+        moveM410Config(context.getConfiguration().getString("build.sourceOutputDir"));
     }
 
     private void moveM410Config(String sourceOut) throws IOException {
         // todo should e the cached env version
-        // todo fix hardcode paths
         Path source = Paths.get("garden.fab.yml");
-        Path target = Paths.get("target/classes/garden.fab.yml");
+        Path target = Paths.get(sourceOut).resolve("garden.fab.yml");
 
         if(!target.toFile().exists())
             Files.copy(source, target);
