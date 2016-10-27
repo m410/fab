@@ -1,9 +1,12 @@
-sourceOutputDir: src/test/assets/src
-org: org.m410.test
-applicationClass: none
-name: test-app
-description: none
-version: 1.0.0
-targetDir: src/test/assets/target
-properties: {}
-authors: none
+build:
+  sourceOutputDir: src/test/assets/src
+  targetDir: src/test/assets/target
+
+application:
+  org: org.m410.test
+  applicationClass: none
+  name: test-app
+  description: none
+  version: 1.0.0
+  properties: {}
+  authors: none
