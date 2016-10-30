@@ -23,6 +23,7 @@ public final class BuildContextImpl implements BuildContext {
     private final ImmutableHierarchicalConfiguration configuration;
 
     // for testing
+    @Deprecated
     public BuildContextImpl(Cli cli, Application application, Build build, String environment,
                             List<Dependency> dependencies, List<Module> modules) {
         this.cli = cli;

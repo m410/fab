@@ -30,11 +30,14 @@ public final class ProjectContext {
     }
 
     private List<Dependency> extractDependencies(ImmutableHierarchicalConfiguration conf) {
-        final ImmutableHierarchicalConfiguration x = conf.immutableConfigurationAt("dependencies(0)");
-
-        return (List<Dependency>) IntStream.range(0, conf.getMaxIndex("dependencies") + 1)
-                .mapToObj(i -> new Dependency(conf.immutableConfigurationAt("dependencies(" + i + ")")))
-                .collect(Collectors.toList());
+        if (conf.containsKey("dependencies")) {
+            return (List<Dependency>) IntStream.range(0, conf.getMaxIndex("dependencies") + 1)
+                    .mapToObj(i -> new Dependency(conf.immutableConfigurationAt("dependencies(" + i + ")")))
+                    .collect(Collectors.toList());
+        }
+        else {
+            return new ArrayList<>();
+        }
     }
 
     private List<Module> extractModules(ImmutableHierarchicalConfiguration configuration) {

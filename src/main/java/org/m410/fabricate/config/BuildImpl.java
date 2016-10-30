@@ -32,26 +32,26 @@ public class BuildImpl implements Build {
     }
 
     public BuildImpl(ImmutableConfiguration config) {
-        defaultEnvironment = config.getString("build.defaultEnvironment", "development");
-        defaultCommand = config.getString("build.defaultCommand", "build");
+        defaultEnvironment = config.getString("build.default_environment", "development");
+        defaultCommand = config.getString("build.default_command", "build");
         lang = config.getString("build.lang", "java");
-        langVersion = config.getString("build.langVersion", "1.8");
-        compilerArgs = config.getString("build.compilerArgs", "-ea");
-        targetDir = config.getString("build.targetDir", "target");
-        webappDir = config.getString("build.webappDir", "webapp");
-        sourceDir = config.getString("build.sourceDir", "src/java");
-        sourceOutputDir = config.getString("build.sourceOutputDir", "dist/classes");
-        resourceDir = config.getString("build.resourceDir", "src/resources");
-        testDir = config.getString("build.testDir", "test/java");
-        testOutputDir = config.getString("testOutputDir","target/test-classes");
-        testResourceDir = config.getString("testResourceDir","test/resources");
+        langVersion = config.getString("build.lang_version", "1.8");
+        compilerArgs = config.getString("build.compiler_args", "-ea");
+        targetDir = config.getString("build.target_dir", "target");
+        webappDir = config.getString("build.webapp_dir", "webapp");
+        sourceDir = config.getString("build.source_dir", "src/java");
+        sourceOutputDir = config.getString("build.source_output_dir", "dist/classes");
+        resourceDir = config.getString("build.resource_dir", "src/resources");
+        testDir = config.getString("build.test_dir", "test/java");
+        testOutputDir = config.getString("test_output_dir", "target/test-classes");
+        testResourceDir = config.getString("test_resource_dir", "test/resources");
         vcs = config.getString("vcs","git");
-        packageSource = config.getBoolean("build.packageSource", false);
-        packageDocs = config.getBoolean("build.packageDocs", false);
-        packageClassifier = config.getString("build.packageClassifier");
-        packageName = config.getString("build.packageName");
-        defaultLogLevel = config.getString("defaultLogLevel","info");
-        cacheDir = config.getString("build.cacheDir", ".fab");
+        packageSource = config.getBoolean("build.package_source", false);
+        packageDocs = config.getBoolean("build.package_docs", false);
+        packageClassifier = config.getString("build.package_classifier");
+        packageName = config.getString("build.package_name");
+        defaultLogLevel = config.getString("default_log_level", "info");
+        cacheDir = config.getString("build.cache_dir", ".fab");
     }
 
     @Override
