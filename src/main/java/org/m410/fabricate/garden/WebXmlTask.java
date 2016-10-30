@@ -72,9 +72,9 @@ public final class WebXmlTask implements Task {
                 .collect(Collectors.toList());
 
         context.cli().debug("artifacts =" + mavenProject    );
-        final String webOut = context.getConfiguration().getString("build.webappOutput");
+        final String webOut = context.getConfiguration().getString("build.webapp_output");
         initWebXml(webOut, context.environment(), context.getApplication().getName());
-        moveM410Config(context.getConfiguration().getString("build.sourceOutputDir"));
+        moveM410Config(context.getConfiguration().getString("build.source_dutput_dir"));
     }
 
     private void moveM410Config(String sourceOut) throws IOException {
