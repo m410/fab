@@ -217,12 +217,14 @@ public class IvyDependencyTask implements Task {
             dependenciesElement.appendChild(dependencyElem);
         }
 
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
-        DOMSource source = new DOMSource(doc);
-        File file = FileSystems.getDefault().getPath(context.getBuild().getCacheDir(),"ivy.xml").toFile();
-        StreamResult result = new StreamResult(file);
+        final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        final Transformer transformer = transformerFactory.newTransformer();
+        final DOMSource source = new DOMSource(doc);
+        final String out = context.getConfiguration().getString("build.cache_dir");
+        final File file = FileSystems.getDefault().getPath(out, "ivy.xml").toFile();
+        final StreamResult result = new StreamResult(file);
         transformer.transform(source, result);
+
         return file;
     }
 
@@ -279,12 +281,14 @@ public class IvyDependencyTask implements Task {
 
         rootElement.appendChild(resolvers);
 
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
-        DOMSource source = new DOMSource(doc);
-        File file = FileSystems.getDefault().getPath(context.getBuild().getCacheDir(),"ivy-settings.xml").toFile();
-        StreamResult result = new StreamResult(file);
+        final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        final Transformer transformer = transformerFactory.newTransformer();
+        final DOMSource source = new DOMSource(doc);
+        final String out = context.getConfiguration().getString("build.cache_dir");
+        final File file = FileSystems.getDefault().getPath(out, "ivy-settings.xml").toFile();
+        final StreamResult result = new StreamResult(file);
         transformer.transform(source, result);
+
         return file;
     }
 }
