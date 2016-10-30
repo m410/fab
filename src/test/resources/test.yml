@@ -1,8 +1,9 @@
 build:
-  sourceDir: src/test/assets/src
-  sourceOutputDir: src/test/assets/target/classes
-  testDir: src/test/assets/test
-  testOutputDir: src/test/assets/target/test-classes
+  source_dir: src/test/assets/src
+  source_output_dir: src/test/assets/target/classes
+  test_dir: src/test/assets/test
+  test_output_dir: src/test/assets/target/test-classes
+  cache_dir: src/test/assets/cache
 
 application:
   name: name
@@ -10,4 +11,4 @@ application:
   version: one
 
 dependencies:
-- {name: name}
+ - {name: name, scope: compile}

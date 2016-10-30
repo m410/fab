@@ -3,6 +3,7 @@ package org.m410.fabricate.compiler;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.junit.Test;
 import org.m410.config.YamlConfig;
+import org.m410.config.YamlConfiguration;
 import org.m410.fabricate.builder.BuildContextImpl;
 import org.m410.fabricate.builder.Cli;
 import org.m410.fabricate.config.ProjectContext;
@@ -36,8 +37,9 @@ public class JavaCompileTaskTest {
     @Test
     public void testCompile() throws ConfigurationException {
         JavaCompileTask task = new JavaCompileTask(JavaCompileTask.COMPILE_SRC);
-        ProjectContext ctx = new ProjectContext(YamlConfig.load(new File("src/test/resources/test.yml")));
-        BuildContextImpl context = new BuildContextImpl(cli, ctx, "env", null);
+        final YamlConfiguration load = YamlConfig.load(new File("src/test/resources/test.yml"));
+        ProjectContext ctx = new ProjectContext(load);
+        BuildContextImpl context = new BuildContextImpl(cli, ctx, "hash", "default");
 
         try {
             task.execute(context);

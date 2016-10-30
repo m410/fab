@@ -65,8 +65,8 @@ public final class JavaCompileTask implements Task {
     public void execute(BuildContext context) throws Exception {
         context.cli().debug("testCompile:"+testCompile);
 
-        Paths.get(context.getConfiguration().getString("build.testOutputDir")).toFile().mkdirs();
-        Paths.get(context.getConfiguration().getString("build.sourceOutputDir")).toFile().mkdirs();
+        Paths.get(context.getConfiguration().getString("build.test_output_dir")).toFile().mkdirs();
+        Paths.get(context.getConfiguration().getString("build.source_output_dir")).toFile().mkdirs();
 
         ArrayList<String> options = new ArrayList<>();
         makeClasspathOption(context).ifPresent(options::addAll);
@@ -107,8 +107,8 @@ public final class JavaCompileTask implements Task {
 
     private Optional<List<String>> makeSourcePathOption(BuildContext context) {
         final String sourceDir = testCompile
-                                 ? context.getConfiguration().getString("build.testDir")
-                                 : context.getConfiguration().getString("build.sourceDir");
+                                 ? context.getConfiguration().getString("build.test_dir")
+                                 : context.getConfiguration().getString("build.source_dir");
 
         final File file = FileSystems.getDefault().getPath(sourceDir).toFile();
 
@@ -123,8 +123,8 @@ public final class JavaCompileTask implements Task {
 
     private Optional<List<String>> makeOutputOption(BuildContext context) {
         final String outputDir = testCompile
-                                 ? context.getConfiguration().getString("build.testOutputDir")
-                                 : context.getConfiguration().getString("build.sourceOutputDir");
+                                 ? context.getConfiguration().getString("build.test_output_dir")
+                                 : context.getConfiguration().getString("build.source_output_dir");
         final File file = FileSystems.getDefault().getPath(outputDir).toFile();
 
         if(!file.exists() && !file.mkdirs())
@@ -163,7 +163,7 @@ public final class JavaCompileTask implements Task {
     }
 
     private String classes(BuildContext context) {
-        final String outputDir = context.getConfiguration().getString("build.sourceOutputDir");
+        final String outputDir = context.getConfiguration().getString("build.source_output_dir");
         final String path = FileSystems.getDefault().getPath(outputDir).toFile().getAbsolutePath();
         return path + System.getProperty("path.separator");
     }
@@ -173,8 +173,8 @@ public final class JavaCompileTask implements Task {
         final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**/*.java");
 
         final Path path = testCompile
-                          ? Paths.get(context.getConfiguration().getString("build.testDir"))
-                          : Paths.get(context.getConfiguration().getString("build.sourceDir"));
+                          ? Paths.get(context.getConfiguration().getString("build.test_dir"))
+                          : Paths.get(context.getConfiguration().getString("build.source_dir"));
 
         Files.walk(path).filter(matcher::matches).forEach(p->{
             final URI uri = p.toUri();
