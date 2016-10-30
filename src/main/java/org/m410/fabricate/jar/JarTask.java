@@ -1,12 +1,15 @@
 package org.m410.fabricate.jar;
 
+import org.apache.commons.configuration2.ImmutableHierarchicalConfiguration;
 import org.m410.fabricate.builder.BuildContext;
 import org.m410.fabricate.builder.Task;
 
 import java.io.*;
 import java.net.URI;
-import java.nio.file.*;
-import java.util.zip.*;
+import java.nio.file.Paths;
+import java.util.zip.CRC32;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public final class JarTask implements Task {
 
@@ -19,8 +22,11 @@ public final class JarTask implements Task {
     }
 
     public void execute(BuildContext context) throws Exception {
-        final File classseDir = FileSystems.getDefault().getPath(context.getBuild().getSourceOutputDir()).toFile();
-        final File targetFile = new File(context.getBuild().getTargetDir());
+        final ImmutableHierarchicalConfiguration config = context.getConfiguration();
+        final String sourceOut = config.getString("build.source_output_dir");
+        final File classseDir = Paths.get(sourceOut).toFile();
+        final String destOut = config.getString("build.target_dir");
+        final File targetFile = Paths.get(destOut).toFile();
 
         makeManifest(classseDir);
 
@@ -37,7 +43,7 @@ public final class JarTask implements Task {
 
     private void makeManifest(File classseDir) throws IOException {
         File metaInf = new File(classseDir,"META-INF");
-        metaInf.mkdir();
+        metaInf.mkdirs();
         File manifestMf = new File(metaInf,"MANIFEST.MF");
 
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(manifestMf))){

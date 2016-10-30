@@ -1,6 +1,6 @@
 build:
-  sourceOutputDir: src/test/assets/src
-  targetDir: src/test/assets/target
+  source_output_dir: src/test/assets/src
+  target_dir: src/test/assets/target
 
 application:
   org: org.m410.test

@@ -8,20 +8,15 @@ import org.m410.config.YamlConfig;
 import org.m410.fabricate.builder.BuildContext;
 import org.m410.fabricate.builder.BuildContextImpl;
 import org.m410.fabricate.builder.Cli;
-import org.m410.fabricate.config.*;
+import org.m410.fabricate.config.Dependency;
+import org.m410.fabricate.config.ProjectContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author m410
@@ -46,11 +41,8 @@ public class JarTaskTest {
         deps.add(new Dependency("compile","org.apache.commons","commons-lang3","3.3.2",false));
 
         final BaseHierarchicalConfiguration load = YamlConfig.load(new File("src/test/resources/test.yml"));
-
-        Build build = new BuildImpl(load);
-        Application app = new ApplicationImpl(load);
-
-        context = new BuildContextImpl(cli,app,build,"dev",deps,null);
+        ProjectContext projectContext = new ProjectContext(load);
+        context = new BuildContextImpl(cli, projectContext, "hash", "dev");
     }
 
     @Test
