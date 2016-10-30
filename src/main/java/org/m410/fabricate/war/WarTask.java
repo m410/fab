@@ -32,16 +32,16 @@ public class WarTask implements Task {
     @Override
     public void execute(BuildContext context) throws Exception {
 
-        final String sourceOutputDir = context.getConfiguration().getString("build.sourceOutputDir");
+        final String sourceOutputDir = context.getConfiguration().getString("build.source_output_dir");
         final File baseDir = Paths.get(sourceOutputDir).toFile();
 
-        final String targetDirStr = context.getConfiguration().getString("build.targetDir");
+        final String targetDirStr = context.getConfiguration().getString("build.target_dir");
         final File targetDir = Paths.get(targetDirStr).toFile();
 
-        final String exploded = context.getConfiguration().getString("build.webappOutput");
+        final String exploded = context.getConfiguration().getString("build.webapp_output");
         final File explodedPath = Paths.get(exploded).toFile();
 
-        final String staticFile = context.getConfiguration().getString("build.webappDir");
+        final String staticFile = context.getConfiguration().getString("build.webapp_dir");
         final File staticDir = Paths.get(staticFile).toFile();
 
         String cp = context.getClasspath().get("compile");
