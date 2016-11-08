@@ -238,10 +238,6 @@ public final class Project implements Reference {
         return archetype;
     }
 
-    public BuildProperties getBuild() {
-        return new BuildProperties(configuration);
-    }
-
     private List<Reference> loadModules(BaseHierarchicalConfiguration configuration) throws IOException {
         return loadModStereotypes(configuration, Type.PROJECT, Level.PROJECT);
     }

@@ -24,6 +24,7 @@ import java.util.*;
  */
 public final class ProjectRunner {
 
+    // todo should be pulled from config
     static final String bundleDir = ".fab/bundles";
     static final String cacheDir = ".fab/cache";
     private final List<String> args;

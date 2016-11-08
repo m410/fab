@@ -32,8 +32,8 @@ public final class Archetype extends ReferenceBase {
         }
 
         if (org == null || name == null || version == null) {
-            throw new InvalidConfigurationException("invalid module declaration: '" + org + "','" + name + "','" +
-                                                    version + "'");
+            throw new InvalidConfigurationException(
+                    "invalid module declaration: '" + org + "','" + name + "','" + version + "'");
         }
     }
 
