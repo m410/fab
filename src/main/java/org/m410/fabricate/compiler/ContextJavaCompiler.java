@@ -104,8 +104,8 @@ public final class ContextJavaCompiler {
 
     private Optional<List<String>> makeSourcePathOption(BuildContext context) {
         final String sourceDir = testCompile
-                ? context.getBuild().getTestDir()
-                : context.getBuild().getSourceDir();
+                                 ? context.getConfiguration().getString("build.test_dir")
+                                 : context.getConfiguration().getString("build.source_dir");
 
         final File file = FileSystems.getDefault().getPath(sourceDir).toFile();
 
@@ -120,8 +120,8 @@ public final class ContextJavaCompiler {
 
     private Optional<List<String>> makeOutputOption(BuildContext context) {
         final String outputDir = testCompile
-                ? context.getBuild().getTestOutputDir()
-                : context.getBuild().getSourceOutputDir();
+                                 ? context.getConfiguration().getString("build.test_output_dir")
+                                 : context.getConfiguration().getString("build.source_output_dir");
         final File file = FileSystems.getDefault().getPath(outputDir).toFile();
 
         if(!file.exists() && !file.mkdirs())
@@ -158,7 +158,7 @@ public final class ContextJavaCompiler {
     }
 
     private String classes(BuildContext context) {
-        final String outputDir = context.getBuild().getSourceOutputDir();
+        final String outputDir = context.getConfiguration().getString("build.source_output_dir");
         final String path = FileSystems.getDefault().getPath(outputDir).toFile().getAbsolutePath();
         return path + System.getProperty("path.separator");
     }
@@ -167,8 +167,8 @@ public final class ContextJavaCompiler {
         List<JavaFileObject> sources = new ArrayList<>();
 
         final Path path = testCompile
-                ? FileSystems.getDefault().getPath(context.getBuild().getTestDir())
-                : FileSystems.getDefault().getPath(context.getBuild().getSourceDir());
+                          ? FileSystems.getDefault().getPath(context.getConfiguration().getString("build.test_dir"))
+                          : FileSystems.getDefault().getPath(context.getConfiguration().getString("build.source_dir"));
 
         Files.walk(path).filter(matcher::matches).forEach(p->{
             final URI uri = p.toUri();
