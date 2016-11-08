@@ -74,11 +74,11 @@ public final class WebXmlTask implements Task {
         context.cli().debug("artifacts =" + mavenProject    );
         final String webOut = context.getConfiguration().getString("build.webapp_output");
         initWebXml(webOut, context.environment(), context.getApplication().getName());
-        moveM410Config(context.getConfiguration().getString("build.source_dutput_dir"));
+        moveM410Config(context.getConfiguration().getString("build.source_output_dir"));
     }
 
     private void moveM410Config(String sourceOut) throws IOException {
-        // todo should e the cached env version
+        // todo should be the cached env version
         Path source = Paths.get("garden.fab.yml");
         Path target = Paths.get(sourceOut).resolve("garden.fab.yml");
 

@@ -22,7 +22,7 @@ public class MakeConfigTask implements Task {
     }
 
     @Override public void execute(BuildContext context) throws Exception {
-        final String sourceOutputDir = context.getBuild().getSourceOutputDir();
+        final String sourceOutputDir = context.getConfiguration().getString("build.source_output_dir");
         FileSystems.getDefault().getPath(sourceOutputDir).toFile().mkdirs();
         final Path path = FileSystems.getDefault().getPath(sourceOutputDir,"garden.fab.yml");
 
