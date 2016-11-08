@@ -67,7 +67,7 @@ public class JUnitTestRunnerTask implements Task {
     }
 
     private static List<String> findTestClasses(BuildContext context) throws IOException {
-        Path path = FileSystems.getDefault().getPath(context.getBuild().getTestDir());
+        Path path = FileSystems.getDefault().getPath(context.getConfiguration().getString("build.test_dir"));
         final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**/*Test.java");
         return Files.walk(path).filter(matcher::matches)
                 .map(Path::toFile)
@@ -85,8 +85,8 @@ public class JUnitTestRunnerTask implements Task {
         for (String path : paths)
             urls.add(asUrl(path));
 
-        urls.add(asUrl(context.getBuild().getSourceOutputDir()));
-        urls.add(asUrl(context.getBuild().getTestOutputDir()));
+        urls.add(asUrl(context.getConfiguration().getString("build.source_output_dir")));
+        urls.add(asUrl(context.getConfiguration().getString("build.test_output_dir")));
         return urls;
     }
 
