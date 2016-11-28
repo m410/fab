@@ -3,21 +3,21 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.m410.fabricate</groupId>
     <artifactId>garden</artifactId>
-    <version>0.3-SNAPSHOT</version>
+    <version>0.3</version>
     <packaging>bundle</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <fab-share.version>0.3-SNAPSHOT</fab-share.version>
-        <yaml-configuration.version>0.3-SNAPSHOT</yaml-configuration.version>
-        <fab-share.version>0.3-SNAPSHOT</fab-share.version>
-        <garden.version>0.3-SNAPSHOT</garden.version>
-        <fab-war.version>0.3-SNAPSHOT</fab-war.version>
-        <fab-junit.version>0.3-SNAPSHOT</fab-junit.version>
-        <fab-java-compiler.version>0.3-SNAPSHOT</fab-java-compiler.version>
-        <fab-java-dependencies.version>0.3-SNAPSHOT</fab-java-dependencies.version>
-        <yaml-configuration.version>0.3-SNAPSHOT</yaml-configuration.version>
+        <fab-share.version>0.3</fab-share.version>
+        <yaml-configuration.version>0.3</yaml-configuration.version>
+        <fab-share.version>0.3</fab-share.version>
+        <garden.version>0.3</garden.version>
+        <fab-war.version>0.3</fab-war.version>
+        <fab-junit.version>0.3</fab-junit.version>
+        <fab-java-compiler.version>0.3</fab-java-compiler.version>
+        <fab-java-dependencies.version>0.3</fab-java-dependencies.version>
+        <yaml-configuration.version>0.3</yaml-configuration.version>
     </properties>
 
 
