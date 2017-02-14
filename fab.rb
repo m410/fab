@@ -5,9 +5,9 @@
 class Fab < Formula
   desc "java centric build tool and framework"
   homepage "http://m410.org/fabricate"
-  url "https://github.com/m410/fab/releases/download/0.2/fab-0.3.tar.gz"
-  version "0.2"
-  sha256 "6545382a4f7a7e9840ddc2a549cb189f8962353286a7838520f8ae1cd98b06aa"
+  url "https://github.com/m410/fab/releases/download/0.3/fab-0.3.tar.gz"
+  version "0.3"
+  sha256 "1833b019fd3b8a26049b51b0213bf7bdf817eb0a6d5734ba54cc70b30bf0be8f"
 
   bottle :unneeded
 
