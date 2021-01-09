@@ -1,0 +1,15 @@
+application:
+  org: org.m410.test
+  applicationClass: none
+  name: test-app
+  description: none
+  version: 1.0.0
+  properties: {}
+  authors: none
+
+build:
+  cache_dir: src/test/assets
+
+dependencies:
+  - {scope: compile, org: org.apache.commons, name: commons-lang3, rev: 3.3.2}
+  - {scope: test, org: junit, name: junit, rev: "4.11"}

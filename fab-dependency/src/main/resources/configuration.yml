@@ -1,0 +1,48 @@
+version: "1.0"
+
+application:
+  name: &name demo2
+  organization: m410
+  version: "1.0-SNAPSHOT"
+  packageName: org.m410
+  applicationClass: org.m410.angular.web.MyApplication
+  author: Michael Fortin
+  description: &desc My Demo App
+
+build:
+  package docs: true
+
+deploy:
+  method: scp {}
+
+publish:
+  url: http://some-maven-repo.com/
+
+persistence(org.m410.mod.persistence:m410-jpa:0.1):
+  properties:
+    hibernate.dialect: org.hibernate.dialect.H2Dialect
+    hibernate.connection.driver_class: org.h2.Driver
+    hibernate.connection.username: sa
+    hibernate.connection.password: ""
+    hibernate.connection.url: "jdbc:h2:db/demo"
+    hibernate.hbm2ddl.auto: update
+
+modules(org.m410.mod:demo:0.2.0):
+  remote_reference: file:target/fab-loader-bundle-0.3-SNAPSHOT.jar
+
+logging:
+  appenders:
+    - name: STDOUT
+      appender class: ch.qos.logback.core.ConsoleAppender
+      layout: ch.qos.logback.classic.encoder.PatternLayoutEncoder
+      pattern: "%-4relative [%thread] %-5level %class - %msg%n"
+  logger:
+    - name: org.m410
+      level: TRACE
+  root:
+    level: DEBUG
+    ref: [STDOUT]
+
+web_xml:
+  - description: *desc
+  - display-name: *name
