@@ -1,0 +1,23 @@
+archetype:
+  version: 0.3-SNAPSHOT
+  name: java-lib
+  organization: org.m410.fabricate
+
+application:
+  name: demo-lib
+  org: org.m410.demo
+  version: 1.0.0-SNAPSHOT
+  description: Sample java library
+
+publish:
+  maven: http://someurl.com
+
+build:
+  langVersion: "1.8"
+
+dependencies:
+  - {scope: compile, org: commongs-lang, name: commons-lang3, rev: 3.2.1}
+
+environments:
+
+

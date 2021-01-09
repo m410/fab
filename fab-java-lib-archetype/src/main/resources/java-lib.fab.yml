@@ -1,0 +1,57 @@
+environment: default
+archetype:
+  name: java-lib
+  version: "${project.version}"
+  organization: org.m410.fabricate
+
+bundles:
+  - name: fab-share
+    org: org.m410.fabricate
+    version: "${fab-share.version}"
+  - name: java-lib
+    org: org.m410.fabricate
+    version: "${project.version}"
+  - name: fab-jar
+    org: org.m410.fabricate
+    version: "${fab-jar.version}"
+  - name: fab-junit
+    org: org.m410.fabricate
+    version: "${fab-junit.version}"
+  - name: fab-java-compiler
+    org: org.m410.fabricate
+    version: "${fab-java-compiler.version}"
+  - name: fab-java-dependencies
+    org: org.m410.fabricate
+    version: "${fab-java-dependencies.version}"
+
+build:
+  cache_dir: .fab
+  default_environment: default
+  default_eommand: build
+
+  lang: java
+  lang_version: "1.8"
+  compiler_args: -ea
+
+  target_dir: dist
+
+  webapp_dir: src/webapp
+  webapp_output: dist/webapp
+
+  source_dir: src/java
+  source_output_dir: dist/classes
+  resource_dir: src/resources
+
+  generated_sources: dist/generated-classes
+
+  test_dir: test/java
+  test_resource_dir: test/resources
+  test_output_dir: dist/test-classes
+
+  package_source: false
+  package_docs: false
+  package_name:
+
+  os_arch: ${sys:os.arch}
+  os_name: ${sys:os.name}
+
