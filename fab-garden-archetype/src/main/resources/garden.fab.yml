@@ -1,0 +1,72 @@
+environment: default
+archetype:
+  name: garden
+  version: "${project.version}"
+  organization: org.m410.fabricate
+
+bundles:
+  - name: fab-share
+    org: org.m410.fabricate
+    version: "${fab-share.version}"
+  - name: garden
+    org: org.m410.fabricate
+    version: "${garden.version}"
+  - name: fab-war
+    org: org.m410.fabricate
+    version: "${fab-war.version}"
+  - name: fab-junit
+    org: org.m410.fabricate
+    version: "${fab-junit.version}"
+  - name: fab-java-compiler
+    org: org.m410.fabricate
+    version: "${fab-java-compiler.version}"
+  - name: fab-java-dependencies
+    org: org.m410.fabricate
+    version: "${fab-java-dependencies.version}"
+
+dependencies:
+  - { scope: compile, org: org.m410.garden, name: garden, rev: "${project.version}" }
+  - { scope: compile, org: org.m410, name: yaml-configuration, rev: "${yaml-configuration.version}" }
+  - { scope: compile, org: org.apache.commons, name: commons-configuration2, rev: "2.1"}
+  - { scope: compile, org: org.yaml, name: snakeyaml, rev: "1.17"}
+  - { scope: compile, org: com.google.code.gson, name: gson, rev: 2.2.4 }
+  - { scope: compile, org: org.slf4j, name: slf4j-api, rev: 1.7.7 }
+  - { scope: compile, org: com.google.guava, name: guava, rev: "18.0"}
+  - { scope: compile, org: com.fasterxml, name: classmate, rev: 1.1.0 }
+  - { scope: provided, org: org.glassfish.web, name: javax.el, rev: 2.2.6 }
+  - { scope: provided, org: javax.el, name: el-api, rev: 2.2.1-b04 }
+  - { scope: provided, org: javax.servlet, name: javax.servlet-api, rev: 3.1.0}
+
+build:
+  cache_dir: .fab
+  default_environment: default
+  default_eommand: build
+
+  lang: java
+  lang_version: "1.8"
+  compiler_args: -ea
+
+  target_dir: dist
+
+  webapp_dir: src/webapp
+  webapp_output: dist/webapp
+
+  source_dir: src/java
+  source_output_dir: dist/classes
+  resource_dir: src/resources
+
+  generated_sources: dist/generated-classes
+
+  test_dir: test/java
+  test_resource_dir: test/resources
+  test_output_dir: dist/test-classes
+
+  package_source: false
+  package_docs: false
+  package_name:
+
+  os_arch: ${sys:os.arch}
+  os_name: ${sys:os.name}
+
+
+
