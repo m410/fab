@@ -1,0 +1,39 @@
+archetype:
+  name: garden
+  version: 0.3-SNAPSHOT
+  organization: org.m410.fabricate.garden
+
+bundles:
+  - name: fab-share
+    org: org.m410.fabricate
+    version: 0.3-SNAPSHOT
+  - name: garden
+    org: org.m410.fabricate.garden
+    version: 0.3-SNAPSHOT
+
+build:
+  defaultEnvironment: someValue1
+  defaultCommand: someValue2
+  lang: someValue3
+  langVersion: someValue4
+  compilerArgs: someValue5
+  targetDir: someValue6
+  webappDir: someValue7
+  sourceDir: someValue8
+  sourceOutputDir: someValue9
+  resourceDir: someValue10
+  testDir: someValue12
+  testOutputDir: someValue13
+  testResourceDir: someValue14
+  vcs: someValue15
+  publishTo: someValue16
+  deployTo: someValue17
+  packageSource: false
+  packageDocs: false
+  packageClassifier: someValue20
+  packageName: someValue21
+  defaultLogLevel: someValue22
+
+dependencies:
+  - {scope: compile, org: org.apache, name: my-app, rev: 1.0.0}
+
