@@ -1,0 +1,14 @@
+build:
+  source_dir: src/test/assets/src
+  source_output_dir: src/test/assets/target/classes
+  test_dir: src/test/assets/test
+  test_output_dir: src/test/assets/target/test-classes
+  cache_dir: src/test/assets/cache
+
+application:
+  name: name
+  org: org
+  version: one
+
+dependencies:
+ - {name: name, scope: compile}
