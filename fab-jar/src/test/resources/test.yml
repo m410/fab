@@ -1,0 +1,12 @@
+build:
+  source_output_dir: src/test/assets/src
+  target_dir: src/test/assets/target
+
+application:
+  org: org.m410.test
+  applicationClass: none
+  name: test-app
+  description: none
+  version: 1.0.0
+  properties: {}
+  authors: none
