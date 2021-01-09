@@ -1,0 +1,39 @@
+archetype:
+  name: test-project
+  version: 0.3-SNAPSHOT
+  organization: org.m410.fabricate.garden
+  remote_reference: file:src/test/resources/test-project.default.fab.yml
+
+application:
+  name: &name demo2
+  organization: m410
+  version: "1.0-SNAPSHOT"
+  packageName: org.m410
+  applicationClass: org.m410.angular.web.MyApplication
+  author: Michael Fortin
+  description: &desc My Demo App
+
+build:
+  package docs: true
+
+deploy:
+  method: scp {}
+
+publish:
+  url: http://some-maven-repo.com/
+
+dependencies:
+- { scope: compile, org: commons-beanutils, name: commons-beanutils, rev: 1.9.2 }
+
+persistence(org.m410.mod.persistence:m410-jpa:0.1):
+  remote_reference: file:src/test/resources/persistence.fab.yml
+  properties:
+    hibernate.dialect: org.hibernate.dialect.H2Dialect
+    hibernate.connection.driver_class: org.h2.Driver
+    hibernate.connection.username: sa
+    hibernate.connection.password: ""
+    hibernate.connection.url: "jdbc:h2:db/demo"
+    hibernate.hbm2ddl.auto: update
+
+modules(org.m410.mod:any-module:0.2.0):
+  remote_reference: file:src/test/resources/module.fab.yml
