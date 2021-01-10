@@ -16,7 +16,7 @@ public final class BuildContextImpl implements BuildContext {
     private final Build build;
     private final String environment;
     private final List<Dependency> dependencies;
-    private final List<Module> modules;
+    private final List<BuildModule> modules;
     private final Map<String,String> classpaths;
     private final String hash;
     private final boolean fromCache;
@@ -25,7 +25,7 @@ public final class BuildContextImpl implements BuildContext {
     // for testing
     @Deprecated
     public BuildContextImpl(Cli cli, Application application, Build build, String environment,
-                            List<Dependency> dependencies, List<Module> modules) {
+                            List<Dependency> dependencies, List<BuildModule> modules) {
         this.cli = cli;
         this.application = application;
         this.build = build;
@@ -112,7 +112,7 @@ public final class BuildContextImpl implements BuildContext {
     }
 
     @Override
-    public List<Module> getModules() {
+    public List<BuildModule> getModules() {
         return modules;
     }
 }

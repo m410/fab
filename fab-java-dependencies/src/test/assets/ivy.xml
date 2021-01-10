@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ivy-buildModule version="2.0">
+    <info buildModule="test-app" organisation="org.m410.test" revision="1.0.0"/>
+    <configurations>
+        <conf name="default" visibility="public"/>
+        <conf extends="default" name="provided" visibility="public"/>
+        <conf extends="provided" name="compile" visibility="public"/>
+        <conf extends="compile" name="test" visibility="public"/>
+        <conf name="javadoc" visibility="public"/>
+        <conf name="sources" visibility="public"/>
+    </configurations>
+    <publications>
+        <artifact conf="compile" ext="pom" type="pom"/>
+        <artifact conf="compile" ext="jar" type="jar"/>
+    </publications>
+    <dependencies>
+        <dependency conf="compile-&gt;default;" name="commons-lang3" org="org.apache.commons" rev="3.3.2"
+                    transitive="false"/>
+        <dependency conf="test-&gt;default;" name="junit" org="junit" rev="4.11" transitive="false"/>
+    </dependencies>
+</ivy-buildModule>

@@ -1,4 +1,4 @@
-Share module for Fab(ricate)
+Share buildModule for Fab(ricate)
 ======================================
 
 This is a java osgi bundle that adds common tasks to all projects.  It also defines the basic command

@@ -14,7 +14,7 @@ Modules
  -  [ORM](https://github.com/m410/garden-orm)       
  -  [Jetty9](https://github.com/m410/garden-jetty9)    
  
-Internal modules
+Internal buildModules
 ----
 
  -  [dependency](https://github.com/m410/fab-dependency)

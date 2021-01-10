@@ -3,8 +3,8 @@ package org.m410.fabricate.service.internal.serialize;
 import org.m410.fabricate.builder.BuildContext;
 import org.m410.fabricate.config.Application;
 import org.m410.fabricate.config.Build;
+import org.m410.fabricate.config.BuildModule;
 import org.m410.fabricate.config.Dependency;
-import org.m410.fabricate.config.Module;
 
 import java.util.List;
 import java.util.Map;
@@ -18,14 +18,14 @@ public class CachedProject {
     private Application application;
     private Build build;
     private List<Dependency> dependencies;
-    private List<Module> modules;
+    private List<BuildModule> buildModules;
     private Map<String,String> classpath;
 
     public CachedProject(BuildContext ctx) {
         this.hash = ctx.getHash();
         this.build = ctx.getBuild();
         this.dependencies = ctx.getDependencies();
-        this.modules = ctx.getModules();
+        this.buildModules = ctx.getModules();
         this.classpath = ctx.getClasspath();
         this.application = ctx.getApplication();
     }
@@ -41,12 +41,12 @@ public class CachedProject {
         this.hash = hash;
     }
 
-    public List<Module> getModules() {
-        return modules;
+    public List<BuildModule> getModules() {
+        return buildModules;
     }
 
-    public void setModules(List<Module> modules) {
-        this.modules = modules;
+    public void setModules(List<BuildModule> buildModules) {
+        this.buildModules = buildModules;
     }
 
     public Application getApplication() {

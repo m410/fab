@@ -3,8 +3,8 @@ package org.m410.fabricate.builder;
 import org.apache.commons.configuration2.ImmutableHierarchicalConfiguration;
 import org.m410.fabricate.config.Application;
 import org.m410.fabricate.config.Build;
+import org.m410.fabricate.config.BuildModule;
 import org.m410.fabricate.config.Dependency;
-import org.m410.fabricate.config.Module;
 
 import java.util.List;
 import java.util.Map;
@@ -32,7 +32,7 @@ public interface BuildContext {
 
     List<Dependency> getDependencies();
 
-    List<Module> getModules();
+    List<BuildModule> getModules();
 
     Map<String,String> getClasspath();
 

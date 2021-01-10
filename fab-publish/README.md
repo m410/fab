@@ -52,7 +52,7 @@ you should see something like this:
 Fab works from within a project and globally on your system.  When working outside
 of a project you can create new project, manage your repostories, etc. From
 within a project, the commands available depend on the type of project
-and modules installed.
+and buildModules installed.
 
  -  [Garden web application example.](https://github.com/m410/example-garden)
  -  [Basic java jar example.](https://github.com/m410/example-lib)

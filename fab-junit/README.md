@@ -1,4 +1,4 @@
-JUnit module for Fab(ricate)
+JUnit buildModule for Fab(ricate)
 ======================================
 
 This is a junit test runner to a project configuration.

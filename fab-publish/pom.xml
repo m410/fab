@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.m410.fabricate</groupId>
-    <artifactId>fab</artifactId>
+    <artifactId>fab-publish</artifactId>
     <name>Fab(ricate) Package Installer</name>
     <description>Builds the distributable zip file, that is the fabricate command line utilities.
     </description>

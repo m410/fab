@@ -18,7 +18,7 @@ public final class ProjectContext {
     private final Application application;
     private final Build build;
     private final List<Dependency> dependencies;
-    private final List<Module> modules;
+    private final List<BuildModule> buildModules;
     private final ImmutableHierarchicalConfiguration configuration;
 
     public ProjectContext(ImmutableHierarchicalConfiguration configuration) {
@@ -26,7 +26,7 @@ public final class ProjectContext {
         this.application = new ApplicationImpl(configuration.immutableConfigurationAt("application"));
         this.build = new BuildImpl(configuration.immutableSubset("build"));
         this.dependencies = extractDependencies(configuration);
-        this.modules = extractModules(configuration);
+        this.buildModules = extractModules(configuration);
     }
 
     private List<Dependency> extractDependencies(ImmutableHierarchicalConfiguration conf) {
@@ -40,7 +40,7 @@ public final class ProjectContext {
         }
     }
 
-    private List<Module> extractModules(ImmutableHierarchicalConfiguration configuration) {
+    private List<BuildModule> extractModules(ImmutableHierarchicalConfiguration configuration) {
         final Iterator<String> keys = configuration.getKeys();
         List<String> modules = new ArrayList<>();
 
@@ -53,7 +53,7 @@ public final class ProjectContext {
         }
 
         return modules.stream()
-                .map(s -> new ModuleImpl(s, configuration.immutableConfigurationAt(s)))
+                .map(s -> new BuildModuleImpl(s, configuration.immutableConfigurationAt(s)))
                 .collect(Collectors.toList());
     }
 
@@ -69,8 +69,8 @@ public final class ProjectContext {
         return dependencies;
     }
 
-    public List<Module> getModules() {
-        return modules;
+    public List<BuildModule> getModules() {
+        return buildModules;
     }
 
     public ImmutableHierarchicalConfiguration getConfiguration() {

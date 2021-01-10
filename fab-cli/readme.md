@@ -12,8 +12,8 @@ This is a java 8 OSGI bundle that's part of the fab build tool. This is the comm
     1. load the files bundle dependencies.
     2. Read the base project file and load the bundle dependencies.
     3. Cache the base configuration file.  (not done yet).
-    4. Read the module configuration files and load the bundle dependencies.
-    5. Cache the module configuration file (not done yet).
+    4. Read the buildModule configuration files and load the bundle dependencies.
+    5. Cache the buildModule configuration file (not done yet).
     6. Start the osgi container and load the bundles.
     7. execute the command or commands passed as arguments
 
